@@ -1,0 +1,142 @@
+{
+  "_meta": {
+    "system": "GenoMAX²",
+    "version": "1.0",
+    "description": "Component specification for all label formats"
+  },
+  "component_tree": {
+    "MAXimo²": {
+      "BOTTLE": {
+        "Front": "MAXimo²/BOTTLE/Front",
+        "Back": "MAXimo²/BOTTLE/Back"
+      },
+      "JAR": {
+        "Front": "MAXimo²/JAR/Front",
+        "Back": "MAXimo²/JAR/Back"
+      },
+      "POUCH": {
+        "Front": "MAXimo²/POUCH/Front",
+        "Back": "MAXimo²/POUCH/Back"
+      },
+      "DROPPER": {
+        "Front": "MAXimo²/DROPPER/Front",
+        "Back": "MAXimo²/DROPPER/Back"
+      },
+      "STRIPS": {
+        "Front": "MAXimo²/STRIPS/Front",
+        "Back": "MAXimo²/STRIPS/Back"
+      }
+    },
+    "MAXima²": {
+      "BOTTLE": {
+        "Front": "MAXima²/BOTTLE/Front",
+        "Back": "MAXima²/BOTTLE/Back"
+      },
+      "JAR": {
+        "Front": "MAXima²/JAR/Front",
+        "Back": "MAXima²/JAR/Back"
+      },
+      "POUCH": {
+        "Front": "MAXima²/POUCH/Front",
+        "Back": "MAXima²/POUCH/Back"
+      },
+      "DROPPER": {
+        "Front": "MAXima²/DROPPER/Front",
+        "Back": "MAXima²/DROPPER/Back"
+      },
+      "STRIPS": {
+        "Front": "MAXima²/STRIPS/Front",
+        "Back": "MAXima²/STRIPS/Back"
+      }
+    }
+  },
+  "format_adaptations": {
+    "BOTTLE": {
+      "dimensions": "6\" × 2.5\"",
+      "orientation": "horizontal",
+      "layout": "standard 7-zone vertical stack",
+      "product_name_size": 26,
+      "notes": "Primary format — 38-39 SKUs. Wrap panel around cylinder."
+    },
+    "JAR": {
+      "dimensions": "8.5\" × 2\"",
+      "orientation": "horizontal (wide)",
+      "layout": "7-zone with wider horizontal spread",
+      "product_name_size": 22,
+      "notes": "Wider but shorter — compress vertical spacing. Zone 6 metadata can spread wider. 20 SKUs."
+    },
+    "POUCH": {
+      "dimensions": "5\" × 4\"",
+      "orientation": "vertical (portrait-ish)",
+      "layout": "7-zone with more vertical space",
+      "product_name_size": 28,
+      "notes": "More vertical room — can increase product name size. Back panel on reverse. 12 SKUs."
+    },
+    "DROPPER": {
+      "dimensions": "2\" × 4\"",
+      "orientation": "vertical (tall narrow)",
+      "layout": "compressed 7-zone — stacked tight",
+      "product_name_size": 14,
+      "notes": "Narrowest format — product name must shrink significantly. Zone 6 metadata stacks vertically instead of 3-col. Only 2 SKUs."
+    },
+    "STRIPS": {
+      "dimensions": "4\" × 6.5\"",
+      "orientation": "vertical (tall)",
+      "layout": "7-zone with generous vertical space",
+      "product_name_size": 30,
+      "notes": "Tallest format — most room for hierarchy. Can increase spacing between zones. 11-12 SKUs."
+    }
+  },
+  "zone_structure": {
+    "zone_1": {
+      "content": "brand_name + module_code",
+      "layout": "horizontal, space-between",
+      "alignment": "top of label"
+    },
+    "zone_2": {
+      "content": "biological_os_module (static)",
+      "layout": "centered text",
+      "alignment": "below zone 1"
+    },
+    "zone_3": {
+      "content": "ingredient_name (from Excel: ingredient_name_label)",
+      "layout": "centered, UPPERCASE",
+      "alignment": "visual center — largest element",
+      "critical": "MUST be the dominant visual element on every format"
+    },
+    "zone_4": {
+      "content": "descriptor + biological_system",
+      "layout": "centered, stacked vertically",
+      "alignment": "below product name"
+    },
+    "zone_5": {
+      "content": "variant_name + accent_rule",
+      "layout": "centered, accent rule below name",
+      "alignment": "below descriptor",
+      "accent_rule": {
+        "maximo": "#7A1E2E (deep muted red)",
+        "maxima": "#7A304A (muted rose)",
+        "weight": "1.5pt",
+        "width": "60px",
+        "position": "centered, 2px below variant name"
+      }
+    },
+    "zone_6": {
+      "content": "TYPE / FUNCTION / STATUS",
+      "layout": "3-column horizontal (BOTTLE/JAR/POUCH/STRIPS) or vertical stack (DROPPER)",
+      "alignment": "below accent rule"
+    },
+    "zone_7": {
+      "content": "version_info + net_quantity",
+      "layout": "horizontal, space-between, separated by zone divider above",
+      "alignment": "bottom of label"
+    }
+  },
+  "auto_layout_rules": {
+    "all_components": "Use vertical auto-layout for zone stacking",
+    "zone_6": "Use horizontal auto-layout with space-between for 3-column metadata",
+    "zone_1": "Use horizontal auto-layout with space-between for brand + module code",
+    "zone_7": "Use horizontal auto-layout with space-between for version + net qty",
+    "no_manual": "No loose manual placement permitted — everything must be in auto-layout"
+  }
+}

@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GenoMAX2 — Execution V3 · Brand Signature</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F2EC;
+  --pri:#1A1815;
+  --sec:#4A4843;
+  --ter:#8A8880;
+  --div:#C5C2BA;
+  --mxo:#7A1E2E;
+  --strip:#1A1815;
+  --strip-text:#C5C2BA;
+  --brand-rule:#1A1815;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'IBM Plex Sans',sans-serif;background:#fff;color:var(--pri);padding:32px 40px}
+h1{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;margin-bottom:3px;letter-spacing:-0.01em}
+.sub{font-weight:300;font-size:10px;color:var(--ter);margin-bottom:36px}
+
+.compare{display:flex;gap:40px;margin-bottom:56px;align-items:flex-start}
+.version{display:flex;flex-direction:column;gap:8px}
+.vtag{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:3px 8px;display:inline-block;width:fit-content}
+.vtag.v2{color:var(--ter);border:1px solid var(--div)}
+.vtag.v3{color:#fff;background:var(--mxo)}
+.vlabel{font-size:8px;color:var(--ter);margin-bottom:2px}
+
+.lbl{background:var(--bg);border:0.5px solid var(--div);display:flex;flex-direction:column;overflow:hidden}
+
+/* ══════════════════════════════════════════════════════ */
+/* V3 BRAND SIGNATURE SYSTEM                             */
+/* ══════════════════════════════════════════════════════ */
+
+/*
+  THE SIGNATURE:
+  1. Brand ceiling — 1.5px accent-colored line at very top of label (full bleed)
+     This is the "brand mark" — visible from distance, instantly ownable
+  2. GenoMAX² — enlarged, tracked wide (0.2em), sitting directly below ceiling
+     Not just placed. Engraved. Like a prescription header.
+  3. Brand rule — 0.5px line beneath GenoMAX² spanning to module code
+     Creates a "header zone" that the brand OWNS
+  4. The ceiling + brand + rule = a 3-element signature lockup
+     Everything below it is "sanctioned by" this header
+*/
+
+.v3l .brand-ceiling{
+  height:2px;
+  background:var(--mxo);
+  margin:0;
+  /* full bleed */
+}
+
+.v3l .brand-zone{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+}
+
+.v3l .brand-name{
+  font-family:'IBM Plex Mono',monospace;
+  font-weight:700;
+  color:var(--pri);
+  letter-spacing:0.18em;
+}
+
+.v3l .brand-module{
+  font-family:'IBM Plex Mono',monospace;
+  font-weight:500;
+  color:var(--ter);
+  letter-spacing:0.12em;
+}
+
+.v3l .brand-rule{
+  height:0.5px;
+  background:var(--pri);
+  opacity:0.25;
+}
+
+/* Rest of V3 zones */
+.v3l .z2{font-family:'IBM Plex Mono',monospace;font-weight:500;text-transform:uppercase;letter-spacing:0.18em;color:var(--sec);text-align:center}
+.v3l .z3{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:-0.025em;color:var(--pri);text-align:center;line-height:0.95}
+.v3l .z4d{font-family:'IBM Plex Sans',sans-serif;font-weight:300;color:var(--sec);text-align:center;letter-spacing:0.01em}
+.v3l .z4s{font-family:'IBM Plex Mono',monospace;font-weight:400;text-transform:uppercase;letter-spacing:0.06em;color:var(--ter);text-align:center}
+.v3l .z5n{font-family:'IBM Plex Sans',sans-serif;font-weight:600;color:var(--pri);text-align:center;letter-spacing:0.01em}
+.v3l .z5a{height:2px;background:var(--mxo);margin:2px auto 0}
+.v3l .z6{display:flex;justify-content:space-between}
+.v3l .z6c{display:flex;flex-direction:column;align-items:center;gap:0}
+.v3l .z6l{font-family:'IBM Plex Mono',monospace;font-weight:500;text-transform:uppercase;letter-spacing:0.1em;color:var(--ter)}
+.v3l .z6x{font-family:'IBM Plex Sans',sans-serif;font-weight:500;color:var(--pri)}
+.v3l .zd{border-top:0.5px solid var(--div)}
+.v3l .z7strip{
+  background:var(--strip);
+  padding:4px 14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-family:'IBM Plex Mono',monospace;
+  letter-spacing:0.03em;
+  color:var(--strip-text);
+  margin-top:auto;
+}
+
+/* V2 REFERENCE (for comparison) */
+.v2l .z1{display:flex;justify-content:space-between;align-items:baseline}
+.v2l .z1b{font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--pri);letter-spacing:0.02em}
+.v2l .z1c{font-family:'IBM Plex Mono',monospace;font-weight:500;color:var(--sec);letter-spacing:0.12em}
+.v2l .z2{font-family:'IBM Plex Mono',monospace;font-weight:500;text-transform:uppercase;letter-spacing:0.18em;color:var(--sec);text-align:center}
+.v2l .z3{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:-0.025em;color:var(--pri);text-align:center;line-height:0.95}
+.v2l .z4d{font-family:'IBM Plex Sans',sans-serif;font-weight:300;color:var(--sec);text-align:center}
+.v2l .z4s{font-family:'IBM Plex Mono',monospace;font-weight:400;text-transform:uppercase;letter-spacing:0.06em;color:var(--ter);text-align:center}
+.v2l .z5n{font-family:'IBM Plex Sans',sans-serif;font-weight:600;color:var(--pri);text-align:center}
+.v2l .z5a{height:2px;background:var(--mxo);margin:2px auto 0}
+.v2l .z6{display:flex;justify-content:space-between}
+.v2l .z6c{display:flex;flex-direction:column;align-items:center;gap:0}
+.v2l .z6l{font-family:'IBM Plex Mono',monospace;font-weight:500;text-transform:uppercase;letter-spacing:0.1em;color:var(--ter)}
+.v2l .z6x{font-family:'IBM Plex Sans',sans-serif;font-weight:500;color:var(--pri)}
+.v2l .zd{border-top:0.5px solid var(--div)}
+.v2l .z7strip{background:var(--strip);padding:4px 14px;display:flex;justify-content:space-between;align-items:center;font-family:'IBM Plex Mono',monospace;letter-spacing:0.03em;color:var(--strip-text);margin-top:auto}
+
+/* Changelog */
+.changelog{margin-top:8px;padding:14px 18px;background:#F8F7F4;border-left:3px solid var(--mxo);font-size:9px;color:var(--sec);line-height:1.8;max-width:480px}
+.changelog b{color:var(--pri);font-weight:600}
+.changelog .cat{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;color:var(--mxo);text-transform:uppercase;letter-spacing:0.08em;margin-top:8px;display:block}
+.changelog .cat:first-child{margin-top:0}
+
+/* Distance test */
+.distance-test{margin-top:16px;display:flex;gap:24px;align-items:flex-end}
+.distance-test .mini{transform:scale(0.35);transform-origin:bottom left}
+.dt-label{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--ter);margin-bottom:4px}
+</style>
+</head>
+<body>
+
+<h1>GenoMAX² — EXECUTION V3 · BRAND SIGNATURE</h1>
+<p class="sub">Brand ceiling + tracked lockup + header rule = ownable signature system</p>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- BOTTLE                                      -->
+<!-- ═══════════════════════════════════════════ -->
+
+<div class="compare">
+
+<!-- V2 BOTTLE -->
+<div class="version">
+<div class="vtag v2">V2 · PREVIOUS</div>
+<div class="vlabel">BOTTLE · 6×2.5"</div>
+<div class="lbl v2l" style="width:310px;height:142px;padding:7px 14px 0">
+  <div class="z1">
+    <span class="z1b" style="font-size:8.5px">GenoMAX²</span>
+    <span class="z1c" style="font-size:4px">CV-01</span>
+  </div>
+  <div style="height:3px"></div>
+  <div class="z2" style="font-size:4.5px">BIOLOGICAL OS MODULE</div>
+  <div style="height:2px"></div>
+  <div class="z3" style="font-size:17.5px">OMEGA-3 EPA 180mg + DHA 120mg</div>
+  <div style="height:1px"></div>
+  <div class="z4d" style="font-size:5px">Omega-3 EPA + DHA</div>
+  <div style="height:0px"></div>
+  <div class="z4s" style="font-size:3px">CARDIOVASCULAR · LIPID METABOLISM</div>
+  <div style="height:3px"></div>
+  <div><div class="z5n" style="font-size:8px">MAXimo²</div><div class="z5a" style="width:44px"></div></div>
+  <div style="height:3px"></div>
+  <div class="z6">
+    <div class="z6c"><span class="z6l" style="font-size:2.5px">TYPE</span><span class="z6x" style="font-size:4px">Softgels</span></div>
+    <div class="z6c"><span class="z6l" style="font-size:2.5px">FUNCTION</span><span class="z6x" style="font-size:4px">Lipid Metabolism</span></div>
+    <div class="z6c"><span class="z6l" style="font-size:2.5px">STATUS</span><span class="z6x" style="font-size:4px">Active</span></div>
+  </div>
+  <div style="height:3px"></div>
+  <div class="zd"></div>
+  <div class="z7strip" style="font-size:3.5px;margin:0 -14px 0">
+    <span>v1.0 · CV-01 · Clinical Grade</span>
+    <span>DIETARY SUPPLEMENT · 100 softgels</span>
+  </div>
+</div>
+</div>
+
+<!-- V3 BOTTLE -->
+<div class="version">
+<div class="vtag v3">V3 · BRAND SIGNATURE</div>
+<div class="vlabel">BOTTLE · 6×2.5" · Signature lockup</div>
+<div class="lbl v3l" style="width:310px;height:142px;padding:0 0 0 0">
+  <!-- BRAND CEILING — accent-colored top line -->
+  <div class="brand-ceiling"></div>
+  <!-- BRAND ZONE — padded interior -->
+  <div style="padding:5px 14px 0">
+    <div class="brand-zone">
+      <span class="brand-name" style="font-size:8px">GenoMAX²</span>
+      <span class="brand-module" style="font-size:3.5px">CV-01</span>
+    </div>
+    <div style="height:3px"></div>
+    <div class="brand-rule"></div>
+  </div>
+  <!-- CONTENT ZONES — below the signature -->
+  <div style="padding:3px 14px 0;display:flex;flex-direction:column;flex:1">
+    <div class="z2" style="font-size:4.5px">BIOLOGICAL OS MODULE</div>
+    <div style="height:2px"></div>
+    <div class="z3" style="font-size:17.5px">OMEGA-3 EPA 180mg + DHA 120mg</div>
+    <div style="height:1px"></div>
+    <div class="z4d" style="font-size:5px">Omega-3 EPA + DHA</div>
+    <div style="height:0px"></div>
+    <div class="z4s" style="font-size:3px">CARDIOVASCULAR · LIPID METABOLISM</div>
+    <div style="height:3px"></div>
+    <div><div class="z5n" style="font-size:8px">MAXimo²</div><div class="z5a" style="width:44px"></div></div>
+    <div style="height:3px"></div>
+    <div class="z6">
+      <div class="z6c"><span class="z6l" style="font-size:2.5px">TYPE</span><span class="z6x" style="font-size:4px">Softgels</span></div>
+      <div class="z6c"><span class="z6l" style="font-size:2.5px">FUNCTION</span><span class="z6x" style="font-size:4px">Lipid Metabolism</span></div>
+      <div class="z6c"><span class="z6l" style="font-size:2.5px">STATUS</span><span class="z6x" style="font-size:4px">Active</span></div>
+    </div>
+    <div style="flex:1"></div>
+    <div class="zd"></div>
+  </div>
+  <!-- ZONE 7 STRIP -->
+  <div class="z7strip" style="font-size:3.5px;padding:4px 14px">
+    <span>v1.0 · CV-01 · Clinical Grade</span>
+    <span>DIETARY SUPPLEMENT · 100 softgels</span>
+  </div>
+</div>
+</div>
+
+<!-- CHANGELOG -->
+<div class="changelog" style="align-self:flex-start">
+  <b>BOTTLE V3 — BRAND SIGNATURE</b>
+  <span class="cat">SIGNATURE LOCKUP (3 elements)</span>
+  1. Brand ceiling — 2px accent line, full bleed, top of label<br>
+  2. GenoMAX² — tracking 2% → 18%, engraved feel<br>
+  3. Brand rule — 0.5px line beneath, 25% opacity<br>
+  These three form an inseparable lockup.<br>
+  <span class="cat">WHY IT WORKS</span>
+  Ceiling = instant color recognition from distance<br>
+  Wide tracking = engraved, not typed<br>
+  Rule beneath = brand OWNS its zone, content below is sanctioned<br>
+  Accent appears twice: top (brand) + middle (variant) = visual symmetry<br>
+  <span class="cat">WHAT DIDN'T CHANGE</span>
+  Product name size, weight, tracking — identical<br>
+  Zone 2-7 — identical to V2<br>
+  7-zone structure — untouched<br>
+  Dark version strip — untouched
+</div>
+</div>
+
+<!-- DISTANCE TEST -->
+<div style="margin:-20px 0 48px 0">
+<div class="dt-label">DISTANCE RECOGNITION TEST — same label at shelf scale (35%)</div>
+<div class="distance-test">
+  <!-- V2 mini -->
+  <div>
+    <div style="font-size:7px;color:var(--ter);margin-bottom:2px;font-family:'IBM Plex Mono',monospace">V2</div>
+    <div class="mini">
+      <div class="lbl v2l" style="width:310px;height:142px;padding:7px 14px 0">
+        <div class="z1"><span class="z1b" style="font-size:8.5px">GenoMAX²</span><span class="z1c" style="font-size:4px">CV-01</span></div>
+        <div style="height:3px"></div>
+        <div class="z2" style="font-size:4.5px">BIOLOGICAL OS MODULE</div>
+        <div style="height:2px"></div>
+        <div class="z3" style="font-size:17.5px">OMEGA-3 EPA 180mg + DHA 120mg</div>
+        <div style="height:1px"></div>
+        <div class="z4d" style="font-size:5px">Omega-3 EPA + DHA</div>
+        <div class="z4s" style="font-size:3px">CARDIOVASCULAR · LIPID METABOLISM</div>
+        <div style="height:3px"></div>
+        <div><div class="z5n" style="font-size:8px">MAXimo²</div><div class="z5a" style="width:44px"></div></div>
+        <div style="height:3px"></div>
+        <div class="z6"><div class="z6c"><span class="z6l" style="font-size:2.5px">TYPE</span><span class="z6x" style="font-size:4px">Softgels</span></div><div class="z6c"><span class="z6l" style="font-size:2.5px">FUNCTION</span><span class="z6x" style="font-size:4px">Lipid Metabolism</span></div><div class="z6c"><span class="z6l" style="font-size:2.5px">STATUS</span><span class="z6x" style="font-size:4px">Active</span></div></div>
+        <div style="flex:1"></div>
+        <div class="zd"></div>
+        <div class="z7strip" style="font-size:3.5px;margin:0 -14px 0"><span>v1.0 · CV-01 · Clinical Grade</span><span>DIETARY SUPPLEMENT · 100 softgels</span></div>
+      </div>
+    </div>
+  </div>
+  <!-- V3 mini -->
+  <div>
+    <div style="font-size:7px;color:var(--mxo);margin-bottom:2px;font-family:'IBM Plex Mono',monospace;font-weight:700">V3</div>
+    <div class="mini">
+      <div class="lbl v3l" style="width:310px;height:142px;padding:0">
+        <div class="brand-ceiling"></div>
+        <div style="padding:5px 14px 0"><div class="brand-zone"><span class="brand-name" style="font-size:8px">GenoMAX²</span><span class="brand-module" style="font-size:3.5px">CV-01</span></div><div style="height:3px"></div><div class="brand-rule"></div></div>
+        <div style="padding:3px 14px 0;display:flex;flex-direction:column;flex:1">
+          <div class="z2" style="font-size:4.5px">BIOLOGICAL OS MODULE</div>
+          <div style="height:2px"></div>
+          <div class="z3" style="font-size:17.5px">OMEGA-3 EPA 180mg + DHA 120mg</div>
+          <div style="height:1px"></div>
+          <div class="z4d" style="font-size:5px">Omega-3 EPA + DHA</div>
+          <div class="z4s" style="font-size:3px">CARDIOVASCULAR · LIPID METABOLISM</div>
+          <div style="height:3px"></div>
+          <div><div class="z5n" style="font-size:8px">MAXimo²</div><div class="z5a" style="width:44px"></div></div>
+          <div style="height:3px"></div>
+          <div class="z6"><div class="z6c"><span class="z6l" style="font-size:2.5px">TYPE</span><span class="z6x" style="font-size:4px">Softgels</span></div><div class="z6c"><span class="z6l" style="font-size:2.5px">FUNCTION</span><span class="z6x" style="font-size:4px">Lipid Metabolism</span></div><div class="z6c"><span class="z6l" style="font-size:2.5px">STATUS</span><span class="z6x" style="font-size:4px">Active</span></div></div>
+          <div style="flex:1"></div>
+          <div class="zd"></div>
+        </div>
+        <div class="z7strip" style="font-size:3.5px;padding:4px 14px"><span>v1.0 · CV-01 · Clinical Grade</span><span>DIETARY SUPPLEMENT · 100 softgels</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- STRIPS                                      -->
+<!-- ═══════════════════════════════════════════ -->
+
+<div class="compare">
+
+<!-- V2 STRIPS -->
+<div class="version">
+<div class="vtag v2">V2 · PREVIOUS</div>
+<div class="vlabel">STRIPS · 4×6.5"</div>
+<div class="lbl v2l" style="width:220px;height:358px;padding:10px 14px 0">
+  <div class="z1"><span class="z1b" style="font-size:8px">GenoMAX²</span><span class="z1c" style="font-size:3.5px">GL-04</span></div>
+  <div style="height:8px"></div>
+  <div class="z2" style="font-size:4px">BIOLOGICAL OS MODULE</div>
+  <div style="height:6px"></div>
+  <div class="z3" style="font-size:30px">IRON<br>STRIPS</div>
+  <div style="height:4px"></div>
+  <div class="z4d" style="font-size:6px">Elemental Iron</div>
+  <div style="height:1px"></div>
+  <div class="z4s" style="font-size:3px">METABOLIC · IRON STATUS OPTIMIZATION</div>
+  <div style="height:10px"></div>
+  <div><div class="z5n" style="font-size:10px">MAXimo²</div><div class="z5a" style="width:48px"></div></div>
+  <div style="height:10px"></div>
+  <div class="z6"><div class="z6c"><span class="z6l" style="font-size:3px">TYPE</span><span class="z6x" style="font-size:5px">Strips</span></div><div class="z6c"><span class="z6l" style="font-size:3px">FUNCTION</span><span class="z6x" style="font-size:5px">Iron Optimization</span></div><div class="z6c"><span class="z6l" style="font-size:3px">STATUS</span><span class="z6x" style="font-size:5px">Active</span></div></div>
+  <div style="flex:1"></div>
+  <div class="zd"></div>
+  <div class="z7strip" style="font-size:3.5px;margin:0 -14px 0"><span>v1.0 · GL-04 · Clinical Grade</span><span>DIETARY SUPPLEMENT · 2 oz (60 g)</span></div>
+</div>
+</div>
+
+<!-- V3 STRIPS -->
+<div class="version">
+<div class="vtag v3">V3 · BRAND SIGNATURE</div>
+<div class="vlabel">STRIPS · 4×6.5" · Signature lockup</div>
+<div class="lbl v3l" style="width:220px;height:358px;padding:0">
+  <!-- BRAND CEILING -->
+  <div class="brand-ceiling"></div>
+  <!-- BRAND ZONE -->
+  <div style="padding:6px 14px 0">
+    <div class="brand-zone">
+      <span class="brand-name" style="font-size:8px">GenoMAX²</span>
+      <span class="brand-module" style="font-size:3.5px">GL-04</span>
+    </div>
+    <div style="height:4px"></div>
+    <div class="brand-rule"></div>
+  </div>
+  <!-- CONTENT ZONES -->
+  <div style="padding:6px 14px 0;display:flex;flex-direction:column;flex:1">
+    <div class="z2" style="font-size:4px">BIOLOGICAL OS MODULE</div>
+    <div style="height:6px"></div>
+    <div class="z3" style="font-size:30px">IRON<br>STRIPS</div>
+    <div style="height:4px"></div>
+    <div class="z4d" style="font-size:6px">Elemental Iron</div>
+    <div style="height:1px"></div>
+    <div class="z4s" style="font-size:3px">METABOLIC · IRON STATUS OPTIMIZATION</div>
+    <div style="height:10px"></div>
+    <div><div class="z5n" style="font-size:10px">MAXimo²</div><div class="z5a" style="width:48px"></div></div>
+    <div style="height:10px"></div>
+    <div class="z6"><div class="z6c"><span class="z6l" style="font-size:3px">TYPE</span><span class="z6x" style="font-size:5px">Strips</span></div><div class="z6c"><span class="z6l" style="font-size:3px">FUNCTION</span><span class="z6x" style="font-size:5px">Iron Optimization</span></div><div class="z6c"><span class="z6l" style="font-size:3px">STATUS</span><span class="z6x" style="font-size:5px">Active</span></div></div>
+    <div style="flex:1"></div>
+    <div class="zd"></div>
+  </div>
+  <!-- ZONE 7 STRIP -->
+  <div class="z7strip" style="font-size:3.5px;padding:4px 14px">
+    <span>v1.0 · GL-04 · Clinical Grade</span>
+    <span>DIETARY SUPPLEMENT · 2 oz (60 g)</span>
+  </div>
+</div>
+</div>
+
+<!-- CHANGELOG -->
+<div class="changelog" style="align-self:flex-start">
+  <b>STRIPS V3 — BRAND SIGNATURE</b>
+  <span class="cat">SAME SIGNATURE SYSTEM</span>
+  Identical 3-element lockup scales to tall format<br>
+  Ceiling line spans full width — stronger on tall labels<br>
+  Brand rule creates clear separation: "brand above / product below"<br>
+  <span class="cat">FORMAT-SPECIFIC</span>
+  Tall format amplifies the vertical axis:<br>
+  brand ceiling → brand name → rule → content → dark strip<br>
+  = top-to-bottom brand sandwich<br>
+  <span class="cat">VISUAL ARCHITECTURE</span>
+  Accent color appears 3× in controlled positions:<br>
+  1. Brand ceiling (top) — ownership<br>
+  2. MAXimo² accent rule (middle) — identity<br>
+  3. Dark strip (bottom) — foundation<br>
+  = three horizontal anchors that lock the composition
+</div>
+</div>
+
+<!-- SIGNATURE ANATOMY -->
+<div style="margin-top:8px;padding:20px 24px;background:#F8F7F4;border:1px solid var(--div);max-width:700px">
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;margin-bottom:12px">BRAND SIGNATURE ANATOMY</div>
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--sec);line-height:2.2">
+    <span style="display:inline-block;width:8px;height:2px;background:var(--mxo);vertical-align:middle;margin-right:8px"></span>Brand ceiling — 2px, accent color, full bleed<br>
+    <span style="display:inline-block;width:60px;font-weight:700;letter-spacing:0.18em;color:var(--pri);margin-right:8px;font-size:8px">GenoMAX²</span>Tracked 0.18em — engraved, not typed<br>
+    <span style="display:inline-block;width:80px;height:0.5px;background:var(--pri);opacity:0.25;vertical-align:middle;margin-right:8px"></span>Brand rule — 0.5px, 25% opacity, spans to module code<br>
+    <br>
+    <span style="color:var(--pri);font-weight:600">THESE THREE = INSEPARABLE LOCKUP</span><br>
+    <span style="color:var(--ter)">Never break apart. Never rearrange. Never omit one element.</span><br>
+    <span style="color:var(--ter)">This is the GenoMAX² signature. It goes on every label, every PDP, every listing.</span>
+  </div>
+</div>
+
+</body>
+</html>

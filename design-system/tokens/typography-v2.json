@@ -1,0 +1,160 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "_version": "2.0",
+  "_changelog": "Execution upgrade: stronger contrast, brand dominance, spatial engineering",
+  "genomax2": {
+    "typography": {
+      "genomax_header": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "IBM Plex Mono",
+          "fontWeight": 700,
+          "fontStyle": "Bold",
+          "fontSize": 12,
+          "letterSpacing": "2%",
+          "textTransform": "none"
+        },
+        "$description": "GenoMAX² brand header — Zone 1 — V2: +26% size, tracking added for presence",
+        "zone": 1,
+        "v1_fontSize": 9.5,
+        "v2_delta": "+26%"
+      },
+      "zone2_header": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "IBM Plex Mono",
+          "fontWeight": 500,
+          "fontStyle": "Medium",
+          "fontSize": 7,
+          "letterSpacing": "180%",
+          "textTransform": "uppercase"
+        },
+        "$description": "BIOLOGICAL OS MODULE — Zone 2 — V2: weight 400→500, tracking 80%→180%",
+        "zone": 2,
+        "v1_fontWeight": 400,
+        "v1_letterSpacing": "80%",
+        "v2_delta": "weight+tracking"
+      },
+      "product_name": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "IBM Plex Sans Condensed",
+          "fontWeight": 700,
+          "fontStyle": "Bold",
+          "fontSize": 28,
+          "letterSpacing": "-25%",
+          "textTransform": "uppercase"
+        },
+        "$description": "Product Name — Zone 3 — V2: weight 600→700, tracking -10%→-25%, MUST DOMINATE",
+        "zone": 3,
+        "v1_fontWeight": 600,
+        "v1_letterSpacing": "-10%",
+        "v1_fontSize": 26,
+        "v2_delta": "weight+tracking+size"
+      },
+      "descriptor_line": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "IBM Plex Sans",
+          "fontWeight": 300,
+          "fontStyle": "Light",
+          "fontSize": 8.5,
+          "letterSpacing": "1%",
+          "textTransform": "none"
+        },
+        "$description": "Descriptor — Zone 4 — V2: subtle tracking added",
+        "zone": 4
+      },
+      "bio_system_name": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "IBM Plex Mono",
+          "fontWeight": 400,
+          "fontStyle": "Regular",
+          "fontSize": 6.5,
+          "letterSpacing": "60%",
+          "textTransform": "uppercase"
+        },
+        "$description": "Bio system name — Zone 4 — V2: tracking 40%→60%, uses · separator",
+        "zone": 4,
+        "v1_letterSpacing": "40%",
+        "v2_separator": "·"
+      },
+      "variant_name": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "IBM Plex Sans",
+          "fontWeight": 600,
+          "fontStyle": "SemiBold",
+          "fontSize": 12,
+          "letterSpacing": "1%",
+          "textTransform": "none"
+        },
+        "$description": "MAXimo²/MAXima² — Zone 5 — V2: weight 500→600, +9% size",
+        "zone": 5,
+        "v1_fontWeight": 500,
+        "v1_fontSize": 11,
+        "v2_delta": "weight+size"
+      },
+      "metadata_label": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "IBM Plex Mono",
+          "fontWeight": 500,
+          "fontStyle": "Medium",
+          "fontSize": 5.5,
+          "letterSpacing": "100%",
+          "textTransform": "uppercase"
+        },
+        "$description": "TYPE / FUNCTION / STATUS labels — Zone 6 — V2: weight 400→500, tracking 60%→100%",
+        "zone": 6,
+        "v1_fontWeight": 400,
+        "v1_letterSpacing": "60%"
+      },
+      "metadata_value": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "IBM Plex Sans",
+          "fontWeight": 500,
+          "fontStyle": "Medium",
+          "fontSize": 6.5,
+          "letterSpacing": "0%",
+          "textTransform": "none"
+        },
+        "$description": "Metadata values — Zone 6 — V2: weight 400→500",
+        "zone": 6,
+        "v1_fontWeight": 400
+      },
+      "version_strip": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "IBM Plex Mono",
+          "fontWeight": 400,
+          "fontStyle": "Regular",
+          "fontSize": 5.5,
+          "letterSpacing": "30%",
+          "textTransform": "none"
+        },
+        "$description": "Version strip — Zone 7 — V2: tracking 20%→30%, on INVERTED dark background",
+        "zone": 7,
+        "v2_background": "#1A1815",
+        "v2_textColor": "#C5C2BA",
+        "v2_separator": "·"
+      }
+    }
+  },
+  "_v2_structural_changes": {
+    "zone7_inversion": "Dark strip (#1A1815 bg, #C5C2BA text) — full bleed, anchors label bottom",
+    "accent_rule": "1.5pt → 2pt weight, wider by ~20%",
+    "divider_weight": "0.35pt → 0.5pt",
+    "bio_system_separator": "space → · (middle dot)",
+    "version_separator": "| → · (middle dot)",
+    "font_weight_escalation": "All label/value pairs: 400→500 minimum"
+  },
+  "_rules": {
+    "product_name_dominance": "Zone 3 MUST be visually dominant. If it doesn't command the label, increase size or weight.",
+    "no_breathing_gaps": "Every gap must be earned. No default spacing. Every space is a design decision.",
+    "brand_authority": "GenoMAX² at 12pt Bold with tracking — must feel unmistakable, not just placed.",
+    "zone7_anchoring": "Dark inverted strip creates visual foundation — clinical instrument finish."
+  }
+}

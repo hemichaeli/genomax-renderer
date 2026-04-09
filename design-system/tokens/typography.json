@@ -1,0 +1,198 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "genomax2": {
+    "typography": {
+      "genomax_header": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "IBM Plex Mono",
+          "fontWeight": 700,
+          "fontStyle": "Bold",
+          "fontSize": 9.5,
+          "letterSpacing": "0%",
+          "textTransform": "none"
+        },
+        "$description": "GenoMAX² brand header — Zone 1",
+        "zone": 1,
+        "field_map": "brand_name (static: 'GenoMAX²')"
+      },
+      "zone2_header": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "IBM Plex Mono",
+          "fontWeight": 400,
+          "fontStyle": "Regular",
+          "fontSize": 7,
+          "letterSpacing": "80%",
+          "textTransform": "uppercase"
+        },
+        "$description": "BIOLOGICAL OS MODULE — Zone 2 — static text",
+        "zone": 2,
+        "field_map": "static: 'BIOLOGICAL OS MODULE'"
+      },
+      "product_name": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "IBM Plex Sans Condensed",
+          "fontWeight": 600,
+          "fontStyle": "SemiBold",
+          "fontSize": 26,
+          "letterSpacing": "-10%",
+          "textTransform": "uppercase"
+        },
+        "$description": "Product Name — Zone 3 — LARGEST element on label. Source: ingredient_name_label",
+        "zone": 3,
+        "field_map": "ingredient_name_label"
+      },
+      "descriptor_line": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "IBM Plex Sans",
+          "fontWeight": 300,
+          "fontStyle": "Light",
+          "fontSize": 8.5,
+          "letterSpacing": "0%",
+          "textTransform": "none"
+        },
+        "$description": "Descriptor — Zone 4. Source: ingredient_descriptor",
+        "zone": 4,
+        "field_map": "ingredient_descriptor"
+      },
+      "bio_system_name": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "IBM Plex Mono",
+          "fontWeight": 400,
+          "fontStyle": "Regular",
+          "fontSize": 6.5,
+          "letterSpacing": "40%",
+          "textTransform": "uppercase"
+        },
+        "$description": "Bio system name — Zone 4. Source: biological_system + function_name",
+        "zone": 4,
+        "field_map": "biological_system + ' ' + function_name"
+      },
+      "variant_name": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "IBM Plex Sans",
+          "fontWeight": 500,
+          "fontStyle": "Medium",
+          "fontSize": 11,
+          "letterSpacing": "0%",
+          "textTransform": "none"
+        },
+        "$description": "MAXimo² or MAXima² — Zone 5. Source: product_line_os",
+        "zone": 5,
+        "field_map": "product_line_os"
+      },
+      "metadata_label": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "IBM Plex Mono",
+          "fontWeight": 400,
+          "fontStyle": "Regular",
+          "fontSize": 5.5,
+          "letterSpacing": "60%",
+          "textTransform": "uppercase"
+        },
+        "$description": "TYPE / FUNCTION / STATUS labels — Zone 6",
+        "zone": 6,
+        "field_map": "static labels: TYPE, FUNCTION, STATUS"
+      },
+      "metadata_value": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "IBM Plex Sans",
+          "fontWeight": 400,
+          "fontStyle": "Regular",
+          "fontSize": 6.5,
+          "letterSpacing": "0%",
+          "textTransform": "none"
+        },
+        "$description": "Metadata values — Zone 6",
+        "zone": 6,
+        "field_map": "supliful_product_form, function_name, validation_status"
+      },
+      "version_strip": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "IBM Plex Mono",
+          "fontWeight": 400,
+          "fontStyle": "Regular",
+          "fontSize": 5.5,
+          "letterSpacing": "20%",
+          "textTransform": "none"
+        },
+        "$description": "Version / Module Code / Clinical Grade — Zone 7",
+        "zone": 7,
+        "field_map": "'v1.0 | ' + module_code + ' | Clinical Grade'"
+      },
+      "supplement_facts_header": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "IBM Plex Sans",
+          "fontWeight": 500,
+          "fontStyle": "Medium",
+          "fontSize": 10,
+          "letterSpacing": "0%",
+          "textTransform": "none"
+        },
+        "$description": "Supplement Facts header — Back Panel"
+      },
+      "supplement_facts_body": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "IBM Plex Sans",
+          "fontWeight": 400,
+          "fontStyle": "Regular",
+          "fontSize": 6,
+          "letterSpacing": "0%",
+          "textTransform": "none"
+        },
+        "$description": "Supplement Facts ingredient names — Back Panel"
+      },
+      "supplement_facts_values": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "IBM Plex Mono",
+          "fontWeight": 400,
+          "fontStyle": "Regular",
+          "fontSize": 6,
+          "letterSpacing": "0%",
+          "textTransform": "none"
+        },
+        "$description": "Supplement Facts numeric values — Back Panel"
+      },
+      "back_section_header": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "IBM Plex Mono",
+          "fontWeight": 400,
+          "fontStyle": "Regular",
+          "fontSize": 6,
+          "letterSpacing": "60%",
+          "textTransform": "uppercase"
+        },
+        "$description": "DIRECTIONS / SAFETY / MANUFACTURED FOR — Back Panel"
+      },
+      "back_body": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "IBM Plex Sans",
+          "fontWeight": 400,
+          "fontStyle": "Regular",
+          "fontSize": 5.5,
+          "letterSpacing": "0%",
+          "textTransform": "none"
+        },
+        "$description": "Back panel body text — directions, safety, address"
+      }
+    }
+  },
+  "_rules": {
+    "no_serif": "No serif fonts. No italic. No decorative typefaces.",
+    "font_system": "IBM Plex ONLY — Mono for system/labels, Sans for body, Sans Condensed for product name.",
+    "hierarchy": "Zone 3 (product_name) is always the visually dominant element."
+  }
+}

@@ -1,0 +1,171 @@
+/**
+ * GenoMAX² Design System — CSS Custom Properties
+ * ================================================
+ * Generated from master label template specification.
+ * Use these tokens for web PDPs, Amazon A+ content, and catalog system.
+ */
+
+:root {
+  /* ── COLORS ── */
+  --gx2-color-background: #F4F2EC;
+  --gx2-color-text-primary: #1A1815;
+  --gx2-color-text-secondary: #5C5A55;
+  --gx2-color-text-tertiary: #9A9890;
+  --gx2-color-divider: #C5C2BA;
+  --gx2-color-accent-maximo: #7A1E2E;
+  --gx2-color-accent-maxima: #7A304A;
+
+  /* ── TYPOGRAPHY — Font Families ── */
+  --gx2-font-mono: 'IBM Plex Mono', monospace;
+  --gx2-font-sans: 'IBM Plex Sans', sans-serif;
+  --gx2-font-condensed: 'IBM Plex Sans Condensed', sans-serif;
+
+  /* ── TYPOGRAPHY — Font Sizes (rem, base 16px) ── */
+  --gx2-text-xs: 0.28125rem;   /* 4.5pt */
+  --gx2-text-sm: 0.34375rem;   /* 5.5pt */
+  --gx2-text-base: 0.375rem;   /* 6pt */
+  --gx2-text-md: 0.40625rem;   /* 6.5pt */
+  --gx2-text-lg: 0.4375rem;    /* 7pt */
+  --gx2-text-xl: 0.53125rem;   /* 8.5pt */
+  --gx2-text-2xl: 0.59375rem;  /* 9.5pt */
+  --gx2-text-3xl: 0.6875rem;   /* 11pt */
+  --gx2-text-4xl: 1.625rem;    /* 26pt — product name */
+
+  /* ── SPACING ── */
+  --gx2-space-micro: 2px;
+  --gx2-space-tight: 4px;
+  --gx2-space-compact: 6px;
+  --gx2-space-base: 8px;
+  --gx2-space-medium: 12px;
+  --gx2-space-section: 16px;
+  --gx2-space-large: 20px;
+  --gx2-space-panel: 24px;
+
+  /* ── STROKE ── */
+  --gx2-stroke-divider: 0.35pt;
+  --gx2-stroke-accent: 1.5pt;
+  --gx2-accent-width: 60px;
+
+  /* ── LABEL EDGE MARGIN ── */
+  --gx2-margin-label-edge: 12px;
+}
+
+/* ══════════════════════════════════════ */
+/* TYPOGRAPHY PRESETS                     */
+/* ══════════════════════════════════════ */
+
+.gx2-brand-header {
+  font-family: var(--gx2-font-mono);
+  font-weight: 700;
+  font-size: 9.5pt;
+  color: var(--gx2-color-text-primary);
+}
+
+.gx2-zone2-header {
+  font-family: var(--gx2-font-mono);
+  font-weight: 400;
+  font-size: 7pt;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gx2-color-text-secondary);
+}
+
+.gx2-product-name {
+  font-family: var(--gx2-font-condensed);
+  font-weight: 600;
+  font-size: 26pt;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--gx2-color-text-primary);
+}
+
+.gx2-descriptor {
+  font-family: var(--gx2-font-sans);
+  font-weight: 300;
+  font-size: 8.5pt;
+  color: var(--gx2-color-text-secondary);
+}
+
+.gx2-bio-system {
+  font-family: var(--gx2-font-mono);
+  font-weight: 400;
+  font-size: 6.5pt;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gx2-color-text-tertiary);
+}
+
+.gx2-variant-name {
+  font-family: var(--gx2-font-sans);
+  font-weight: 500;
+  font-size: 11pt;
+  color: var(--gx2-color-text-primary);
+}
+
+.gx2-metadata-label {
+  font-family: var(--gx2-font-mono);
+  font-weight: 400;
+  font-size: 5.5pt;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gx2-color-text-tertiary);
+}
+
+.gx2-metadata-value {
+  font-family: var(--gx2-font-sans);
+  font-weight: 400;
+  font-size: 6.5pt;
+  color: var(--gx2-color-text-primary);
+}
+
+.gx2-version-strip {
+  font-family: var(--gx2-font-mono);
+  font-weight: 400;
+  font-size: 5.5pt;
+  letter-spacing: 0.02em;
+  color: var(--gx2-color-text-tertiary);
+}
+
+.gx2-back-section-header {
+  font-family: var(--gx2-font-mono);
+  font-weight: 400;
+  font-size: 6pt;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gx2-color-text-tertiary);
+}
+
+.gx2-back-body {
+  font-family: var(--gx2-font-sans);
+  font-weight: 400;
+  font-size: 5.5pt;
+  color: var(--gx2-color-text-primary);
+}
+
+/* ══════════════════════════════════════ */
+/* ACCENT RULES                           */
+/* ══════════════════════════════════════ */
+
+.gx2-accent-rule {
+  width: var(--gx2-accent-width);
+  height: var(--gx2-stroke-accent);
+  margin-top: var(--gx2-space-micro);
+}
+
+.gx2-accent-rule--maximo {
+  background-color: var(--gx2-color-accent-maximo);
+}
+
+.gx2-accent-rule--maxima {
+  background-color: var(--gx2-color-accent-maxima);
+}
+
+/* ══════════════════════════════════════ */
+/* ZONE DIVIDER                           */
+/* ══════════════════════════════════════ */
+
+.gx2-zone-divider {
+  width: 100%;
+  height: 0;
+  border-top: var(--gx2-stroke-divider) solid var(--gx2-color-divider);
+}

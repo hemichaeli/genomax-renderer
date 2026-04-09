@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GenoMAX2 — QA Batch · 20 Random SKUs</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=IBM+Plex+Sans+Condensed:wght@700&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F4F2EC;--pri:#1A1815;--sec:#4A4843;--ter:#8A8880;--div:#C5C2BA;--mxo:#7A1E2E;--mxa:#7A304A;--strip:#1A1815;--strip-text:#C5C2BA}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'IBM Plex Sans',sans-serif;background:#fff;color:var(--pri);padding:24px 32px}
+h1{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;margin-bottom:3px}
+.sub{font-size:9px;color:var(--ter);font-weight:300;margin-bottom:24px}
+.grid{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}
+.card{display:flex;flex-direction:column;gap:3px}
+.card-tag{font-family:'IBM Plex Mono',monospace;font-size:6px;font-weight:500;letter-spacing:0.08em;display:flex;gap:6px;align-items:center}
+.card-tag .sys{font-weight:700;letter-spacing:0.1em}
+.card-tag .sys.mxo{color:var(--mxo)}
+.card-tag .sys.mxa{color:var(--mxa)}
+.card-tag .fmt{color:var(--ter)}
+.card-tag .idx{color:var(--div)}
+
+/* Label shell */
+.lbl{background:var(--bg);border:0.5px solid var(--div);display:flex;flex-direction:column;overflow:hidden}
+.ceil{height:2px;width:100%}
+.ceil.mxo{background:var(--mxo)}
+.ceil.mxa{background:var(--mxa)}
+.bz{display:flex;justify-content:space-between;align-items:baseline}
+.bn{font-family:'IBM Plex Mono',monospace;font-weight:700;letter-spacing:0.18em;color:var(--pri)}
+.bm{font-family:'IBM Plex Mono',monospace;font-weight:500;letter-spacing:0.12em;color:var(--ter)}
+.br{height:0.5px;background:var(--pri);opacity:0.25}
+.z2{font-family:'IBM Plex Mono',monospace;font-weight:500;text-transform:uppercase;letter-spacing:0.18em;color:var(--sec);text-align:center}
+.z3{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:-0.025em;color:var(--pri);text-align:center;line-height:0.95}
+.z4d{font-family:'IBM Plex Sans',sans-serif;font-weight:300;color:var(--sec);text-align:center}
+.z4s{font-family:'IBM Plex Mono',monospace;font-weight:400;text-transform:uppercase;letter-spacing:0.06em;color:var(--ter);text-align:center}
+.z5n{font-family:'IBM Plex Sans',sans-serif;font-weight:600;color:var(--pri);text-align:center}
+.z5a{height:2px;margin:2px auto 0}
+.z5a.mxo{background:var(--mxo)}
+.z5a.mxa{background:var(--mxa)}
+.z6{display:flex;justify-content:space-between}
+.z6v{flex-direction:column;gap:2px}
+.z6v .z6c{flex-direction:row;gap:3px;align-items:baseline}
+.z6c{display:flex;flex-direction:column;align-items:center;gap:0}
+.z6l{font-family:'IBM Plex Mono',monospace;font-weight:500;text-transform:uppercase;letter-spacing:0.1em;color:var(--ter)}
+.z6x{font-family:'IBM Plex Sans',sans-serif;font-weight:500;color:var(--pri)}
+.zd{border-top:0.5px solid var(--div)}
+.z7{display:flex;justify-content:space-between;align-items:center;font-family:'IBM Plex Mono',monospace;letter-spacing:0.03em;color:var(--strip-text);background:var(--strip);margin-top:auto}
+.z7s{flex-direction:column;text-align:center}
+
+.note{margin-top:20px;padding:12px 16px;background:#F8F7F4;border-left:3px solid var(--mxo);font-size:8px;color:var(--sec);line-height:1.8;max-width:700px}
+.note b{color:var(--pri);font-weight:600}
+</style>
+</head>
+<body>
+
+<h1>GenoMAX² — QA BATCH · 20 RANDOM SKUs</h1>
+<p class="sub">Seed 42 · No curation · No manual fixes · Real production data · Final QA before scaling</p>
+
+<div class="grid" id="grid"></div>
+
+<script>
+const DATA = [{"src":"maxima","os":"MAXima\u00b2","code":"HR-04","name":"SEA MOSS","desc":"Irish Sea Moss + Iodine","bio":"HORMONAL SYSTEM \u00b7 THYROID MINERAL SIGNALING","variant":"MAXima\u00b2","accent":"#7A304A","form":"Capsules","func":"Thyroid Mineral Signaling","status":"Active","version":"v1.0 \u00b7 HR-04 \u00b7 Clinical Grade","qty":"DIETARY SUPPLEMENT \u00b7 60 caps","fmt":"BOTTLE","nameLen":8},{"src":"maximo","os":"MAXimo\u00b2","code":"GL-15","name":"HYDRATION POWDER (LEMONADE)","desc":"Magnesium Electrolyte","bio":"METABOLIC SYSTEM \u00b7 ELECTROLYTE BALANCE","variant":"MAXimo\u00b2","accent":"#7A1E2E","form":"Powders","func":"Electrolyte Balance","status":"Active","version":"v1.0 \u00b7 GL-15 \u00b7 Clinical Grade","qty":"DIETARY SUPPLEMENT \u00b7 7.23 oz (205 g)","fmt":"JAR","nameLen":27},{"src":"maximo","os":"MAXimo\u00b2","code":"GL-01","name":"BERBERINE","desc":"Berberine HCl","bio":"METABOLIC SYSTEM \u00b7 INSULIN SENSITIVITY","variant":"MAXimo\u00b2","accent":"#7A1E2E","form":"Capsules","func":"Insulin Sensitivity","status":"Active","version":"v1.0 \u00b7 GL-01 \u00b7 Clinical Grade","qty":"DIETARY SUPPLEMENT \u00b7 0.2 lb (90 g)","fmt":"BOTTLE","nameLen":9},{"src":"maximo","os":"MAXimo\u00b2","code":"COG-01","name":"MUSHROOM FOCUS STRIPS","desc":"Bacopa + Nootropic Blend","bio":"COGNITIVE SYSTEM \u00b7 COGNITIVE CLARITY","variant":"MAXimo\u00b2","accent":"#7A1E2E","form":"Strips","func":"Cognitive Clarity","status":"Active","version":"v1.0 \u00b7 COG-01 \u00b7 Clinical Grade","qty":"DIETARY SUPPLEMENT \u00b7 2 oz (60 g)","fmt":"STRIPS","nameLen":21},{"src":"maximo","os":"MAXimo\u00b2","code":"IN-01","name":"PLATINUM TURMERIC","desc":"Curcumin 95% + Black Pepper","bio":"INFLAMMATION SYSTEM \u00b7 INFLAMMATORY BALANCE","variant":"MAXimo\u00b2","accent":"#7A1E2E","form":"Capsules","func":"Inflammatory Balance","status":"Active","version":"v1.0 \u00b7 IN-01 \u00b7 Clinical Grade","qty":"DIETARY SUPPLEMENT \u00b7 0.25 lb (113 g)","fmt":"BOTTLE","nameLen":17},{"src":"maximo","os":"MAXimo\u00b2","code":"MT-11","name":"BEAUTY + COLLAGEN STRIPS","desc":"Grass-Fed Collagen Peptides","bio":"MITOCHONDRIAL SYSTEM \u00b7 DERMAL COLLAGEN SYNTHESIS","variant":"MAXimo\u00b2","accent":"#7A1E2E","form":"Strips","func":"Dermal Collagen Synthesis","status":"Active","version":"v1.0 \u00b7 MT-11 \u00b7 Clinical Grade","qty":"DIETARY SUPPLEMENT \u00b7 2 oz (60 g)","fmt":"STRIPS","nameLen":24},{"src":"maximo","os":"MAXimo\u00b2","code":"MT-01","name":"ENERGY POWDER (FRUIT PUNCH)","desc":"Beta-Alanine + Caffeine","bio":"MITOCHONDRIAL SYSTEM \u00b7 MITOCHONDRIAL ENERGY","variant":"MAXimo\u00b2","accent":"#7A1E2E","form":"Powders","func":"Mitochondrial Energy","status":"Active","version":"v1.0 \u00b7 MT-01 \u00b7 Clinical Grade","qty":"DIETARY SUPPLEMENT \u00b7 6.42 oz (182 g)","fmt":"JAR","nameLen":27},{"src":"maximo","os":"MAXimo\u00b2","code":"GL-13","name":"HAIR SKIN & NAILS STRIPS","desc":"Biotin + Hair Nutrient Blend","bio":"METABOLIC SYSTEM \u00b7 KERATIN SYNTHESIS","variant":"MAXimo\u00b2","accent":"#7A1E2E","form":"Strips","func":"Keratin Synthesis","status":"Active","version":"v1.0 \u00b7 GL-13 \u00b7 Clinical Grade","qty":"DIETARY SUPPLEMENT \u00b7 2 oz (60 g)","fmt":"STRIPS","nameLen":24},{"src":"maxima","os":"MAXima\u00b2","code":"MT-10","name":"BCAA POST WORKOUT POWDER (HONEYDEW/WATERMELON)","desc":"BCAAs","bio":"MITOCHONDRIAL SYSTEM \u00b7 MUSCLE RECOVERY","variant":"MAXima\u00b2","accent":"#7A304A","form":"Powders","func":"Muscle Recovery","status":"Active","version":"v1.0 \u00b7 MT-10 \u00b7 Clinical Grade","qty":"DIETARY SUPPLEMENT \u00b7 1 lb (454 g)","fmt":"POUCH","nameLen":46},{"src":"maximo","os":"MAXimo\u00b2","code":"GL-11","name":"PROBIOTIC + METABOLISM STRIPS","desc":"Probiotic + Metabolism Blend","bio":"METABOLIC SYSTEM \u00b7 GUT-METABOLIC AXIS","variant":"MAXimo\u00b2","accent":"#7A1E2E","form":"Strips","func":"Gut-Metabolic Axis","status":"Active","version":"v1.0 \u00b7 GL-11 \u00b7 Clinical Grade","qty":"DIETARY SUPPLEMENT \u00b7 2 oz (60 g)","fmt":"STRIPS","nameLen":29},{"src":"maxima","os":"MAXima\u00b2","code":"IN-05","name":"LIVER SUPPORT","desc":"Milk Thistle + Liver Blend","bio":"INFLAMMATION SYSTEM \u00b7 HEPATIC DETOXIFICATION","variant":"MAXima\u00b2","accent":"#7A304A","form":"Capsules","func":"Hepatic Detoxification","status":"Active","version":"v1.0 \u00b7 IN-05 \u00b7 Clinical Grade","qty":"DIETARY SUPPLEMENT \u00b7 0.2 lb (90.72 g)","fmt":"BOTTLE","nameLen":13},{"src":"maxima","os":"MAXima\u00b2","code":"GL-13","name":"HAIR SKIN & NAILS GUMMIES","desc":"Biotin + Hair Nutrient Blend","bio":"METABOLIC SYSTEM \u00b7 KERATIN SYNTHESIS","variant":"MAXima\u00b2","accent":"#7A304A","form":"Gummies","func":"Keratin Synthesis","status":"Active","version":"v1.0 \u00b7 GL-13 \u00b7 Clinical Grade","qty":"DIETARY SUPPLEMENT \u00b7 6.63 oz (188 g)","fmt":"BOTTLE","nameLen":25},{"src":"maximo","os":"MAXimo\u00b2","code":"GL-02","name":"COMPLETE MULTIVITAMIN","desc":"Complete Multivitamin","bio":"METABOLIC SYSTEM \u00b7 MICRONUTRIENT SUFFICIENCY","variant":"MAXimo\u00b2","accent":"#7A1E2E","form":"Capsules","func":"Micronutrient Sufficiency","status":"Active","version":"v1.0 \u00b7 GL-02 \u00b7 Clinical Grade","qty":"DIETARY SUPPLEMENT \u00b7 60 caps","fmt":"BOTTLE","nameLen":21},{"src":"maximo","os":"MAXimo\u00b2","code":"GL-01","name":"NORMAL BLOOD SUGAR DROPS","desc":"Berberine HCl","bio":"METABOLIC SYSTEM \u00b7 INSULIN SENSITIVITY","variant":"MAXimo\u00b2","accent":"#7A1E2E","form":"Drops","func":"Insulin Sensitivity","status":"Active","version":"v1.0 \u00b7 GL-01 \u00b7 Clinical Grade","qty":"DIETARY SUPPLEMENT \u00b7 2.7 oz (75 g)","fmt":"DROPPER","nameLen":24},{"src":"maximo","os":"MAXimo\u00b2","code":"GL-12","name":"L-GLUTAMINE POWDER","desc":"L-Glutamine","bio":"METABOLIC SYSTEM \u00b7 GUT MUCOSAL INTEGRITY","variant":"MAXimo\u00b2","accent":"#7A1E2E","form":"Powders","func":"Gut Mucosal Integrity","status":"Active","version":"v1.0 \u00b7 GL-12 \u00b7 Clinical Grade","qty":"DIETARY SUPPLEMENT \u00b7 0.7 lb (317 g)","fmt":"POUCH","nameLen":18},{"src":"maximo","os":"MAXimo\u00b2","code":"MT-10","name":"BCAA POST WORKOUT POWDER (HONEYDEW/WATERMELON)","desc":"BCAAs","bio":"MITOCHONDRIAL SYSTEM \u00b7 MUSCLE RECOVERY","variant":"MAXimo\u00b2","accent":"#7A1E2E","form":"Powders","func":"Muscle Recovery","status":"Active","version":"v1.0 \u00b7 MT-10 \u00b7 Clinical Grade","qty":"DIETARY SUPPLEMENT \u00b7 1 lb (454 g)","fmt":"POUCH","nameLen":46},{"src":"maximo","os":"MAXimo\u00b2","code":"MT-11","name":"GRASS-FED COLLAGEN PEPTIDES POWDER (CHOCOLATE)","desc":"Grass-Fed Collagen Peptides","bio":"MITOCHONDRIAL SYSTEM \u00b7 DERMAL COLLAGEN SYNTHESIS","variant":"MAXimo\u00b2","accent":"#7A1E2E","form":"Powders","func":"Dermal Collagen Synthesis","status":"Active","version":"v1.0 \u00b7 MT-11 \u00b7 Clinical Grade","qty":"DIETARY SUPPLEMENT \u00b7 0.98 lb (444 g)","fmt":"POUCH","nameLen":46},{"src":"maxima","os":"MAXima\u00b2","code":"MT-04","name":"ULTRA CLEANSE SMOOTHIE GREENS","desc":"Detox Greens Blend","bio":"MITOCHONDRIAL SYSTEM \u00b7 CELLULAR DETOX SUPPORT","variant":"MAXima\u00b2","accent":"#7A304A","form":"Powders","func":"Cellular Detox Support","status":"Active","version":"v1.0 \u00b7 MT-04 \u00b7 Clinical Grade","qty":"DIETARY SUPPLEMENT \u00b7 0.67 lb (304 g)","fmt":"POUCH","nameLen":29},{"src":"maxima","os":"MAXima\u00b2","code":"COG-01","name":"MUSHROOM FOCUS STRIPS","desc":"Bacopa + Nootropic Blend","bio":"COGNITIVE SYSTEM \u00b7 COGNITIVE CLARITY","variant":"MAXima\u00b2","accent":"#7A304A","form":"Strips","func":"Cognitive Clarity","status":"Active","version":"v1.0 \u00b7 COG-01 \u00b7 Clinical Grade","qty":"DIETARY SUPPLEMENT \u00b7 2 oz (60 g)","fmt":"STRIPS","nameLen":21},{"src":"maxima","os":"MAXima\u00b2","code":"MT-11","name":"GRASS-FED COLLAGEN PEPTIDES POWDER (CHOCOLATE)","desc":"Grass-Fed Collagen Peptides","bio":"MITOCHONDRIAL SYSTEM \u00b7 DERMAL COLLAGEN SYNTHESIS","variant":"MAXima\u00b2","accent":"#7A304A","form":"Powders","func":"Dermal Collagen Synthesis","status":"Active","version":"v1.0 \u00b7 MT-11 \u00b7 Clinical Grade","qty":"DIETARY SUPPLEMENT \u00b7 0.98 lb (444 g)","fmt":"POUCH","nameLen":46}];
+
+// Format dimensions (scaled for grid view)
+const DIMS = {
+  BOTTLE:  { w: 220, h: 104 },
+  JAR:     { w: 290, h: 72 },
+  POUCH:   { w: 180, h: 145 },
+  DROPPER: { w: 76, h: 145 },
+  STRIPS:  { w: 145, h: 235 },
+};
+
+function buildLabel(d, i) {
+  const f = DIMS[d.fmt] || DIMS.BOTTLE;
+  const isNarrow = d.fmt === 'DROPPER';
+  const isStrips = d.fmt === 'STRIPS';
+  const isTall = isStrips || d.fmt === 'POUCH' || isNarrow;
+  const ac = d.os === 'MAXimo\u00b2' ? 'mxo' : 'mxa';
+
+  // Adaptive product name size
+  let ns;
+  if (isNarrow) ns = d.nameLen > 20 ? 6 : 8;
+  else if (isStrips) ns = d.nameLen > 30 ? 11 : d.nameLen > 20 ? 14 : 18;
+  else if (d.fmt === 'JAR') ns = d.nameLen > 30 ? 8 : d.nameLen > 20 ? 10 : 13;
+  else if (d.fmt === 'POUCH') ns = d.nameLen > 30 ? 10 : d.nameLen > 20 ? 13 : 16;
+  else ns = d.nameLen > 30 ? 9 : d.nameLen > 20 ? 12 : 16;
+
+  const bs = isNarrow ? 5 : (d.fmt === 'JAR' ? 5.5 : 6);
+  const ms = isNarrow ? 2.5 : 3;
+  const z2s = isNarrow ? 2.5 : (d.fmt === 'JAR' ? 3 : 3.5);
+  const ds = isNarrow ? 3.5 : (d.fmt === 'JAR' ? 4 : 4.5);
+  const bios = isNarrow ? 2 : 2.5;
+  const vs = isNarrow ? 5 : (d.fmt === 'JAR' ? 6 : 7);
+  const z7s = isNarrow ? 2.5 : 2.5;
+  const pad = isNarrow ? '3px 6px 0' : (d.fmt === 'JAR' ? '3px 10px 0' : '4px 10px 0');
+  const cpad = isNarrow ? '2px 6px 0' : (d.fmt === 'JAR' ? '2px 10px 0' : '2px 10px 0');
+  const z7pad = isNarrow ? '2px 6px' : '2px 10px';
+  const aw = isNarrow ? 18 : 32;
+
+  const z6html = isNarrow
+    ? `<div class="z6 z6v" style="font-size:${ms}px">
+        <div class="z6c" style="flex-direction:row;gap:3px;align-items:baseline"><span class="z6l" style="font-size:${ms-0.5}px">TYPE</span><span class="z6x" style="font-size:${ms}px">${d.form}</span></div>
+        <div class="z6c" style="flex-direction:row;gap:3px;align-items:baseline"><span class="z6l" style="font-size:${ms-0.5}px">FUNC</span><span class="z6x" style="font-size:${ms}px">${d.func.split(' ').slice(0,2).join(' ')}</span></div>
+        <div class="z6c" style="flex-direction:row;gap:3px;align-items:baseline"><span class="z6l" style="font-size:${ms-0.5}px">STATUS</span><span class="z6x" style="font-size:${ms}px">${d.status}</span></div>
+       </div>`
+    : `<div class="z6">
+        <div class="z6c"><span class="z6l" style="font-size:${ms-0.5}px">TYPE</span><span class="z6x" style="font-size:${ms}px">${d.form}</span></div>
+        <div class="z6c"><span class="z6l" style="font-size:${ms-0.5}px">FUNCTION</span><span class="z6x" style="font-size:${ms}px">${d.func}</span></div>
+        <div class="z6c"><span class="z6l" style="font-size:${ms-0.5}px">STATUS</span><span class="z6x" style="font-size:${ms}px">${d.status}</span></div>
+       </div>`;
+
+  const z7html = isNarrow
+    ? `<div class="z7 z7s" style="font-size:${z7s}px;padding:${z7pad}"><span>${d.version}</span><span>${d.qty.replace('DIETARY SUPPLEMENT \u00b7 ','')}</span></div>`
+    : `<div class="z7" style="font-size:${z7s}px;padding:${z7pad}"><span>${d.version}</span><span>${d.qty.replace('DIETARY SUPPLEMENT \u00b7 ','')}</span></div>`;
+
+  return `<div class="card">
+    <div class="card-tag"><span class="idx">#${i+1}</span><span class="sys ${ac}">${d.os}</span><span class="fmt">${d.fmt}</span></div>
+    <div class="lbl" style="width:${f.w}px;height:${f.h}px">
+      <div class="ceil ${ac}"></div>
+      <div style="padding:${pad}">
+        <div class="bz"><span class="bn" style="font-size:${bs}px">GenoMAX\u00b2</span><span class="bm" style="font-size:${ms}px">${d.code}</span></div>
+        <div style="height:${isNarrow?1:2}px"></div>
+        <div class="br"></div>
+      </div>
+      <div style="padding:${cpad};display:flex;flex-direction:column;flex:1;overflow:hidden">
+        <div class="z2" style="font-size:${z2s}px">BIOLOGICAL OS MODULE</div>
+        <div style="height:${isTall?3:1}px"></div>
+        <div class="z3" style="font-size:${ns}px">${d.name}</div>
+        <div style="height:1px"></div>
+        <div class="z4d" style="font-size:${ds}px">${d.desc}</div>
+        <div class="z4s" style="font-size:${bios}px">${d.bio}</div>
+        <div style="height:${isTall?5:2}px"></div>
+        <div style="text-align:center"><div class="z5n" style="font-size:${vs}px">${d.variant}</div><div class="z5a ${ac}" style="width:${aw}px"></div></div>
+        <div style="height:${isTall?5:2}px"></div>
+        ${z6html}
+        <div style="flex:1"></div>
+        <div class="zd"></div>
+      </div>
+      ${z7html}
+    </div>
+  </div>`;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = DATA.map((d, i) => buildLabel(d, i)).join('');
+});
+</script>
+
+<div class="note" style="margin-top:20px">
+  <b>QA BATCH — STATS</b><br>
+  <b>Sample:</b> 20 random SKUs (seed 42, no curation)<br>
+  <b>Systems:</b> 13 MAXimo\u00b2 · 7 MAXima\u00b2<br>
+  <b>Formats:</b> BOTTLE(6) · JAR(2) · POUCH(6) · DROPPER(1) · STRIPS(5)<br>
+  <b>Name lengths:</b> 8–46 characters<br>
+  <b>Edge cases present:</b> 46-char names (BCAA, Collagen), 8-char name (Sea Moss), parenthetical flavors, ampersands, +/& characters<br>
+  <b>No manual fixes applied.</b> All renders use raw production data.
+</div>
+
+</body>
+</html>

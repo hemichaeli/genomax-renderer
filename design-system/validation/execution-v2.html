@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GenoMAX2 — Execution V2 · BOTTLE + STRIPS</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F2EC;
+  --pri:#1A1815;
+  --sec:#4A4843;
+  --ter:#8A8880;
+  --div:#C5C2BA;
+  --mxo:#7A1E2E;
+  --strip:#1A1815;
+  --strip-text:#C5C2BA;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'IBM Plex Sans',sans-serif;background:#fff;color:var(--pri);padding:32px 40px}
+h1{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;margin-bottom:3px;letter-spacing:-0.01em}
+.sub{font-weight:300;font-size:10px;color:var(--ter);margin-bottom:36px}
+
+.compare{display:flex;gap:48px;margin-bottom:56px;align-items:flex-start}
+.version{display:flex;flex-direction:column;gap:8px}
+.vtag{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:3px 8px;display:inline-block;width:fit-content}
+.vtag.v1{color:var(--ter);border:1px solid var(--div)}
+.vtag.v2{color:#fff;background:var(--pri)}
+.vlabel{font-size:8px;color:var(--ter);margin-bottom:2px}
+
+/* ══ SHARED LABEL STYLES ══ */
+.lbl{background:var(--bg);border:0.5px solid var(--div);display:flex;flex-direction:column;overflow:hidden}
+
+/* ══ V1 — CURRENT (toned down to show contrast) ══ */
+.v1l .z1b{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:6.5px;color:var(--pri)}
+.v1l .z1c{font-family:'IBM Plex Mono',monospace;font-weight:400;font-size:4.5px;color:#8A8880;letter-spacing:0.08em}
+.v1l .z2{font-family:'IBM Plex Mono',monospace;font-weight:400;font-size:4.5px;text-transform:uppercase;letter-spacing:0.08em;color:#8A8880;text-align:center}
+.v1l .z3{font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:-0.01em;color:var(--pri);text-align:center;line-height:1.05}
+.v1l .z4d{font-family:'IBM Plex Sans',sans-serif;font-weight:300;color:#8A8880;text-align:center}
+.v1l .z4s{font-family:'IBM Plex Mono',monospace;font-weight:400;text-transform:uppercase;letter-spacing:0.04em;color:#AAA8A0;text-align:center}
+.v1l .z5n{font-family:'IBM Plex Sans',sans-serif;font-weight:500;color:var(--pri);text-align:center}
+.v1l .z5a{height:1.5px;background:var(--mxo);margin:2px auto 0}
+.v1l .z6l{font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:0.06em;color:#AAA8A0}
+.v1l .z6x{font-family:'IBM Plex Sans',sans-serif;color:var(--pri)}
+.v1l .zd{border-top:0.35px solid var(--div)}
+.v1l .z7{font-family:'IBM Plex Mono',monospace;letter-spacing:0.02em;color:#AAA8A0}
+
+/* ══ V2 — REFINED ══ */
+.v2l .z1{display:flex;justify-content:space-between;align-items:baseline}
+.v2l .z1b{
+  font-family:'IBM Plex Mono',monospace;
+  font-weight:700;
+  color:var(--pri);
+  letter-spacing:0.02em;
+}
+.v2l .z1c{
+  font-family:'IBM Plex Mono',monospace;
+  font-weight:500;
+  color:var(--sec);
+  letter-spacing:0.12em;
+}
+.v2l .z2{
+  font-family:'IBM Plex Mono',monospace;
+  font-weight:500;
+  text-transform:uppercase;
+  letter-spacing:0.18em;
+  color:var(--sec);
+  text-align:center;
+}
+.v2l .z3{
+  font-family:'IBM Plex Sans Condensed',sans-serif;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:-0.025em;
+  color:var(--pri);
+  text-align:center;
+  line-height:0.95;
+}
+.v2l .z4d{
+  font-family:'IBM Plex Sans',sans-serif;
+  font-weight:300;
+  color:var(--sec);
+  text-align:center;
+  letter-spacing:0.01em;
+}
+.v2l .z4s{
+  font-family:'IBM Plex Mono',monospace;
+  font-weight:400;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+  color:var(--ter);
+  text-align:center;
+}
+.v2l .z5n{
+  font-family:'IBM Plex Sans',sans-serif;
+  font-weight:600;
+  color:var(--pri);
+  text-align:center;
+  letter-spacing:0.01em;
+}
+.v2l .z5a{
+  height:2px;
+  background:var(--mxo);
+  margin:2px auto 0;
+}
+.v2l .z6{display:flex;justify-content:space-between}
+.v2l .z6c{display:flex;flex-direction:column;align-items:center;gap:0}
+.v2l .z6l{
+  font-family:'IBM Plex Mono',monospace;
+  font-weight:500;
+  text-transform:uppercase;
+  letter-spacing:0.1em;
+  color:var(--ter);
+}
+.v2l .z6x{
+  font-family:'IBM Plex Sans',sans-serif;
+  font-weight:500;
+  color:var(--pri);
+}
+.v2l .zd{border-top:0.5px solid var(--div)}
+/* V2 Zone 7: dark inverted strip */
+.v2l .z7strip{
+  background:var(--strip);
+  margin:0 -14px -8px -14px;
+  padding:4px 14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-family:'IBM Plex Mono',monospace;
+  letter-spacing:0.03em;
+  color:var(--strip-text);
+  margin-top:auto;
+}
+
+/* ══ CHANGE LOG ══ */
+.changelog{
+  margin-top:8px;
+  padding:14px 18px;
+  background:#F8F7F4;
+  border-left:3px solid var(--mxo);
+  font-size:9px;color:var(--sec);line-height:1.8;max-width:600px
+}
+.changelog b{color:var(--pri);font-weight:600}
+.changelog .cat{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;color:var(--mxo);text-transform:uppercase;letter-spacing:0.08em;margin-top:8px;display:block}
+.changelog .cat:first-child{margin-top:0}
+</style>
+</head>
+<body>
+
+<h1>GenoMAX² — EXECUTION V2</h1>
+<p class="sub">Typography authority · Brand dominance · Spatial engineering · Clinical power</p>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- BOTTLE COMPARISON                          -->
+<!-- ═══════════════════════════════════════════ -->
+
+<div class="compare">
+
+<!-- V1 BOTTLE -->
+<div class="version">
+<div class="vtag v1">V1 · CURRENT</div>
+<div class="vlabel">BOTTLE · 6×2.5"</div>
+<div class="lbl v1l" style="width:300px;height:126px;padding:8px 12px 6px">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <span class="z1b">GenoMAX²</span><span class="z1c">CV-01</span>
+  </div>
+  <div style="height:5px"></div>
+  <div class="z2">BIOLOGICAL OS MODULE</div>
+  <div style="height:3px"></div>
+  <div class="z3" style="font-size:15px">OMEGA-3 EPA 180mg + DHA 120mg</div>
+  <div style="height:2px"></div>
+  <div class="z4d" style="font-size:5.5px">Omega-3 EPA + DHA</div>
+  <div style="height:1px"></div>
+  <div class="z4s" style="font-size:3.5px">CARDIOVASCULAR LIPID METABOLISM</div>
+  <div style="height:4px"></div>
+  <div><div class="z5n" style="font-size:7px;text-align:center">MAXimo²</div><div class="z5a" style="width:35px"></div></div>
+  <div style="height:3px"></div>
+  <div style="display:flex;justify-content:space-between">
+    <div style="text-align:center"><div class="z6l" style="font-size:3px">TYPE</div><div class="z6x" style="font-size:4px">Softgels</div></div>
+    <div style="text-align:center"><div class="z6l" style="font-size:3px">FUNCTION</div><div class="z6x" style="font-size:4px">Lipid Metabolism</div></div>
+    <div style="text-align:center"><div class="z6l" style="font-size:3px">STATUS</div><div class="z6x" style="font-size:4px">Active</div></div>
+  </div>
+  <div style="flex:1"></div>
+  <div class="zd"></div>
+  <div style="height:2px"></div>
+  <div class="z7" style="display:flex;justify-content:space-between;font-size:3px"><span>v1.0 | CV-01 | Clinical Grade</span><span>DIETARY SUPPLEMENT · 100 softgels</span></div>
+</div>
+</div>
+
+<!-- V2 BOTTLE -->
+<div class="version">
+<div class="vtag v2">V2 · REFINED</div>
+<div class="vlabel">BOTTLE · 6×2.5" · Execution upgrade</div>
+<div class="lbl v2l" style="width:310px;height:142px;padding:7px 14px 0">
+  <div class="z1">
+    <span class="z1b" style="font-size:8.5px">GenoMAX²</span>
+    <span class="z1c" style="font-size:4px">CV-01</span>
+  </div>
+  <div style="height:3px"></div>
+  <div class="z2" style="font-size:4.5px">BIOLOGICAL OS MODULE</div>
+  <div style="height:2px"></div>
+  <div class="z3" style="font-size:17.5px">OMEGA-3 EPA 180mg + DHA 120mg</div>
+  <div style="height:1px"></div>
+  <div class="z4d" style="font-size:5px">Omega-3 EPA + DHA</div>
+  <div style="height:0px"></div>
+  <div class="z4s" style="font-size:3px">CARDIOVASCULAR · LIPID METABOLISM</div>
+  <div style="height:3px"></div>
+  <div>
+    <div class="z5n" style="font-size:8px">MAXimo²</div>
+    <div class="z5a" style="width:44px"></div>
+  </div>
+  <div style="height:3px"></div>
+  <div class="z6">
+    <div class="z6c"><span class="z6l" style="font-size:2.5px">TYPE</span><span class="z6x" style="font-size:4px">Softgels</span></div>
+    <div class="z6c"><span class="z6l" style="font-size:2.5px">FUNCTION</span><span class="z6x" style="font-size:4px">Lipid Metabolism</span></div>
+    <div class="z6c"><span class="z6l" style="font-size:2.5px">STATUS</span><span class="z6x" style="font-size:4px">Active</span></div>
+  </div>
+  <div style="height:3px"></div>
+  <div class="zd"></div>
+  <div class="z7strip" style="font-size:3.5px;margin:-0px -14px 0">
+    <span>v1.0 · CV-01 · Clinical Grade</span>
+    <span>DIETARY SUPPLEMENT · 100 softgels</span>
+  </div>
+</div>
+</div>
+
+<!-- CHANGELOG -->
+<div class="changelog" style="align-self:flex-start">
+  <b>BOTTLE — CHANGES V1→V2</b>
+  <span class="cat">TYPOGRAPHY</span>
+  Product name: 15px → 19px, weight 600 → 700, tracking -1% → -2.5%<br>
+  GenoMAX² brand: 6.5px → 8.5px (+31%), tracking added<br>
+  Zone 2: weight 400 → 500, tracking 8% → 18%<br>
+  MAXimo²: weight 500 → 600<br>
+  Metadata labels: weight 400 → 500, tracking 6% → 10%<br>
+  Metadata values: weight 400 → 500<br>
+  <span class="cat">SPACING</span>
+  Zone gaps compressed 30-50%<br>
+  Removed all "breathing" gaps — every space is earned<br>
+  Bio system uses · separator instead of space<br>
+  <span class="cat">STRUCTURE</span>
+  Zone 7: inverted dark strip (full bleed) — anchors bottom<br>
+  Accent rule: 1.5px → 2px, wider<br>
+  Divider: 0.35px → 0.5px<br>
+  Overall height increased to prevent cramping<br>
+  <span class="cat">FEEL</span>
+  Product name now DOMINATES the label<br>
+  Brand feels authoritative, not just placed<br>
+  Dark version strip = clinical instrument
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- STRIPS COMPARISON                          -->
+<!-- ═══════════════════════════════════════════ -->
+
+<div class="compare">
+
+<!-- V1 STRIPS -->
+<div class="version">
+<div class="vtag v1">V1 · CURRENT</div>
+<div class="vlabel">STRIPS · 4×6.5"</div>
+<div class="lbl v1l" style="width:200px;height:325px;padding:12px 14px 8px">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <span class="z1b">GenoMAX²</span><span class="z1c">GL-04</span>
+  </div>
+  <div style="height:12px"></div>
+  <div class="z2">BIOLOGICAL OS MODULE</div>
+  <div style="height:10px"></div>
+  <div class="z3" style="font-size:20px">IRON<br>STRIPS</div>
+  <div style="height:8px"></div>
+  <div class="z4d" style="font-size:6px">Elemental Iron</div>
+  <div style="height:2px"></div>
+  <div class="z4s" style="font-size:3.5px">METABOLIC IRON STATUS OPTIMIZATION</div>
+  <div style="height:14px"></div>
+  <div><div class="z5n" style="font-size:9px;text-align:center">MAXimo²</div><div class="z5a" style="width:40px"></div></div>
+  <div style="height:14px"></div>
+  <div style="display:flex;justify-content:space-between">
+    <div style="text-align:center"><div class="z6l" style="font-size:3.5px">TYPE</div><div class="z6x" style="font-size:4.5px">Strips</div></div>
+    <div style="text-align:center"><div class="z6l" style="font-size:3.5px">FUNCTION</div><div class="z6x" style="font-size:4.5px">Iron Optimization</div></div>
+    <div style="text-align:center"><div class="z6l" style="font-size:3.5px">STATUS</div><div class="z6x" style="font-size:4.5px">Active</div></div>
+  </div>
+  <div style="flex:1"></div>
+  <div class="zd"></div>
+  <div style="height:3px"></div>
+  <div class="z7" style="display:flex;justify-content:space-between;font-size:3px"><span>v1.0 | GL-04 | Clinical Grade</span><span>DIETARY SUPPLEMENT · 2 oz (60 g)</span></div>
+</div>
+</div>
+
+<!-- V2 STRIPS -->
+<div class="version">
+<div class="vtag v2">V2 · REFINED</div>
+<div class="vlabel">STRIPS · 4×6.5" · Execution upgrade</div>
+<div class="lbl v2l" style="width:220px;height:358px;padding:10px 14px 0">
+  <div class="z1">
+    <span class="z1b" style="font-size:8px">GenoMAX²</span>
+    <span class="z1c" style="font-size:3.5px">GL-04</span>
+  </div>
+  <div style="height:8px"></div>
+  <div class="z2" style="font-size:4px">BIOLOGICAL OS MODULE</div>
+  <div style="height:6px"></div>
+  <div class="z3" style="font-size:30px">IRON<br>STRIPS</div>
+  <div style="height:4px"></div>
+  <div class="z4d" style="font-size:6px">Elemental Iron</div>
+  <div style="height:1px"></div>
+  <div class="z4s" style="font-size:3px">METABOLIC · IRON STATUS OPTIMIZATION</div>
+  <div style="height:10px"></div>
+  <div>
+    <div class="z5n" style="font-size:10px">MAXimo²</div>
+    <div class="z5a" style="width:48px"></div>
+  </div>
+  <div style="height:10px"></div>
+  <div class="z6">
+    <div class="z6c"><span class="z6l" style="font-size:3px">TYPE</span><span class="z6x" style="font-size:5px">Strips</span></div>
+    <div class="z6c"><span class="z6l" style="font-size:3px">FUNCTION</span><span class="z6x" style="font-size:5px">Iron Optimization</span></div>
+    <div class="z6c"><span class="z6l" style="font-size:3px">STATUS</span><span class="z6x" style="font-size:5px">Active</span></div>
+  </div>
+  <div style="flex:1"></div>
+  <div class="zd"></div>
+  <div class="z7strip" style="font-size:3.5px;margin:0 -14px 0">
+    <span>v1.0 · GL-04 · Clinical Grade</span>
+    <span>DIETARY SUPPLEMENT · 2 oz (60 g)</span>
+  </div>
+</div>
+</div>
+
+<!-- CHANGELOG -->
+<div class="changelog" style="align-self:flex-start">
+  <b>STRIPS — CHANGES V1→V2</b>
+  <span class="cat">TYPOGRAPHY</span>
+  Product name: 20px → 30px (+50%), weight 600 → 700<br>
+  "IRON STRIPS" now commands the entire label<br>
+  GenoMAX² brand: 6px → 8px<br>
+  MAXimo²: 9px → 10px, weight 500 → 600<br>
+  Zone 2: tracking 8% → 18%<br>
+  <span class="cat">SPACING</span>
+  Default spacing feel eliminated<br>
+  Gaps: 14px → 10px (zone separators)<br>
+  12px → 8px (post-brand)<br>
+  10px → 6px (post-zone2)<br>
+  Every gap justified by typographic rhythm<br>
+  <span class="cat">STRUCTURE</span>
+  Zone 7: inverted dark strip — same as BOTTLE<br>
+  Accent rule: wider (40px → 48px), thicker (2px)<br>
+  Bio system uses · separator<br>
+  <span class="cat">FEEL</span>
+  Product name dominates at 30px — massive presence<br>
+  Tall format fully utilized — no wasted space<br>
+  Clinical instrument aesthetic
+</div>
+</div>
+
+</body>
+</html>

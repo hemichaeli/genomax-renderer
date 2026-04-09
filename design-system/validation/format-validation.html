@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GenoMAX2 Format Validation</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&family=IBM+Plex+Sans+Condensed:wght@600&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F4F2EC;--pri:#1A1815;--sec:#5C5A55;--ter:#9A9890;--div:#C5C2BA;--mxo:#7A1E2E;--mxa:#7A304A}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'IBM Plex Sans',sans-serif;background:#fff;color:var(--pri);padding:32px 40px}
+h1{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:18px;margin-bottom:4px}
+.sub{font-weight:300;font-size:11px;color:var(--ter);margin-bottom:32px}
+.grid{display:flex;flex-wrap:wrap;gap:28px 24px;align-items:flex-start}
+.block{display:flex;flex-direction:column;gap:6px}
+.block h3{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700}
+.block p{font-size:8px;color:var(--ter);margin-bottom:2px}
+.lbl{background:var(--bg);border:0.5px solid var(--div);border-radius:1px;display:flex;flex-direction:column;overflow:hidden}
+.lbl *{word-wrap:break-word}
+
+/* zones */
+.z1{display:flex;justify-content:space-between;align-items:center}
+.z1 .b{font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--pri)}
+.z1 .c{font-family:'IBM Plex Mono',monospace;font-weight:400;color:var(--sec);letter-spacing:0.08em}
+.z2{text-align:center;font-family:'IBM Plex Mono',monospace;font-weight:400;text-transform:uppercase;letter-spacing:0.08em;color:var(--sec)}
+.z3{text-align:center;font-family:'IBM Plex Sans Condensed',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:-0.01em;color:var(--pri);line-height:1.05}
+.z4d{text-align:center;font-family:'IBM Plex Sans',sans-serif;font-weight:300;color:var(--sec)}
+.z4s{text-align:center;font-family:'IBM Plex Mono',monospace;font-weight:400;text-transform:uppercase;letter-spacing:0.04em;color:var(--ter)}
+.z5{text-align:center}
+.z5n{font-family:'IBM Plex Sans',sans-serif;font-weight:500;color:var(--pri)}
+.z5a{height:1.5px;margin:2px auto 0}
+.z5a.mo{background:var(--mxo)}
+.z6{display:flex;justify-content:space-between}
+.z6v{flex-direction:column;gap:2px}
+.z6v .z6c{flex-direction:row;gap:4px}
+.z6c{display:flex;flex-direction:column;align-items:center;gap:0}
+.z6l{font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:0.06em;color:var(--ter)}
+.z6x{font-family:'IBM Plex Sans',sans-serif;color:var(--pri)}
+.zd{border-top:0.35px solid var(--div);width:100%}
+.z7{display:flex;justify-content:space-between;align-items:center;font-family:'IBM Plex Mono',monospace;letter-spacing:0.02em;color:var(--ter)}
+.z7s{flex-direction:column;text-align:center;gap:1px}
+
+.note{margin-top:32px;padding:14px 18px;background:#F8F7F4;border-left:3px solid var(--mxo);font-size:9px;color:var(--sec);line-height:1.7;max-width:700px}
+.note b{color:var(--pri);font-weight:500}
+.note code{font-family:'IBM Plex Mono',monospace;font-size:8px;background:#EDECEA;padding:0 3px;border-radius:1px}
+</style>
+</head>
+<body>
+
+<h1>GenoMAX² — FORMAT VALIDATION</h1>
+<p class="sub">7 formats · MAXimo² system · One example per format · Real Excel data · 7-zone consistency check</p>
+
+<div class="grid">
+
+<!-- ═══ BOTTLE ═══ -->
+<div class="block">
+<h3>BOTTLE</h3>
+<p>6×2.5" · 38 MAXimo² / 39 MAXima² SKUs</p>
+<div class="lbl" style="width:300px;height:126px;padding:8px 12px 6px">
+  <div class="z1"><span class="b" style="font-size:6.5px">GenoMAX²</span><span class="c" style="font-size:4.5px">CV-01</span></div>
+  <div style="height:5px"></div>
+  <div class="z2" style="font-size:4.5px">BIOLOGICAL OS MODULE</div>
+  <div style="height:3px"></div>
+  <div class="z3" style="font-size:15px">OMEGA-3 EPA 180mg + DHA 120mg</div>
+  <div style="height:2px"></div>
+  <div class="z4d" style="font-size:5.5px">Omega-3 EPA + DHA</div>
+  <div style="height:1px"></div>
+  <div class="z4s" style="font-size:3.5px">CARDIOVASCULAR LIPID METABOLISM</div>
+  <div style="height:4px"></div>
+  <div class="z5"><div class="z5n" style="font-size:7px">MAXimo²</div><div class="z5a mo" style="width:35px"></div></div>
+  <div style="height:3px"></div>
+  <div class="z6">
+    <div class="z6c"><span class="z6l" style="font-size:3px">TYPE</span><span class="z6x" style="font-size:4px">Softgels</span></div>
+    <div class="z6c"><span class="z6l" style="font-size:3px">FUNCTION</span><span class="z6x" style="font-size:4px">Lipid Metabolism</span></div>
+    <div class="z6c"><span class="z6l" style="font-size:3px">STATUS</span><span class="z6x" style="font-size:4px">Active</span></div>
+  </div>
+  <div style="flex:1"></div>
+  <div class="zd"></div>
+  <div style="height:2px"></div>
+  <div class="z7" style="font-size:3px"><span>v1.0 | CV-01 | Clinical Grade</span><span>DIETARY SUPPLEMENT · 100 softgels</span></div>
+</div>
+</div>
+
+<!-- ═══ JAR ═══ -->
+<div class="block">
+<h3>JAR</h3>
+<p>8.5×2" · 20 MAXimo² / 20 MAXima² SKUs</p>
+<div class="lbl" style="width:420px;height:100px;padding:6px 12px 5px">
+  <div class="z1"><span class="b" style="font-size:5.5px">GenoMAX²</span><span class="c" style="font-size:4px">CV-04</span></div>
+  <div style="height:3px"></div>
+  <div class="z2" style="font-size:3.5px">BIOLOGICAL OS MODULE</div>
+  <div style="height:2px"></div>
+  <div class="z3" style="font-size:13px">COLON GENTLE CLEANSE</div>
+  <div style="height:2px"></div>
+  <div class="z4d" style="font-size:4.5px">Psyllium Fiber Blend</div>
+  <div style="height:1px"></div>
+  <div class="z4s" style="font-size:3px">CARDIOVASCULAR GUT MOTILITY</div>
+  <div style="height:3px"></div>
+  <div style="display:flex;align-items:center;gap:16px;justify-content:center">
+    <div class="z5"><div class="z5n" style="font-size:6.5px">MAXimo²</div><div class="z5a mo" style="width:30px"></div></div>
+    <div class="z6" style="gap:14px">
+      <div class="z6c"><span class="z6l" style="font-size:2.5px">TYPE</span><span class="z6x" style="font-size:3.5px">Powders</span></div>
+      <div class="z6c"><span class="z6l" style="font-size:2.5px">FUNCTION</span><span class="z6x" style="font-size:3.5px">Gut Motility</span></div>
+      <div class="z6c"><span class="z6l" style="font-size:2.5px">STATUS</span><span class="z6x" style="font-size:3.5px">Active</span></div>
+    </div>
+  </div>
+  <div style="flex:1"></div>
+  <div class="zd"></div>
+  <div style="height:1px"></div>
+  <div class="z7" style="font-size:2.5px"><span>v1.0 | CV-04 | Clinical Grade</span><span>DIETARY SUPPLEMENT · 0.20 lb (90 g)</span></div>
+</div>
+</div>
+
+<!-- ═══ POUCH ═══ -->
+<div class="block">
+<h3>POUCH</h3>
+<p>5×4" · 12 MAXimo² / 12 MAXima² SKUs</p>
+<div class="lbl" style="width:250px;height:200px;padding:10px 14px 8px">
+  <div class="z1"><span class="b" style="font-size:6px">GenoMAX²</span><span class="c" style="font-size:4px">CV-03</span></div>
+  <div style="height:6px"></div>
+  <div class="z2" style="font-size:4px">BIOLOGICAL OS MODULE</div>
+  <div style="height:5px"></div>
+  <div class="z3" style="font-size:15px;line-height:1.0">NITRIC SHOCK<br>PRE-WORKOUT POWDER</div>
+  <div style="height:4px"></div>
+  <div class="z4d" style="font-size:5px">L-Citrulline + Beetroot</div>
+  <div style="height:1px"></div>
+  <div class="z4s" style="font-size:3px">CARDIOVASCULAR NITRIC OXIDE SIGNALING</div>
+  <div style="height:7px"></div>
+  <div class="z5"><div class="z5n" style="font-size:7.5px">MAXimo²</div><div class="z5a mo" style="width:35px"></div></div>
+  <div style="height:7px"></div>
+  <div class="z6">
+    <div class="z6c"><span class="z6l" style="font-size:3px">TYPE</span><span class="z6x" style="font-size:4px">Powders</span></div>
+    <div class="z6c"><span class="z6l" style="font-size:3px">FUNCTION</span><span class="z6x" style="font-size:4px">Nitric Oxide</span></div>
+    <div class="z6c"><span class="z6l" style="font-size:3px">STATUS</span><span class="z6x" style="font-size:4px">Active</span></div>
+  </div>
+  <div style="flex:1"></div>
+  <div class="zd"></div>
+  <div style="height:2px"></div>
+  <div class="z7" style="font-size:3px"><span>v1.0 | CV-03 | Clinical Grade</span><span>1 lb (454 g)</span></div>
+</div>
+</div>
+
+<!-- ═══ DROPPER ═══ -->
+<div class="block">
+<h3>DROPPER</h3>
+<p>2×4" · 2 MAXimo² / 2 MAXima² SKUs</p>
+<div class="lbl" style="width:100px;height:200px;padding:6px 8px 5px">
+  <div class="z1"><span class="b" style="font-size:4.5px">GenoMAX²</span><span class="c" style="font-size:3px">GL-01</span></div>
+  <div style="height:3px"></div>
+  <div class="z2" style="font-size:2.5px">BIOLOGICAL OS MODULE</div>
+  <div style="height:3px"></div>
+  <div class="z3" style="font-size:8px;line-height:1.1">NORMAL<br>BLOOD SUGAR<br>DROPS</div>
+  <div style="height:2px"></div>
+  <div class="z4d" style="font-size:3.5px">Berberine HCl</div>
+  <div style="height:1px"></div>
+  <div class="z4s" style="font-size:2.5px">METABOLIC INSULIN SENSITIVITY</div>
+  <div style="height:4px"></div>
+  <div class="z5"><div class="z5n" style="font-size:5.5px">MAXimo²</div><div class="z5a mo" style="width:22px"></div></div>
+  <div style="height:4px"></div>
+  <div class="z6 z6v" style="font-size:3px">
+    <div class="z6c" style="flex-direction:row;gap:3px;align-items:baseline"><span class="z6l" style="font-size:2.5px">TYPE</span><span class="z6x" style="font-size:3px">Drops</span></div>
+    <div class="z6c" style="flex-direction:row;gap:3px;align-items:baseline"><span class="z6l" style="font-size:2.5px">FUNCTION</span><span class="z6x" style="font-size:3px">Insulin Sensitivity</span></div>
+    <div class="z6c" style="flex-direction:row;gap:3px;align-items:baseline"><span class="z6l" style="font-size:2.5px">STATUS</span><span class="z6x" style="font-size:3px">Active</span></div>
+  </div>
+  <div style="flex:1"></div>
+  <div class="zd"></div>
+  <div style="height:2px"></div>
+  <div class="z7 z7s" style="font-size:2.5px"><span>v1.0 | GL-01 | Clinical Grade</span><span>2.7 oz (75 g)</span></div>
+</div>
+</div>
+
+<!-- ═══ GUMMY ═══ -->
+<div class="block">
+<h3>GUMMY</h3>
+<p>6×2.5" (= BOTTLE container) · Gummy product form</p>
+<div class="lbl" style="width:300px;height:126px;padding:8px 12px 6px">
+  <div class="z1"><span class="b" style="font-size:6.5px">GenoMAX²</span><span class="c" style="font-size:4.5px">GL-13</span></div>
+  <div style="height:5px"></div>
+  <div class="z2" style="font-size:4.5px">BIOLOGICAL OS MODULE</div>
+  <div style="height:3px"></div>
+  <div class="z3" style="font-size:14px">HAIR SKIN &amp; NAILS GUMMIES</div>
+  <div style="height:2px"></div>
+  <div class="z4d" style="font-size:5.5px">Biotin + Collagen Complex</div>
+  <div style="height:1px"></div>
+  <div class="z4s" style="font-size:3.5px">INTEGUMENTARY KERATIN SYNTHESIS</div>
+  <div style="height:4px"></div>
+  <div class="z5"><div class="z5n" style="font-size:7px">MAXimo²</div><div class="z5a mo" style="width:35px"></div></div>
+  <div style="height:3px"></div>
+  <div class="z6">
+    <div class="z6c"><span class="z6l" style="font-size:3px">TYPE</span><span class="z6x" style="font-size:4px">Gummies</span></div>
+    <div class="z6c"><span class="z6l" style="font-size:3px">FUNCTION</span><span class="z6x" style="font-size:4px">Keratin Synthesis</span></div>
+    <div class="z6c"><span class="z6l" style="font-size:3px">STATUS</span><span class="z6x" style="font-size:4px">Active</span></div>
+  </div>
+  <div style="flex:1"></div>
+  <div class="zd"></div>
+  <div style="height:2px"></div>
+  <div class="z7" style="font-size:3px"><span>v1.0 | GL-13 | Clinical Grade</span><span>DIETARY SUPPLEMENT · 60 gummies</span></div>
+</div>
+</div>
+
+<!-- ═══ STRIPS ═══ -->
+<div class="block">
+<h3>STRIPS</h3>
+<p>4×6.5" · 12 MAXimo² / 11 MAXima² SKUs</p>
+<div class="lbl" style="width:200px;height:325px;padding:12px 14px 8px">
+  <div class="z1"><span class="b" style="font-size:6px">GenoMAX²</span><span class="c" style="font-size:4px">GL-04</span></div>
+  <div style="height:12px"></div>
+  <div class="z2" style="font-size:4.5px">BIOLOGICAL OS MODULE</div>
+  <div style="height:10px"></div>
+  <div class="z3" style="font-size:20px">IRON<br>STRIPS</div>
+  <div style="height:8px"></div>
+  <div class="z4d" style="font-size:6px">Elemental Iron</div>
+  <div style="height:2px"></div>
+  <div class="z4s" style="font-size:3.5px">METABOLIC IRON STATUS OPTIMIZATION</div>
+  <div style="height:14px"></div>
+  <div class="z5"><div class="z5n" style="font-size:9px">MAXimo²</div><div class="z5a mo" style="width:40px"></div></div>
+  <div style="height:14px"></div>
+  <div class="z6">
+    <div class="z6c"><span class="z6l" style="font-size:3.5px">TYPE</span><span class="z6x" style="font-size:4.5px">Strips</span></div>
+    <div class="z6c"><span class="z6l" style="font-size:3.5px">FUNCTION</span><span class="z6x" style="font-size:4.5px">Iron Optimization</span></div>
+    <div class="z6c"><span class="z6l" style="font-size:3.5px">STATUS</span><span class="z6x" style="font-size:4.5px">Active</span></div>
+  </div>
+  <div style="flex:1"></div>
+  <div class="zd"></div>
+  <div style="height:3px"></div>
+  <div class="z7" style="font-size:3px"><span>v1.0 | GL-04 | Clinical Grade</span><span>DIETARY SUPPLEMENT · 2 oz (60 g)</span></div>
+</div>
+</div>
+
+<!-- ═══ SACHET ═══ -->
+<div class="block">
+<h3>SACHET <span style="font-weight:400;color:var(--ter);font-size:9px">— proposed</span></h3>
+<p>3.5×2.75" (proposed) · Not in current Excel</p>
+<div class="lbl" style="width:176px;height:138px;padding:7px 10px 5px;border-style:dashed">
+  <div class="z1"><span class="b" style="font-size:5px">GenoMAX²</span><span class="c" style="font-size:3.5px">—</span></div>
+  <div style="height:4px"></div>
+  <div class="z2" style="font-size:3.5px">BIOLOGICAL OS MODULE</div>
+  <div style="height:3px"></div>
+  <div class="z3" style="font-size:11px">ELECTROLYTE<br>BALANCE</div>
+  <div style="height:2px"></div>
+  <div class="z4d" style="font-size:4.5px">Mineral Complex</div>
+  <div style="height:1px"></div>
+  <div class="z4s" style="font-size:2.5px">METABOLIC HYDRATION SUPPORT</div>
+  <div style="height:4px"></div>
+  <div class="z5"><div class="z5n" style="font-size:6px">MAXimo²</div><div class="z5a mo" style="width:28px"></div></div>
+  <div style="height:3px"></div>
+  <div class="z6">
+    <div class="z6c"><span class="z6l" style="font-size:2.5px">TYPE</span><span class="z6x" style="font-size:3.5px">Sachet</span></div>
+    <div class="z6c"><span class="z6l" style="font-size:2.5px">FUNCTION</span><span class="z6x" style="font-size:3.5px">Electrolyte</span></div>
+    <div class="z6c"><span class="z6l" style="font-size:2.5px">STATUS</span><span class="z6x" style="font-size:3.5px">Proposed</span></div>
+  </div>
+  <div style="flex:1"></div>
+  <div class="zd"></div>
+  <div style="height:1px"></div>
+  <div class="z7" style="font-size:2.5px"><span>v1.0 | — | Clinical Grade</span><span>5 g per sachet</span></div>
+</div>
+</div>
+
+</div>
+
+<div class="note">
+<b>VALIDATION NOTES</b><br><br>
+<b>Data integrity:</b> All product names from <code>Ingredient Name (Label)</code> field only. No interpretation.<br>
+<b>Format discovery:</b> Excel has 5 container types: <code>bottle</code>, <code>jar</code>, <code>pouch</code>, <code>dropper_bottle</code>, <code>strips_card</code>.<br>
+<b>GUMMY:</b> Uses <code>bottle</code> container (6×2.5"). Differentiated by <code>Product Form: Gummies</code> in Zone 6.<br>
+<b>SACHET:</b> Not in current Excel. Shown dashed as proposed. Dimensions need confirmation.<br>
+<b>System integrity:</b> All 7 zones present across every format. Typography hierarchy and color system consistent.<br>
+<b>Dropper:</b> Zone 6 switches to vertical stack. Zone 7 stacks. All sizes scale proportionally.<br>
+<b>JAR:</b> Wide-short — Zone 5+6 placed side-by-side to use horizontal space. Vertical spacing compressed.
+</div>
+
+</body>
+</html>

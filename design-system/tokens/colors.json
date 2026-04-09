@@ -1,0 +1,51 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "genomax2": {
+    "color": {
+      "background": {
+        "$value": "#F4F2EC",
+        "$type": "color",
+        "$description": "Off-white clinical — label background, PDP background"
+      },
+      "text": {
+        "primary": {
+          "$value": "#1A1815",
+          "$type": "color",
+          "$description": "Graphite / near-black — product name, brand, metadata values"
+        },
+        "secondary": {
+          "$value": "#5C5A55",
+          "$type": "color",
+          "$description": "Muted graphite — descriptor, module code, other ingredients"
+        },
+        "tertiary": {
+          "$value": "#9A9890",
+          "$type": "color",
+          "$description": "Zone separators, version strip, metadata labels, FDA disclaimer"
+        }
+      },
+      "divider": {
+        "$value": "#C5C2BA",
+        "$type": "color",
+        "$description": "Hairline zone dividers — 0.3-0.4pt weight"
+      },
+      "accent": {
+        "maximo": {
+          "$value": "#7A1E2E",
+          "$type": "color",
+          "$description": "Deep muted red — MAXimo² accent rule ONLY. Never decorative."
+        },
+        "maxima": {
+          "$value": "#7A304A",
+          "$type": "color",
+          "$description": "Muted rose — MAXima² accent rule ONLY. Never decorative."
+        }
+      }
+    }
+  },
+  "_rules": {
+    "accent_placement": "Under MAXimo²/MAXima² variant name ONLY (Zone 5). NOT under GenoMAX².",
+    "no_additions": "No badges, color blocks, gradients, or additional colors permitted.",
+    "brand_writing": "Always GenoMAX² — exact casing, superscript ²"
+  }
+}

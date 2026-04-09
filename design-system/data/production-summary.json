@@ -1,0 +1,26 @@
+{
+  "total_skus": 168,
+  "systems": {
+    "maximo": {
+      "count": 84,
+      "formats": {
+        "BOTTLE": 38,
+        "POUCH": 12,
+        "JAR": 20,
+        "DROPPER": 2,
+        "STRIPS": 12
+      }
+    },
+    "maxima": {
+      "count": 84,
+      "formats": {
+        "BOTTLE": 39,
+        "POUCH": 12,
+        "JAR": 20,
+        "DROPPER": 2,
+        "STRIPS": 11
+      }
+    }
+  },
+  "version": "3.0-LOCKED"
+}

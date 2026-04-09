@@ -1,0 +1,91 @@
+{
+  "_meta": {
+    "system": "GenoMAX²",
+    "version": "3.0-LOCKED",
+    "status": "PRODUCTION",
+    "locked_date": "2026-04-07",
+    "approved_by": "Hemi Michaeli",
+    "description": "V3 Brand Signature System — LOCKED. No deviations permitted."
+  },
+  "brand_signature_lockup": {
+    "_rule": "These 3 elements are INSEPARABLE. Never break, rearrange, or omit.",
+    "ceiling": {
+      "height": "2px",
+      "color": "{accent_color}",
+      "position": "top of label, full bleed",
+      "maximo_color": "#7A1E2E",
+      "maxima_color": "#7A304A"
+    },
+    "brand_name": {
+      "text": "GenoMAX²",
+      "fontFamily": "IBM Plex Mono",
+      "fontWeight": 700,
+      "fontSize": 12,
+      "letterSpacing": "18%",
+      "color": "#1A1815",
+      "position": "left-aligned below ceiling"
+    },
+    "brand_rule": {
+      "height": "0.5px",
+      "color": "#1A1815",
+      "opacity": 0.25,
+      "position": "below brand name, spans full content width"
+    },
+    "module_code": {
+      "fontFamily": "IBM Plex Mono",
+      "fontWeight": 500,
+      "fontSize": 6,
+      "letterSpacing": "12%",
+      "color": "#8A8880",
+      "position": "right-aligned, same baseline as brand name"
+    }
+  },
+  "colors_v3": {
+    "background": "#F4F2EC",
+    "text_primary": "#1A1815",
+    "text_secondary": "#4A4843",
+    "text_tertiary": "#8A8880",
+    "divider": "#C5C2BA",
+    "accent_maximo": "#7A1E2E",
+    "accent_maxima": "#7A304A",
+    "strip_bg": "#1A1815",
+    "strip_text": "#C5C2BA"
+  },
+  "typography_v3": {
+    "genomax_header": { "family": "IBM Plex Mono", "weight": 700, "size": 12, "tracking": "18%", "zone": 1 },
+    "zone2_header": { "family": "IBM Plex Mono", "weight": 500, "size": 7, "tracking": "18%", "transform": "uppercase", "zone": 2 },
+    "product_name": { "family": "IBM Plex Sans Condensed", "weight": 700, "size": 28, "tracking": "-2.5%", "transform": "uppercase", "lineHeight": 0.95, "zone": 3 },
+    "descriptor": { "family": "IBM Plex Sans", "weight": 300, "size": 8.5, "tracking": "1%", "zone": 4 },
+    "bio_system": { "family": "IBM Plex Mono", "weight": 400, "size": 6.5, "tracking": "6%", "transform": "uppercase", "separator": "·", "zone": 4 },
+    "variant_name": { "family": "IBM Plex Sans", "weight": 600, "size": 12, "tracking": "1%", "zone": 5 },
+    "metadata_label": { "family": "IBM Plex Mono", "weight": 500, "size": 5.5, "tracking": "10%", "transform": "uppercase", "zone": 6 },
+    "metadata_value": { "family": "IBM Plex Sans", "weight": 500, "size": 6.5, "zone": 6 },
+    "version_strip": { "family": "IBM Plex Mono", "weight": 400, "size": 5.5, "tracking": "3%", "inverted": true, "zone": 7 }
+  },
+  "spacing_v3": {
+    "micro": 2, "tight": 3, "compact": 4, "base": 6, "medium": 8, "section": 12, "large": 16, "panel": 20
+  },
+  "strokes_v3": {
+    "divider": 0.5,
+    "accent_rule": 2,
+    "accent_width": 70,
+    "brand_ceiling": 2,
+    "brand_rule": 0.5,
+    "brand_rule_opacity": 0.25
+  },
+  "zone7_strip": {
+    "background": "#1A1815",
+    "text_color": "#C5C2BA",
+    "padding_vertical": 5,
+    "position": "full bleed bottom",
+    "separator": "·"
+  },
+  "visual_architecture": {
+    "three_horizontal_anchors": [
+      "Brand ceiling (top) — accent color — ownership",
+      "MAXimo²/MAXima² accent rule (middle) — identity",
+      "Dark version strip (bottom) — foundation"
+    ],
+    "brand_sandwich": "accent ceiling + content + dark strip = instantly recognizable from distance"
+  }
+}

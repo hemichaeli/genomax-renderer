@@ -1,0 +1,1192 @@
+{
+  "version": "V4-FINAL",
+  "generated": "2026-04-07",
+  "systems": {
+    "maximo": {
+      "total": 84,
+      "labels": [
+        {
+          "code": "CV-01",
+          "name": "OMEGA-3 EPA 180MG + DHA 120MG",
+          "format": "BOTTLE",
+          "pdf": "CV-01_OMEGA-3_EPA_180MG_+_DHA_120MG_BOTTLE.pdf",
+          "png": "CV-01_OMEGA-3_EPA_180MG_+_DHA_120MG_BOTTLE.png"
+        },
+        {
+          "code": "CV-02",
+          "name": "BONE & HEART SUPPORT",
+          "format": "BOTTLE",
+          "pdf": "CV-02_BONE_&_HEART_SUPPORT_BOTTLE.pdf",
+          "png": "CV-02_BONE_&_HEART_SUPPORT_BOTTLE.png"
+        },
+        {
+          "code": "CV-03",
+          "name": "NITRIC OXIDE",
+          "format": "BOTTLE",
+          "pdf": "CV-03_NITRIC_OXIDE_BOTTLE.pdf",
+          "png": "CV-03_NITRIC_OXIDE_BOTTLE.png"
+        },
+        {
+          "code": "CV-03",
+          "name": "NITRIC SHOCK PRE-WORKOUT POWDER (FRUIT PUNCH)",
+          "format": "POUCH",
+          "pdf": "CV-03_NITRIC_SHOCK_PRE-WORKOUT_POWDER_(FRUIT_P_POUCH.pdf",
+          "png": "CV-03_NITRIC_SHOCK_PRE-WORKOUT_POWDER_(FRUIT_P_POUCH.png"
+        },
+        {
+          "code": "CV-03",
+          "name": "BEETROOT CAPSULES",
+          "format": "BOTTLE",
+          "pdf": "CV-03_BEETROOT_CAPSULES_BOTTLE.pdf",
+          "png": "CV-03_BEETROOT_CAPSULES_BOTTLE.png"
+        },
+        {
+          "code": "CV-04",
+          "name": "COLON GENTLE CLEANSE",
+          "format": "JAR",
+          "pdf": "CV-04_COLON_GENTLE_CLEANSE_JAR.pdf",
+          "png": "CV-04_COLON_GENTLE_CLEANSE_JAR.png"
+        },
+        {
+          "code": "GL-01",
+          "name": "BERBERINE",
+          "format": "BOTTLE",
+          "pdf": "GL-01_BERBERINE_BOTTLE.pdf",
+          "png": "GL-01_BERBERINE_BOTTLE.png"
+        },
+        {
+          "code": "GL-01",
+          "name": "NORMAL BLOOD SUGAR DROPS",
+          "format": "DROPPER",
+          "pdf": "GL-01_NORMAL_BLOOD_SUGAR_DROPS_DROPPER.pdf",
+          "png": "GL-01_NORMAL_BLOOD_SUGAR_DROPS_DROPPER.png"
+        },
+        {
+          "code": "GL-02",
+          "name": "COMPLETE MULTIVITAMIN",
+          "format": "BOTTLE",
+          "pdf": "GL-02_COMPLETE_MULTIVITAMIN_BOTTLE.pdf",
+          "png": "GL-02_COMPLETE_MULTIVITAMIN_BOTTLE.png"
+        },
+        {
+          "code": "GL-03",
+          "name": "VITAMIN D3 2,000 IU",
+          "format": "BOTTLE",
+          "pdf": "GL-03_VITAMIN_D3_2,000_IU_BOTTLE.pdf",
+          "png": "GL-03_VITAMIN_D3_2,000_IU_BOTTLE.png"
+        },
+        {
+          "code": "GL-04",
+          "name": "IRON STRIPS",
+          "format": "STRIPS",
+          "pdf": "GL-04_IRON_STRIPS_STRIPS.pdf",
+          "png": "GL-04_IRON_STRIPS_STRIPS.png"
+        },
+        {
+          "code": "GL-05",
+          "name": "FAT BURNER WITH MCT",
+          "format": "BOTTLE",
+          "pdf": "GL-05_FAT_BURNER_WITH_MCT_BOTTLE.pdf",
+          "png": "GL-05_FAT_BURNER_WITH_MCT_BOTTLE.png"
+        },
+        {
+          "code": "GL-06",
+          "name": "MORINGA PURE",
+          "format": "BOTTLE",
+          "pdf": "GL-06_MORINGA_PURE_BOTTLE.pdf",
+          "png": "GL-06_MORINGA_PURE_BOTTLE.png"
+        },
+        {
+          "code": "GL-07",
+          "name": "DIGESTIVE + GUT HEALTH STRIPS",
+          "format": "BOTTLE",
+          "pdf": "GL-07_DIGESTIVE_+_GUT_HEALTH_STRIPS_BOTTLE.pdf",
+          "png": "GL-07_DIGESTIVE_+_GUT_HEALTH_STRIPS_BOTTLE.png"
+        },
+        {
+          "code": "GL-07",
+          "name": "PROBIOTIC 20 BILLION",
+          "format": "BOTTLE",
+          "pdf": "GL-07_PROBIOTIC_20_BILLION_BOTTLE.pdf",
+          "png": "GL-07_PROBIOTIC_20_BILLION_BOTTLE.png"
+        },
+        {
+          "code": "GL-07",
+          "name": "PROBIOTIC 40 BILLION WITH PREBIOTICS",
+          "format": "BOTTLE",
+          "pdf": "GL-07_PROBIOTIC_40_BILLION_WITH_PREBIOTICS_BOTTLE.pdf",
+          "png": "GL-07_PROBIOTIC_40_BILLION_WITH_PREBIOTICS_BOTTLE.png"
+        },
+        {
+          "code": "GL-07",
+          "name": "FERMENTED MUSHROOM BLEND",
+          "format": "JAR",
+          "pdf": "GL-07_FERMENTED_MUSHROOM_BLEND_JAR.pdf",
+          "png": "GL-07_FERMENTED_MUSHROOM_BLEND_JAR.png"
+        },
+        {
+          "code": "GL-08",
+          "name": "COLOSTRUM CAPSULES",
+          "format": "BOTTLE",
+          "pdf": "GL-08_COLOSTRUM_CAPSULES_BOTTLE.pdf",
+          "png": "GL-08_COLOSTRUM_CAPSULES_BOTTLE.png"
+        },
+        {
+          "code": "GL-08",
+          "name": "COLOSTRUM POWDER",
+          "format": "JAR",
+          "pdf": "GL-08_COLOSTRUM_POWDER_JAR.pdf",
+          "png": "GL-08_COLOSTRUM_POWDER_JAR.png"
+        },
+        {
+          "code": "GL-08",
+          "name": "DIGESTIVE + GUT HEALTH STRIPS",
+          "format": "STRIPS",
+          "pdf": "GL-08_DIGESTIVE_+_GUT_HEALTH_STRIPS_STRIPS.pdf",
+          "png": "GL-08_DIGESTIVE_+_GUT_HEALTH_STRIPS_STRIPS.png"
+        },
+        {
+          "code": "GL-09",
+          "name": "DIGESTIVE ENZYME PRO BLEND",
+          "format": "BOTTLE",
+          "pdf": "GL-09_DIGESTIVE_ENZYME_PRO_BLEND_BOTTLE.pdf",
+          "png": "GL-09_DIGESTIVE_ENZYME_PRO_BLEND_BOTTLE.png"
+        },
+        {
+          "code": "GL-10",
+          "name": "DENTAL + ORAL HEALTH CHEWABLES",
+          "format": "BOTTLE",
+          "pdf": "GL-10_DENTAL_+_ORAL_HEALTH_CHEWABLES_BOTTLE.pdf",
+          "png": "GL-10_DENTAL_+_ORAL_HEALTH_CHEWABLES_BOTTLE.png"
+        },
+        {
+          "code": "GL-11",
+          "name": "PROBIOTIC + METABOLISM STRIPS",
+          "format": "STRIPS",
+          "pdf": "GL-11_PROBIOTIC_+_METABOLISM_STRIPS_STRIPS.pdf",
+          "png": "GL-11_PROBIOTIC_+_METABOLISM_STRIPS_STRIPS.png"
+        },
+        {
+          "code": "GL-12",
+          "name": "L-GLUTAMINE POWDER",
+          "format": "POUCH",
+          "pdf": "GL-12_L-GLUTAMINE_POWDER_POUCH.pdf",
+          "png": "GL-12_L-GLUTAMINE_POWDER_POUCH.png"
+        },
+        {
+          "code": "GL-13",
+          "name": "HAIR SKIN & NAILS GUMMIES",
+          "format": "BOTTLE",
+          "pdf": "GL-13_HAIR_SKIN_&_NAILS_GUMMIES_BOTTLE.pdf",
+          "png": "GL-13_HAIR_SKIN_&_NAILS_GUMMIES_BOTTLE.png"
+        },
+        {
+          "code": "GL-13",
+          "name": "HAIR SKIN AND NAILS ESSENTIALS",
+          "format": "BOTTLE",
+          "pdf": "GL-13_HAIR_SKIN_AND_NAILS_ESSENTIALS_BOTTLE.pdf",
+          "png": "GL-13_HAIR_SKIN_AND_NAILS_ESSENTIALS_BOTTLE.png"
+        },
+        {
+          "code": "GL-13",
+          "name": "HAIR SKIN & NAILS STRIPS",
+          "format": "STRIPS",
+          "pdf": "GL-13_HAIR_SKIN_&_NAILS_STRIPS_STRIPS.pdf",
+          "png": "GL-13_HAIR_SKIN_&_NAILS_STRIPS_STRIPS.png"
+        },
+        {
+          "code": "GL-14",
+          "name": "BONE SUPPORT STRIPS",
+          "format": "STRIPS",
+          "pdf": "GL-14_BONE_SUPPORT_STRIPS_STRIPS.pdf",
+          "png": "GL-14_BONE_SUPPORT_STRIPS_STRIPS.png"
+        },
+        {
+          "code": "GL-15",
+          "name": "HYDRATION POWDER (LEMONADE)",
+          "format": "JAR",
+          "pdf": "GL-15_HYDRATION_POWDER_(LEMONADE)_JAR.pdf",
+          "png": "GL-15_HYDRATION_POWDER_(LEMONADE)_JAR.png"
+        },
+        {
+          "code": "GL-15",
+          "name": "HYDRATION POWDER (LYCHEE)",
+          "format": "JAR",
+          "pdf": "GL-15_HYDRATION_POWDER_(LYCHEE)_JAR.pdf",
+          "png": "GL-15_HYDRATION_POWDER_(LYCHEE)_JAR.png"
+        },
+        {
+          "code": "GL-15",
+          "name": "HYDRATION POWDER (MATCHA GREEN TEA)",
+          "format": "JAR",
+          "pdf": "GL-15_HYDRATION_POWDER_(MATCHA_GREEN_TEA)_JAR.pdf",
+          "png": "GL-15_HYDRATION_POWDER_(MATCHA_GREEN_TEA)_JAR.png"
+        },
+        {
+          "code": "GL-15",
+          "name": "HYDRATION POWDER (PASSION FRUIT)",
+          "format": "JAR",
+          "pdf": "GL-15_HYDRATION_POWDER_(PASSION_FRUIT)_JAR.pdf",
+          "png": "GL-15_HYDRATION_POWDER_(PASSION_FRUIT)_JAR.png"
+        },
+        {
+          "code": "GL-15",
+          "name": "HYDRATION POWDER (PEACH MANGO)",
+          "format": "JAR",
+          "pdf": "GL-15_HYDRATION_POWDER_(PEACH_MANGO)_JAR.pdf",
+          "png": "GL-15_HYDRATION_POWDER_(PEACH_MANGO)_JAR.png"
+        },
+        {
+          "code": "MT-01",
+          "name": "ALPHA ENERGY",
+          "format": "BOTTLE",
+          "pdf": "MT-01_ALPHA_ENERGY_BOTTLE.pdf",
+          "png": "MT-01_ALPHA_ENERGY_BOTTLE.png"
+        },
+        {
+          "code": "MT-01",
+          "name": "ENERGY POWDER (COTTON CANDY)",
+          "format": "JAR",
+          "pdf": "MT-01_ENERGY_POWDER_(COTTON_CANDY)_JAR.pdf",
+          "png": "MT-01_ENERGY_POWDER_(COTTON_CANDY)_JAR.png"
+        },
+        {
+          "code": "MT-01",
+          "name": "ENERGY POWDER (FRUIT PUNCH)",
+          "format": "JAR",
+          "pdf": "MT-01_ENERGY_POWDER_(FRUIT_PUNCH)_JAR.pdf",
+          "png": "MT-01_ENERGY_POWDER_(FRUIT_PUNCH)_JAR.png"
+        },
+        {
+          "code": "MT-01",
+          "name": "ENERGY POWDER (GUAVA BERRY)",
+          "format": "JAR",
+          "pdf": "MT-01_ENERGY_POWDER_(GUAVA_BERRY)_JAR.pdf",
+          "png": "MT-01_ENERGY_POWDER_(GUAVA_BERRY)_JAR.png"
+        },
+        {
+          "code": "MT-01",
+          "name": "ENERGY POWDER (LYCHEE SPLASH ENERGY)",
+          "format": "JAR",
+          "pdf": "MT-01_ENERGY_POWDER_(LYCHEE_SPLASH_ENERGY)_JAR.pdf",
+          "png": "MT-01_ENERGY_POWDER_(LYCHEE_SPLASH_ENERGY)_JAR.png"
+        },
+        {
+          "code": "MT-01",
+          "name": "ENERGY POWDER (STRAWBERRY SHORTCAKE)",
+          "format": "JAR",
+          "pdf": "MT-01_ENERGY_POWDER_(STRAWBERRY_SHORTCAKE)_JAR.pdf",
+          "png": "MT-01_ENERGY_POWDER_(STRAWBERRY_SHORTCAKE)_JAR.png"
+        },
+        {
+          "code": "MT-01",
+          "name": "ENERGY POWDER (YUZU FLAVOR)",
+          "format": "JAR",
+          "pdf": "MT-01_ENERGY_POWDER_(YUZU_FLAVOR)_JAR.pdf",
+          "png": "MT-01_ENERGY_POWDER_(YUZU_FLAVOR)_JAR.png"
+        },
+        {
+          "code": "MT-01",
+          "name": "ENERGY STRIPS",
+          "format": "STRIPS",
+          "pdf": "MT-01_ENERGY_STRIPS_STRIPS.pdf",
+          "png": "MT-01_ENERGY_STRIPS_STRIPS.png"
+        },
+        {
+          "code": "MT-02",
+          "name": "FRUITS AND VEGGIES",
+          "format": "BOTTLE",
+          "pdf": "MT-02_FRUITS_AND_VEGGIES_BOTTLE.pdf",
+          "png": "MT-02_FRUITS_AND_VEGGIES_BOTTLE.png"
+        },
+        {
+          "code": "MT-02",
+          "name": "BEE BREAD POWDER",
+          "format": "JAR",
+          "pdf": "MT-02_BEE_BREAD_POWDER_JAR.pdf",
+          "png": "MT-02_BEE_BREAD_POWDER_JAR.png"
+        },
+        {
+          "code": "MT-02",
+          "name": "BEE PEARL",
+          "format": "BOTTLE",
+          "pdf": "MT-02_BEE_PEARL_BOTTLE.pdf",
+          "png": "MT-02_BEE_PEARL_BOTTLE.png"
+        },
+        {
+          "code": "MT-03",
+          "name": "GREENS SUPERFOOD",
+          "format": "JAR",
+          "pdf": "MT-03_GREENS_SUPERFOOD_JAR.pdf",
+          "png": "MT-03_GREENS_SUPERFOOD_JAR.png"
+        },
+        {
+          "code": "MT-04",
+          "name": "ULTRA CLEANSE SMOOTHIE GREENS",
+          "format": "POUCH",
+          "pdf": "MT-04_ULTRA_CLEANSE_SMOOTHIE_GREENS_POUCH.pdf",
+          "png": "MT-04_ULTRA_CLEANSE_SMOOTHIE_GREENS_POUCH.png"
+        },
+        {
+          "code": "MT-04",
+          "name": "MAX DETOX (ACAI DETOX)",
+          "format": "BOTTLE",
+          "pdf": "MT-04_MAX_DETOX_(ACAI_DETOX)_BOTTLE.pdf",
+          "png": "MT-04_MAX_DETOX_(ACAI_DETOX)_BOTTLE.png"
+        },
+        {
+          "code": "MT-05",
+          "name": "REDS SUPERFOOD",
+          "format": "JAR",
+          "pdf": "MT-05_REDS_SUPERFOOD_JAR.pdf",
+          "png": "MT-05_REDS_SUPERFOOD_JAR.png"
+        },
+        {
+          "code": "MT-06",
+          "name": "NAD+",
+          "format": "BOTTLE",
+          "pdf": "MT-06_NAD+_BOTTLE.pdf",
+          "png": "MT-06_NAD+_BOTTLE.png"
+        },
+        {
+          "code": "MT-07",
+          "name": "RESVERATROL 50% 600MG",
+          "format": "BOTTLE",
+          "pdf": "MT-07_RESVERATROL_50%_600MG_BOTTLE.pdf",
+          "png": "MT-07_RESVERATROL_50%_600MG_BOTTLE.png"
+        },
+        {
+          "code": "MT-08",
+          "name": "MUSHROOM EXTRACT COMPLEX",
+          "format": "BOTTLE",
+          "pdf": "MT-08_MUSHROOM_EXTRACT_COMPLEX_BOTTLE.pdf",
+          "png": "MT-08_MUSHROOM_EXTRACT_COMPLEX_BOTTLE.png"
+        },
+        {
+          "code": "MT-09",
+          "name": "ADVANCED 100% WHEY PROTEIN ISOLATE (CHOCOLATE)",
+          "format": "POUCH",
+          "pdf": "MT-09_ADVANCED_100%_WHEY_PROTEIN_ISOLATE_(CHOC_POUCH.pdf",
+          "png": "MT-09_ADVANCED_100%_WHEY_PROTEIN_ISOLATE_(CHOC_POUCH.png"
+        },
+        {
+          "code": "MT-09",
+          "name": "ADVANCED 100% WHEY PROTEIN ISOLATE (VANILLA)",
+          "format": "POUCH",
+          "pdf": "MT-09_ADVANCED_100%_WHEY_PROTEIN_ISOLATE_(VANI_POUCH.pdf",
+          "png": "MT-09_ADVANCED_100%_WHEY_PROTEIN_ISOLATE_(VANI_POUCH.png"
+        },
+        {
+          "code": "MT-09",
+          "name": "PURE3 100% WHEY PROTEIN ISOLATE (CHOCOLATE)",
+          "format": "POUCH",
+          "pdf": "MT-09_PURE3_100%_WHEY_PROTEIN_ISOLATE_(CHOCOLA_POUCH.pdf",
+          "png": "MT-09_PURE3_100%_WHEY_PROTEIN_ISOLATE_(CHOCOLA_POUCH.png"
+        },
+        {
+          "code": "MT-09",
+          "name": "PURE3 100% WHEY PROTEIN ISOLATE (VANILLA)",
+          "format": "POUCH",
+          "pdf": "MT-09_PURE3_100%_WHEY_PROTEIN_ISOLATE_(VANILLA_POUCH.pdf",
+          "png": "MT-09_PURE3_100%_WHEY_PROTEIN_ISOLATE_(VANILLA_POUCH.png"
+        },
+        {
+          "code": "MT-10",
+          "name": "BCAA POST WORKOUT POWDER (HONEYDEW/WATERMELON)",
+          "format": "POUCH",
+          "pdf": "MT-10_BCAA_POST_WORKOUT_POWDER_(HONEYDEW-WATER_POUCH.pdf",
+          "png": "MT-10_BCAA_POST_WORKOUT_POWDER_(HONEYDEW-WATER_POUCH.png"
+        },
+        {
+          "code": "MT-10",
+          "name": "BCAA SHOCK POWDER (FRUIT PUNCH)",
+          "format": "POUCH",
+          "pdf": "MT-10_BCAA_SHOCK_POWDER_(FRUIT_PUNCH)_POUCH.pdf",
+          "png": "MT-10_BCAA_SHOCK_POWDER_(FRUIT_PUNCH)_POUCH.png"
+        },
+        {
+          "code": "MT-11",
+          "name": "BEAUTY + COLLAGEN STRIPS",
+          "format": "STRIPS",
+          "pdf": "MT-11_BEAUTY_+_COLLAGEN_STRIPS_STRIPS.pdf",
+          "png": "MT-11_BEAUTY_+_COLLAGEN_STRIPS_STRIPS.png"
+        },
+        {
+          "code": "MT-11",
+          "name": "GRASS-FED COLLAGEN CREAMER (VANILLA)",
+          "format": "POUCH",
+          "pdf": "MT-11_GRASS-FED_COLLAGEN_CREAMER_(VANILLA)_POUCH.pdf",
+          "png": "MT-11_GRASS-FED_COLLAGEN_CREAMER_(VANILLA)_POUCH.png"
+        },
+        {
+          "code": "MT-11",
+          "name": "GRASS-FED COLLAGEN PEPTIDES POWDER (CHOCOLATE)",
+          "format": "POUCH",
+          "pdf": "MT-11_GRASS-FED_COLLAGEN_PEPTIDES_POWDER_(CHOC_POUCH.pdf",
+          "png": "MT-11_GRASS-FED_COLLAGEN_PEPTIDES_POWDER_(CHOC_POUCH.png"
+        },
+        {
+          "code": "MT-11",
+          "name": "GRASS-FED HYDROLYZED COLLAGEN PEPTIDES",
+          "format": "POUCH",
+          "pdf": "MT-11_GRASS-FED_HYDROLYZED_COLLAGEN_PEPTIDES_POUCH.pdf",
+          "png": "MT-11_GRASS-FED_HYDROLYZED_COLLAGEN_PEPTIDES_POUCH.png"
+        },
+        {
+          "code": "MT-12",
+          "name": "BEE PEARL",
+          "format": "BOTTLE",
+          "pdf": "MT-12_BEE_PEARL_BOTTLE.pdf",
+          "png": "MT-12_BEE_PEARL_BOTTLE.png"
+        },
+        {
+          "code": "IN-01",
+          "name": "PLATINUM TURMERIC",
+          "format": "BOTTLE",
+          "pdf": "IN-01_PLATINUM_TURMERIC_BOTTLE.pdf",
+          "png": "IN-01_PLATINUM_TURMERIC_BOTTLE.png"
+        },
+        {
+          "code": "IN-01",
+          "name": "AYURVEDIC COMPLEX",
+          "format": "BOTTLE",
+          "pdf": "IN-01_AYURVEDIC_COMPLEX_BOTTLE.pdf",
+          "png": "IN-01_AYURVEDIC_COMPLEX_BOTTLE.png"
+        },
+        {
+          "code": "IN-02",
+          "name": "VISION SUPPORT",
+          "format": "BOTTLE",
+          "pdf": "IN-02_VISION_SUPPORT_BOTTLE.pdf",
+          "png": "IN-02_VISION_SUPPORT_BOTTLE.png"
+        },
+        {
+          "code": "IN-03",
+          "name": "HANGOVER STRIPS",
+          "format": "STRIPS",
+          "pdf": "IN-03_HANGOVER_STRIPS_STRIPS.pdf",
+          "png": "IN-03_HANGOVER_STRIPS_STRIPS.png"
+        },
+        {
+          "code": "IN-04",
+          "name": "RESPIRATORY & LUNG HEALTH DROPS",
+          "format": "DROPPER",
+          "pdf": "IN-04_RESPIRATORY_&_LUNG_HEALTH_DROPS_DROPPER.pdf",
+          "png": "IN-04_RESPIRATORY_&_LUNG_HEALTH_DROPS_DROPPER.png"
+        },
+        {
+          "code": "IN-05",
+          "name": "LIVER SUPPORT",
+          "format": "BOTTLE",
+          "pdf": "IN-05_LIVER_SUPPORT_BOTTLE.pdf",
+          "png": "IN-05_LIVER_SUPPORT_BOTTLE.png"
+        },
+        {
+          "code": "IN-06",
+          "name": "CHAGA MUSHROOM",
+          "format": "BOTTLE",
+          "pdf": "IN-06_CHAGA_MUSHROOM_BOTTLE.pdf",
+          "png": "IN-06_CHAGA_MUSHROOM_BOTTLE.png"
+        },
+        {
+          "code": "COG-01",
+          "name": "BRAIN & FOCUS FORMULA",
+          "format": "BOTTLE",
+          "pdf": "COG-01_BRAIN_&_FOCUS_FORMULA_BOTTLE.pdf",
+          "png": "COG-01_BRAIN_&_FOCUS_FORMULA_BOTTLE.png"
+        },
+        {
+          "code": "COG-01",
+          "name": "MUSHROOM FOCUS STRIPS",
+          "format": "STRIPS",
+          "pdf": "COG-01_MUSHROOM_FOCUS_STRIPS_STRIPS.pdf",
+          "png": "COG-01_MUSHROOM_FOCUS_STRIPS_STRIPS.png"
+        },
+        {
+          "code": "COG-02",
+          "name": "FOCUS POWDER (SOUR GRAPE)",
+          "format": "JAR",
+          "pdf": "COG-02_FOCUS_POWDER_(SOUR_GRAPE)_JAR.pdf",
+          "png": "COG-02_FOCUS_POWDER_(SOUR_GRAPE)_JAR.png"
+        },
+        {
+          "code": "COG-02",
+          "name": "FOCUS POWDER (SOUR GUMMI WORM)",
+          "format": "JAR",
+          "pdf": "COG-02_FOCUS_POWDER_(SOUR_GUMMI_WORM)_JAR.pdf",
+          "png": "COG-02_FOCUS_POWDER_(SOUR_GUMMI_WORM)_JAR.png"
+        },
+        {
+          "code": "COG-03",
+          "name": "COGNITIVE RELAX STRIPS",
+          "format": "STRIPS",
+          "pdf": "COG-03_COGNITIVE_RELAX_STRIPS_STRIPS.pdf",
+          "png": "COG-03_COGNITIVE_RELAX_STRIPS_STRIPS.png"
+        },
+        {
+          "code": "COG-04",
+          "name": "MUSHROOM EXTRACT COMPLEX",
+          "format": "BOTTLE",
+          "pdf": "COG-04_MUSHROOM_EXTRACT_COMPLEX_BOTTLE.pdf",
+          "png": "COG-04_MUSHROOM_EXTRACT_COMPLEX_BOTTLE.png"
+        },
+        {
+          "code": "COG-05",
+          "name": "LION'S MANE MUSHROOM",
+          "format": "BOTTLE",
+          "pdf": "COG-05_LIONS_MANE_MUSHROOM_BOTTLE.pdf",
+          "png": "COG-05_LIONS_MANE_MUSHROOM_BOTTLE.png"
+        },
+        {
+          "code": "COG-06",
+          "name": "GINKGO BILOBA + GINSENG",
+          "format": "BOTTLE",
+          "pdf": "COG-06_GINKGO_BILOBA_+_GINSENG_BOTTLE.pdf",
+          "png": "COG-06_GINKGO_BILOBA_+_GINSENG_BOTTLE.png"
+        },
+        {
+          "code": "HR-01",
+          "name": "MACA PLUS",
+          "format": "BOTTLE",
+          "pdf": "HR-01_MACA_PLUS_BOTTLE.pdf",
+          "png": "HR-01_MACA_PLUS_BOTTLE.png"
+        },
+        {
+          "code": "HR-03",
+          "name": "LIBIDO SUPPORT STRIPS",
+          "format": "STRIPS",
+          "pdf": "HR-03_LIBIDO_SUPPORT_STRIPS_STRIPS.pdf",
+          "png": "HR-03_LIBIDO_SUPPORT_STRIPS_STRIPS.png"
+        },
+        {
+          "code": "HR-04",
+          "name": "SEA MOSS",
+          "format": "BOTTLE",
+          "pdf": "HR-04_SEA_MOSS_BOTTLE.pdf",
+          "png": "HR-04_SEA_MOSS_BOTTLE.png"
+        },
+        {
+          "code": "SL-01",
+          "name": "MAGNESIUM GLYCINATE",
+          "format": "BOTTLE",
+          "pdf": "SL-01_MAGNESIUM_GLYCINATE_BOTTLE.pdf",
+          "png": "SL-01_MAGNESIUM_GLYCINATE_BOTTLE.png"
+        },
+        {
+          "code": "SL-01",
+          "name": "SLEEP STRIPS",
+          "format": "STRIPS",
+          "pdf": "SL-01_SLEEP_STRIPS_STRIPS.pdf",
+          "png": "SL-01_SLEEP_STRIPS_STRIPS.png"
+        },
+        {
+          "code": "SL-01",
+          "name": "SLEEP PLUS COLLAGEN CREAM",
+          "format": "JAR",
+          "pdf": "SL-01_SLEEP_PLUS_COLLAGEN_CREAM_JAR.pdf",
+          "png": "SL-01_SLEEP_PLUS_COLLAGEN_CREAM_JAR.png"
+        },
+        {
+          "code": "SL-02",
+          "name": "SLEEP SUPPORT",
+          "format": "BOTTLE",
+          "pdf": "SL-02_SLEEP_SUPPORT_BOTTLE.pdf",
+          "png": "SL-02_SLEEP_SUPPORT_BOTTLE.png"
+        }
+      ]
+    },
+    "maxima": {
+      "total": 84,
+      "labels": [
+        {
+          "code": "CV-01",
+          "name": "OMEGA-3 EPA 180MG + DHA 120MG",
+          "format": "BOTTLE",
+          "pdf": "CV-01_OMEGA-3_EPA_180MG_+_DHA_120MG_BOTTLE.pdf",
+          "png": "CV-01_OMEGA-3_EPA_180MG_+_DHA_120MG_BOTTLE.png"
+        },
+        {
+          "code": "CV-02",
+          "name": "BONE & HEART SUPPORT",
+          "format": "BOTTLE",
+          "pdf": "CV-02_BONE_&_HEART_SUPPORT_BOTTLE.pdf",
+          "png": "CV-02_BONE_&_HEART_SUPPORT_BOTTLE.png"
+        },
+        {
+          "code": "CV-03",
+          "name": "NITRIC OXIDE",
+          "format": "BOTTLE",
+          "pdf": "CV-03_NITRIC_OXIDE_BOTTLE.pdf",
+          "png": "CV-03_NITRIC_OXIDE_BOTTLE.png"
+        },
+        {
+          "code": "CV-03",
+          "name": "NITRIC SHOCK PRE-WORKOUT POWDER (FRUIT PUNCH)",
+          "format": "POUCH",
+          "pdf": "CV-03_NITRIC_SHOCK_PRE-WORKOUT_POWDER_(FRUIT_P_POUCH.pdf",
+          "png": "CV-03_NITRIC_SHOCK_PRE-WORKOUT_POWDER_(FRUIT_P_POUCH.png"
+        },
+        {
+          "code": "CV-03",
+          "name": "BEETROOT CAPSULES",
+          "format": "BOTTLE",
+          "pdf": "CV-03_BEETROOT_CAPSULES_BOTTLE.pdf",
+          "png": "CV-03_BEETROOT_CAPSULES_BOTTLE.png"
+        },
+        {
+          "code": "CV-04",
+          "name": "COLON GENTLE CLEANSE",
+          "format": "JAR",
+          "pdf": "CV-04_COLON_GENTLE_CLEANSE_JAR.pdf",
+          "png": "CV-04_COLON_GENTLE_CLEANSE_JAR.png"
+        },
+        {
+          "code": "GL-01",
+          "name": "BERBERINE",
+          "format": "BOTTLE",
+          "pdf": "GL-01_BERBERINE_BOTTLE.pdf",
+          "png": "GL-01_BERBERINE_BOTTLE.png"
+        },
+        {
+          "code": "GL-01",
+          "name": "NORMAL BLOOD SUGAR DROPS",
+          "format": "DROPPER",
+          "pdf": "GL-01_NORMAL_BLOOD_SUGAR_DROPS_DROPPER.pdf",
+          "png": "GL-01_NORMAL_BLOOD_SUGAR_DROPS_DROPPER.png"
+        },
+        {
+          "code": "GL-02",
+          "name": "COMPLETE MULTIVITAMIN",
+          "format": "BOTTLE",
+          "pdf": "GL-02_COMPLETE_MULTIVITAMIN_BOTTLE.pdf",
+          "png": "GL-02_COMPLETE_MULTIVITAMIN_BOTTLE.png"
+        },
+        {
+          "code": "GL-03",
+          "name": "VITAMIN D3 2,000 IU",
+          "format": "BOTTLE",
+          "pdf": "GL-03_VITAMIN_D3_2,000_IU_BOTTLE.pdf",
+          "png": "GL-03_VITAMIN_D3_2,000_IU_BOTTLE.png"
+        },
+        {
+          "code": "GL-04",
+          "name": "IRON STRIPS",
+          "format": "STRIPS",
+          "pdf": "GL-04_IRON_STRIPS_STRIPS.pdf",
+          "png": "GL-04_IRON_STRIPS_STRIPS.png"
+        },
+        {
+          "code": "GL-05",
+          "name": "FAT BURNER WITH MCT",
+          "format": "BOTTLE",
+          "pdf": "GL-05_FAT_BURNER_WITH_MCT_BOTTLE.pdf",
+          "png": "GL-05_FAT_BURNER_WITH_MCT_BOTTLE.png"
+        },
+        {
+          "code": "GL-06",
+          "name": "MORINGA PURE",
+          "format": "BOTTLE",
+          "pdf": "GL-06_MORINGA_PURE_BOTTLE.pdf",
+          "png": "GL-06_MORINGA_PURE_BOTTLE.png"
+        },
+        {
+          "code": "GL-07",
+          "name": "DIGESTIVE + GUT HEALTH STRIPS",
+          "format": "BOTTLE",
+          "pdf": "GL-07_DIGESTIVE_+_GUT_HEALTH_STRIPS_BOTTLE.pdf",
+          "png": "GL-07_DIGESTIVE_+_GUT_HEALTH_STRIPS_BOTTLE.png"
+        },
+        {
+          "code": "GL-07",
+          "name": "PROBIOTIC 20 BILLION",
+          "format": "BOTTLE",
+          "pdf": "GL-07_PROBIOTIC_20_BILLION_BOTTLE.pdf",
+          "png": "GL-07_PROBIOTIC_20_BILLION_BOTTLE.png"
+        },
+        {
+          "code": "GL-07",
+          "name": "PROBIOTIC 40 BILLION WITH PREBIOTICS",
+          "format": "BOTTLE",
+          "pdf": "GL-07_PROBIOTIC_40_BILLION_WITH_PREBIOTICS_BOTTLE.pdf",
+          "png": "GL-07_PROBIOTIC_40_BILLION_WITH_PREBIOTICS_BOTTLE.png"
+        },
+        {
+          "code": "GL-07",
+          "name": "FERMENTED MUSHROOM BLEND",
+          "format": "JAR",
+          "pdf": "GL-07_FERMENTED_MUSHROOM_BLEND_JAR.pdf",
+          "png": "GL-07_FERMENTED_MUSHROOM_BLEND_JAR.png"
+        },
+        {
+          "code": "GL-08",
+          "name": "COLOSTRUM CAPSULES",
+          "format": "BOTTLE",
+          "pdf": "GL-08_COLOSTRUM_CAPSULES_BOTTLE.pdf",
+          "png": "GL-08_COLOSTRUM_CAPSULES_BOTTLE.png"
+        },
+        {
+          "code": "GL-08",
+          "name": "COLOSTRUM POWDER",
+          "format": "JAR",
+          "pdf": "GL-08_COLOSTRUM_POWDER_JAR.pdf",
+          "png": "GL-08_COLOSTRUM_POWDER_JAR.png"
+        },
+        {
+          "code": "GL-08",
+          "name": "DIGESTIVE + GUT HEALTH STRIPS",
+          "format": "STRIPS",
+          "pdf": "GL-08_DIGESTIVE_+_GUT_HEALTH_STRIPS_STRIPS.pdf",
+          "png": "GL-08_DIGESTIVE_+_GUT_HEALTH_STRIPS_STRIPS.png"
+        },
+        {
+          "code": "GL-09",
+          "name": "DIGESTIVE ENZYME PRO BLEND",
+          "format": "BOTTLE",
+          "pdf": "GL-09_DIGESTIVE_ENZYME_PRO_BLEND_BOTTLE.pdf",
+          "png": "GL-09_DIGESTIVE_ENZYME_PRO_BLEND_BOTTLE.png"
+        },
+        {
+          "code": "GL-10",
+          "name": "DENTAL + ORAL HEALTH CHEWABLES",
+          "format": "BOTTLE",
+          "pdf": "GL-10_DENTAL_+_ORAL_HEALTH_CHEWABLES_BOTTLE.pdf",
+          "png": "GL-10_DENTAL_+_ORAL_HEALTH_CHEWABLES_BOTTLE.png"
+        },
+        {
+          "code": "GL-11",
+          "name": "PROBIOTIC + METABOLISM STRIPS",
+          "format": "STRIPS",
+          "pdf": "GL-11_PROBIOTIC_+_METABOLISM_STRIPS_STRIPS.pdf",
+          "png": "GL-11_PROBIOTIC_+_METABOLISM_STRIPS_STRIPS.png"
+        },
+        {
+          "code": "GL-12",
+          "name": "L-GLUTAMINE POWDER",
+          "format": "POUCH",
+          "pdf": "GL-12_L-GLUTAMINE_POWDER_POUCH.pdf",
+          "png": "GL-12_L-GLUTAMINE_POWDER_POUCH.png"
+        },
+        {
+          "code": "GL-13",
+          "name": "HAIR SKIN & NAILS GUMMIES",
+          "format": "BOTTLE",
+          "pdf": "GL-13_HAIR_SKIN_&_NAILS_GUMMIES_BOTTLE.pdf",
+          "png": "GL-13_HAIR_SKIN_&_NAILS_GUMMIES_BOTTLE.png"
+        },
+        {
+          "code": "GL-13",
+          "name": "HAIR SKIN AND NAILS ESSENTIALS",
+          "format": "BOTTLE",
+          "pdf": "GL-13_HAIR_SKIN_AND_NAILS_ESSENTIALS_BOTTLE.pdf",
+          "png": "GL-13_HAIR_SKIN_AND_NAILS_ESSENTIALS_BOTTLE.png"
+        },
+        {
+          "code": "GL-13",
+          "name": "HAIR SKIN & NAILS STRIPS",
+          "format": "STRIPS",
+          "pdf": "GL-13_HAIR_SKIN_&_NAILS_STRIPS_STRIPS.pdf",
+          "png": "GL-13_HAIR_SKIN_&_NAILS_STRIPS_STRIPS.png"
+        },
+        {
+          "code": "GL-14",
+          "name": "BONE SUPPORT STRIPS",
+          "format": "STRIPS",
+          "pdf": "GL-14_BONE_SUPPORT_STRIPS_STRIPS.pdf",
+          "png": "GL-14_BONE_SUPPORT_STRIPS_STRIPS.png"
+        },
+        {
+          "code": "GL-15",
+          "name": "HYDRATION POWDER (LEMONADE)",
+          "format": "JAR",
+          "pdf": "GL-15_HYDRATION_POWDER_(LEMONADE)_JAR.pdf",
+          "png": "GL-15_HYDRATION_POWDER_(LEMONADE)_JAR.png"
+        },
+        {
+          "code": "GL-15",
+          "name": "HYDRATION POWDER (LYCHEE)",
+          "format": "JAR",
+          "pdf": "GL-15_HYDRATION_POWDER_(LYCHEE)_JAR.pdf",
+          "png": "GL-15_HYDRATION_POWDER_(LYCHEE)_JAR.png"
+        },
+        {
+          "code": "GL-15",
+          "name": "HYDRATION POWDER (MATCHA GREEN TEA)",
+          "format": "JAR",
+          "pdf": "GL-15_HYDRATION_POWDER_(MATCHA_GREEN_TEA)_JAR.pdf",
+          "png": "GL-15_HYDRATION_POWDER_(MATCHA_GREEN_TEA)_JAR.png"
+        },
+        {
+          "code": "GL-15",
+          "name": "HYDRATION POWDER (PASSION FRUIT)",
+          "format": "JAR",
+          "pdf": "GL-15_HYDRATION_POWDER_(PASSION_FRUIT)_JAR.pdf",
+          "png": "GL-15_HYDRATION_POWDER_(PASSION_FRUIT)_JAR.png"
+        },
+        {
+          "code": "GL-15",
+          "name": "HYDRATION POWDER (PEACH MANGO)",
+          "format": "JAR",
+          "pdf": "GL-15_HYDRATION_POWDER_(PEACH_MANGO)_JAR.pdf",
+          "png": "GL-15_HYDRATION_POWDER_(PEACH_MANGO)_JAR.png"
+        },
+        {
+          "code": "MT-01",
+          "name": "ALPHA ENERGY",
+          "format": "BOTTLE",
+          "pdf": "MT-01_ALPHA_ENERGY_BOTTLE.pdf",
+          "png": "MT-01_ALPHA_ENERGY_BOTTLE.png"
+        },
+        {
+          "code": "MT-01",
+          "name": "ENERGY POWDER (COTTON CANDY)",
+          "format": "JAR",
+          "pdf": "MT-01_ENERGY_POWDER_(COTTON_CANDY)_JAR.pdf",
+          "png": "MT-01_ENERGY_POWDER_(COTTON_CANDY)_JAR.png"
+        },
+        {
+          "code": "MT-01",
+          "name": "ENERGY POWDER (FRUIT PUNCH)",
+          "format": "JAR",
+          "pdf": "MT-01_ENERGY_POWDER_(FRUIT_PUNCH)_JAR.pdf",
+          "png": "MT-01_ENERGY_POWDER_(FRUIT_PUNCH)_JAR.png"
+        },
+        {
+          "code": "MT-01",
+          "name": "ENERGY POWDER (GUAVA BERRY)",
+          "format": "JAR",
+          "pdf": "MT-01_ENERGY_POWDER_(GUAVA_BERRY)_JAR.pdf",
+          "png": "MT-01_ENERGY_POWDER_(GUAVA_BERRY)_JAR.png"
+        },
+        {
+          "code": "MT-01",
+          "name": "ENERGY POWDER (LYCHEE SPLASH ENERGY)",
+          "format": "JAR",
+          "pdf": "MT-01_ENERGY_POWDER_(LYCHEE_SPLASH_ENERGY)_JAR.pdf",
+          "png": "MT-01_ENERGY_POWDER_(LYCHEE_SPLASH_ENERGY)_JAR.png"
+        },
+        {
+          "code": "MT-01",
+          "name": "ENERGY POWDER (STRAWBERRY SHORTCAKE)",
+          "format": "JAR",
+          "pdf": "MT-01_ENERGY_POWDER_(STRAWBERRY_SHORTCAKE)_JAR.pdf",
+          "png": "MT-01_ENERGY_POWDER_(STRAWBERRY_SHORTCAKE)_JAR.png"
+        },
+        {
+          "code": "MT-01",
+          "name": "ENERGY POWDER (YUZU FLAVOR)",
+          "format": "JAR",
+          "pdf": "MT-01_ENERGY_POWDER_(YUZU_FLAVOR)_JAR.pdf",
+          "png": "MT-01_ENERGY_POWDER_(YUZU_FLAVOR)_JAR.png"
+        },
+        {
+          "code": "MT-01",
+          "name": "ENERGY STRIPS",
+          "format": "STRIPS",
+          "pdf": "MT-01_ENERGY_STRIPS_STRIPS.pdf",
+          "png": "MT-01_ENERGY_STRIPS_STRIPS.png"
+        },
+        {
+          "code": "MT-02",
+          "name": "FRUITS AND VEGGIES",
+          "format": "BOTTLE",
+          "pdf": "MT-02_FRUITS_AND_VEGGIES_BOTTLE.pdf",
+          "png": "MT-02_FRUITS_AND_VEGGIES_BOTTLE.png"
+        },
+        {
+          "code": "MT-02",
+          "name": "BEE BREAD POWDER",
+          "format": "JAR",
+          "pdf": "MT-02_BEE_BREAD_POWDER_JAR.pdf",
+          "png": "MT-02_BEE_BREAD_POWDER_JAR.png"
+        },
+        {
+          "code": "MT-02",
+          "name": "BEE PEARL",
+          "format": "BOTTLE",
+          "pdf": "MT-02_BEE_PEARL_BOTTLE.pdf",
+          "png": "MT-02_BEE_PEARL_BOTTLE.png"
+        },
+        {
+          "code": "MT-03",
+          "name": "GREENS SUPERFOOD",
+          "format": "JAR",
+          "pdf": "MT-03_GREENS_SUPERFOOD_JAR.pdf",
+          "png": "MT-03_GREENS_SUPERFOOD_JAR.png"
+        },
+        {
+          "code": "MT-04",
+          "name": "ULTRA CLEANSE SMOOTHIE GREENS",
+          "format": "POUCH",
+          "pdf": "MT-04_ULTRA_CLEANSE_SMOOTHIE_GREENS_POUCH.pdf",
+          "png": "MT-04_ULTRA_CLEANSE_SMOOTHIE_GREENS_POUCH.png"
+        },
+        {
+          "code": "MT-04",
+          "name": "MAX DETOX (ACAI DETOX)",
+          "format": "BOTTLE",
+          "pdf": "MT-04_MAX_DETOX_(ACAI_DETOX)_BOTTLE.pdf",
+          "png": "MT-04_MAX_DETOX_(ACAI_DETOX)_BOTTLE.png"
+        },
+        {
+          "code": "MT-05",
+          "name": "REDS SUPERFOOD",
+          "format": "JAR",
+          "pdf": "MT-05_REDS_SUPERFOOD_JAR.pdf",
+          "png": "MT-05_REDS_SUPERFOOD_JAR.png"
+        },
+        {
+          "code": "MT-06",
+          "name": "NAD+",
+          "format": "BOTTLE",
+          "pdf": "MT-06_NAD+_BOTTLE.pdf",
+          "png": "MT-06_NAD+_BOTTLE.png"
+        },
+        {
+          "code": "MT-07",
+          "name": "RESVERATROL 50% 600MG",
+          "format": "BOTTLE",
+          "pdf": "MT-07_RESVERATROL_50%_600MG_BOTTLE.pdf",
+          "png": "MT-07_RESVERATROL_50%_600MG_BOTTLE.png"
+        },
+        {
+          "code": "MT-08",
+          "name": "MUSHROOM EXTRACT COMPLEX",
+          "format": "BOTTLE",
+          "pdf": "MT-08_MUSHROOM_EXTRACT_COMPLEX_BOTTLE.pdf",
+          "png": "MT-08_MUSHROOM_EXTRACT_COMPLEX_BOTTLE.png"
+        },
+        {
+          "code": "MT-09",
+          "name": "ADVANCED 100% WHEY PROTEIN ISOLATE (CHOCOLATE)",
+          "format": "POUCH",
+          "pdf": "MT-09_ADVANCED_100%_WHEY_PROTEIN_ISOLATE_(CHOC_POUCH.pdf",
+          "png": "MT-09_ADVANCED_100%_WHEY_PROTEIN_ISOLATE_(CHOC_POUCH.png"
+        },
+        {
+          "code": "MT-09",
+          "name": "ADVANCED 100% WHEY PROTEIN ISOLATE (VANILLA)",
+          "format": "POUCH",
+          "pdf": "MT-09_ADVANCED_100%_WHEY_PROTEIN_ISOLATE_(VANI_POUCH.pdf",
+          "png": "MT-09_ADVANCED_100%_WHEY_PROTEIN_ISOLATE_(VANI_POUCH.png"
+        },
+        {
+          "code": "MT-09",
+          "name": "PURE3 100% WHEY PROTEIN ISOLATE (CHOCOLATE)",
+          "format": "POUCH",
+          "pdf": "MT-09_PURE3_100%_WHEY_PROTEIN_ISOLATE_(CHOCOLA_POUCH.pdf",
+          "png": "MT-09_PURE3_100%_WHEY_PROTEIN_ISOLATE_(CHOCOLA_POUCH.png"
+        },
+        {
+          "code": "MT-09",
+          "name": "PURE3 100% WHEY PROTEIN ISOLATE (VANILLA)",
+          "format": "POUCH",
+          "pdf": "MT-09_PURE3_100%_WHEY_PROTEIN_ISOLATE_(VANILLA_POUCH.pdf",
+          "png": "MT-09_PURE3_100%_WHEY_PROTEIN_ISOLATE_(VANILLA_POUCH.png"
+        },
+        {
+          "code": "MT-10",
+          "name": "BCAA POST WORKOUT POWDER (HONEYDEW/WATERMELON)",
+          "format": "POUCH",
+          "pdf": "MT-10_BCAA_POST_WORKOUT_POWDER_(HONEYDEW-WATER_POUCH.pdf",
+          "png": "MT-10_BCAA_POST_WORKOUT_POWDER_(HONEYDEW-WATER_POUCH.png"
+        },
+        {
+          "code": "MT-10",
+          "name": "BCAA SHOCK POWDER (FRUIT PUNCH)",
+          "format": "POUCH",
+          "pdf": "MT-10_BCAA_SHOCK_POWDER_(FRUIT_PUNCH)_POUCH.pdf",
+          "png": "MT-10_BCAA_SHOCK_POWDER_(FRUIT_PUNCH)_POUCH.png"
+        },
+        {
+          "code": "MT-11",
+          "name": "BEAUTY + COLLAGEN STRIPS",
+          "format": "STRIPS",
+          "pdf": "MT-11_BEAUTY_+_COLLAGEN_STRIPS_STRIPS.pdf",
+          "png": "MT-11_BEAUTY_+_COLLAGEN_STRIPS_STRIPS.png"
+        },
+        {
+          "code": "MT-11",
+          "name": "GRASS-FED COLLAGEN CREAMER (VANILLA)",
+          "format": "POUCH",
+          "pdf": "MT-11_GRASS-FED_COLLAGEN_CREAMER_(VANILLA)_POUCH.pdf",
+          "png": "MT-11_GRASS-FED_COLLAGEN_CREAMER_(VANILLA)_POUCH.png"
+        },
+        {
+          "code": "MT-11",
+          "name": "GRASS-FED COLLAGEN PEPTIDES POWDER (CHOCOLATE)",
+          "format": "POUCH",
+          "pdf": "MT-11_GRASS-FED_COLLAGEN_PEPTIDES_POWDER_(CHOC_POUCH.pdf",
+          "png": "MT-11_GRASS-FED_COLLAGEN_PEPTIDES_POWDER_(CHOC_POUCH.png"
+        },
+        {
+          "code": "MT-11",
+          "name": "GRASS-FED HYDROLYZED COLLAGEN PEPTIDES",
+          "format": "POUCH",
+          "pdf": "MT-11_GRASS-FED_HYDROLYZED_COLLAGEN_PEPTIDES_POUCH.pdf",
+          "png": "MT-11_GRASS-FED_HYDROLYZED_COLLAGEN_PEPTIDES_POUCH.png"
+        },
+        {
+          "code": "MT-12",
+          "name": "BEE PEARL",
+          "format": "BOTTLE",
+          "pdf": "MT-12_BEE_PEARL_BOTTLE.pdf",
+          "png": "MT-12_BEE_PEARL_BOTTLE.png"
+        },
+        {
+          "code": "IN-01",
+          "name": "PLATINUM TURMERIC",
+          "format": "BOTTLE",
+          "pdf": "IN-01_PLATINUM_TURMERIC_BOTTLE.pdf",
+          "png": "IN-01_PLATINUM_TURMERIC_BOTTLE.png"
+        },
+        {
+          "code": "IN-01",
+          "name": "AYURVEDIC COMPLEX",
+          "format": "BOTTLE",
+          "pdf": "IN-01_AYURVEDIC_COMPLEX_BOTTLE.pdf",
+          "png": "IN-01_AYURVEDIC_COMPLEX_BOTTLE.png"
+        },
+        {
+          "code": "IN-02",
+          "name": "VISION SUPPORT",
+          "format": "BOTTLE",
+          "pdf": "IN-02_VISION_SUPPORT_BOTTLE.pdf",
+          "png": "IN-02_VISION_SUPPORT_BOTTLE.png"
+        },
+        {
+          "code": "IN-03",
+          "name": "HANGOVER STRIPS",
+          "format": "STRIPS",
+          "pdf": "IN-03_HANGOVER_STRIPS_STRIPS.pdf",
+          "png": "IN-03_HANGOVER_STRIPS_STRIPS.png"
+        },
+        {
+          "code": "IN-04",
+          "name": "RESPIRATORY & LUNG HEALTH DROPS",
+          "format": "DROPPER",
+          "pdf": "IN-04_RESPIRATORY_&_LUNG_HEALTH_DROPS_DROPPER.pdf",
+          "png": "IN-04_RESPIRATORY_&_LUNG_HEALTH_DROPS_DROPPER.png"
+        },
+        {
+          "code": "IN-05",
+          "name": "LIVER SUPPORT",
+          "format": "BOTTLE",
+          "pdf": "IN-05_LIVER_SUPPORT_BOTTLE.pdf",
+          "png": "IN-05_LIVER_SUPPORT_BOTTLE.png"
+        },
+        {
+          "code": "IN-06",
+          "name": "CHAGA MUSHROOM",
+          "format": "BOTTLE",
+          "pdf": "IN-06_CHAGA_MUSHROOM_BOTTLE.pdf",
+          "png": "IN-06_CHAGA_MUSHROOM_BOTTLE.png"
+        },
+        {
+          "code": "COG-01",
+          "name": "BRAIN & FOCUS FORMULA",
+          "format": "BOTTLE",
+          "pdf": "COG-01_BRAIN_&_FOCUS_FORMULA_BOTTLE.pdf",
+          "png": "COG-01_BRAIN_&_FOCUS_FORMULA_BOTTLE.png"
+        },
+        {
+          "code": "COG-01",
+          "name": "MUSHROOM FOCUS STRIPS",
+          "format": "STRIPS",
+          "pdf": "COG-01_MUSHROOM_FOCUS_STRIPS_STRIPS.pdf",
+          "png": "COG-01_MUSHROOM_FOCUS_STRIPS_STRIPS.png"
+        },
+        {
+          "code": "COG-02",
+          "name": "FOCUS POWDER (SOUR GRAPE)",
+          "format": "JAR",
+          "pdf": "COG-02_FOCUS_POWDER_(SOUR_GRAPE)_JAR.pdf",
+          "png": "COG-02_FOCUS_POWDER_(SOUR_GRAPE)_JAR.png"
+        },
+        {
+          "code": "COG-02",
+          "name": "FOCUS POWDER (SOUR GUMMI WORM)",
+          "format": "JAR",
+          "pdf": "COG-02_FOCUS_POWDER_(SOUR_GUMMI_WORM)_JAR.pdf",
+          "png": "COG-02_FOCUS_POWDER_(SOUR_GUMMI_WORM)_JAR.png"
+        },
+        {
+          "code": "COG-03",
+          "name": "COGNITIVE RELAX STRIPS",
+          "format": "STRIPS",
+          "pdf": "COG-03_COGNITIVE_RELAX_STRIPS_STRIPS.pdf",
+          "png": "COG-03_COGNITIVE_RELAX_STRIPS_STRIPS.png"
+        },
+        {
+          "code": "COG-04",
+          "name": "MUSHROOM EXTRACT COMPLEX",
+          "format": "BOTTLE",
+          "pdf": "COG-04_MUSHROOM_EXTRACT_COMPLEX_BOTTLE.pdf",
+          "png": "COG-04_MUSHROOM_EXTRACT_COMPLEX_BOTTLE.png"
+        },
+        {
+          "code": "COG-05",
+          "name": "LION'S MANE MUSHROOM",
+          "format": "BOTTLE",
+          "pdf": "COG-05_LIONS_MANE_MUSHROOM_BOTTLE.pdf",
+          "png": "COG-05_LIONS_MANE_MUSHROOM_BOTTLE.png"
+        },
+        {
+          "code": "COG-06",
+          "name": "GINKGO BILOBA + GINSENG",
+          "format": "BOTTLE",
+          "pdf": "COG-06_GINKGO_BILOBA_+_GINSENG_BOTTLE.pdf",
+          "png": "COG-06_GINKGO_BILOBA_+_GINSENG_BOTTLE.png"
+        },
+        {
+          "code": "HR-02",
+          "name": "FEMALE ENHANCEMENT",
+          "format": "BOTTLE",
+          "pdf": "HR-02_FEMALE_ENHANCEMENT_BOTTLE.pdf",
+          "png": "HR-02_FEMALE_ENHANCEMENT_BOTTLE.png"
+        },
+        {
+          "code": "HR-02",
+          "name": "WOMEN'S VITALITY FORMULA",
+          "format": "BOTTLE",
+          "pdf": "HR-02_WOMENS_VITALITY_FORMULA_BOTTLE.pdf",
+          "png": "HR-02_WOMENS_VITALITY_FORMULA_BOTTLE.png"
+        },
+        {
+          "code": "HR-04",
+          "name": "SEA MOSS",
+          "format": "BOTTLE",
+          "pdf": "HR-04_SEA_MOSS_BOTTLE.pdf",
+          "png": "HR-04_SEA_MOSS_BOTTLE.png"
+        },
+        {
+          "code": "SL-01",
+          "name": "MAGNESIUM GLYCINATE",
+          "format": "BOTTLE",
+          "pdf": "SL-01_MAGNESIUM_GLYCINATE_BOTTLE.pdf",
+          "png": "SL-01_MAGNESIUM_GLYCINATE_BOTTLE.png"
+        },
+        {
+          "code": "SL-01",
+          "name": "SLEEP STRIPS",
+          "format": "STRIPS",
+          "pdf": "SL-01_SLEEP_STRIPS_STRIPS.pdf",
+          "png": "SL-01_SLEEP_STRIPS_STRIPS.png"
+        },
+        {
+          "code": "SL-01",
+          "name": "SLEEP PLUS COLLAGEN CREAM",
+          "format": "JAR",
+          "pdf": "SL-01_SLEEP_PLUS_COLLAGEN_CREAM_JAR.pdf",
+          "png": "SL-01_SLEEP_PLUS_COLLAGEN_CREAM_JAR.png"
+        },
+        {
+          "code": "SL-02",
+          "name": "SLEEP SUPPORT",
+          "format": "BOTTLE",
+          "pdf": "SL-02_SLEEP_SUPPORT_BOTTLE.pdf",
+          "png": "SL-02_SLEEP_SUPPORT_BOTTLE.png"
+        }
+      ]
+    }
+  }
+}

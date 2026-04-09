@@ -1,0 +1,163 @@
+/**
+ * GenoMAX² Design System — V2 CSS Custom Properties
+ * ====================================================
+ * EXECUTION UPGRADE: Typography authority, brand dominance,
+ * spatial engineering, clinical power.
+ *
+ * Changes from V1:
+ * - All font weights escalated (400→500 minimum)
+ * - Product name: weight 700, tighter tracking
+ * - Brand header: +26% size with tracking
+ * - Zone 7: inverted dark strip (full bleed)
+ * - Accent rule: 2pt weight
+ * - Dividers: 0.5pt weight
+ * - Bio system uses · separator
+ */
+
+:root {
+  /* ── COLORS (unchanged) ── */
+  --gx2-color-background: #F4F2EC;
+  --gx2-color-text-primary: #1A1815;
+  --gx2-color-text-secondary: #4A4843;   /* V2: darkened from #5C5A55 */
+  --gx2-color-text-tertiary: #8A8880;    /* V2: darkened from #9A9890 */
+  --gx2-color-divider: #C5C2BA;
+  --gx2-color-accent-maximo: #7A1E2E;
+  --gx2-color-accent-maxima: #7A304A;
+
+  /* V2: Zone 7 inverted strip */
+  --gx2-color-strip-bg: #1A1815;
+  --gx2-color-strip-text: #C5C2BA;
+
+  /* ── TYPOGRAPHY — Font Families ── */
+  --gx2-font-mono: 'IBM Plex Mono', monospace;
+  --gx2-font-sans: 'IBM Plex Sans', sans-serif;
+  --gx2-font-condensed: 'IBM Plex Sans Condensed', sans-serif;
+
+  /* ── SPACING (V2: tighter) ── */
+  --gx2-space-micro: 2px;
+  --gx2-space-tight: 3px;     /* V2: was 4px */
+  --gx2-space-compact: 4px;   /* V2: was 6px */
+  --gx2-space-base: 6px;      /* V2: was 8px */
+  --gx2-space-medium: 8px;    /* V2: was 12px */
+  --gx2-space-section: 12px;  /* V2: was 16px */
+  --gx2-space-large: 16px;    /* V2: was 20px */
+  --gx2-space-panel: 20px;    /* V2: was 24px */
+
+  /* ── STROKE (V2: heavier) ── */
+  --gx2-stroke-divider: 0.5pt;   /* V2: was 0.35pt */
+  --gx2-stroke-accent: 2pt;      /* V2: was 1.5pt */
+  --gx2-accent-width: 70px;      /* V2: was 60px */
+
+  --gx2-margin-label-edge: 12px;
+}
+
+/* ══════════════════════════════════════ */
+/* V2 TYPOGRAPHY PRESETS                  */
+/* ══════════════════════════════════════ */
+
+.gx2-brand-header {
+  font-family: var(--gx2-font-mono);
+  font-weight: 700;
+  font-size: 12pt;              /* V2: was 9.5pt */
+  letter-spacing: 0.02em;       /* V2: added */
+  color: var(--gx2-color-text-primary);
+}
+
+.gx2-zone2-header {
+  font-family: var(--gx2-font-mono);
+  font-weight: 500;             /* V2: was 400 */
+  font-size: 7pt;
+  letter-spacing: 0.18em;       /* V2: was 0.08em */
+  text-transform: uppercase;
+  color: var(--gx2-color-text-secondary);
+}
+
+.gx2-product-name {
+  font-family: var(--gx2-font-condensed);
+  font-weight: 700;             /* V2: was 600 */
+  font-size: 28pt;              /* V2: was 26pt */
+  letter-spacing: -0.025em;     /* V2: was -0.01em */
+  text-transform: uppercase;
+  line-height: 0.95;            /* V2: tighter line-height */
+  color: var(--gx2-color-text-primary);
+}
+
+.gx2-descriptor {
+  font-family: var(--gx2-font-sans);
+  font-weight: 300;
+  font-size: 8.5pt;
+  letter-spacing: 0.01em;       /* V2: subtle tracking */
+  color: var(--gx2-color-text-secondary);
+}
+
+.gx2-bio-system {
+  font-family: var(--gx2-font-mono);
+  font-weight: 400;
+  font-size: 6.5pt;
+  letter-spacing: 0.06em;       /* V2: was 0.04em */
+  text-transform: uppercase;
+  color: var(--gx2-color-text-tertiary);
+}
+
+.gx2-variant-name {
+  font-family: var(--gx2-font-sans);
+  font-weight: 600;             /* V2: was 500 */
+  font-size: 12pt;              /* V2: was 11pt */
+  letter-spacing: 0.01em;       /* V2: added */
+  color: var(--gx2-color-text-primary);
+}
+
+.gx2-metadata-label {
+  font-family: var(--gx2-font-mono);
+  font-weight: 500;             /* V2: was 400 */
+  font-size: 5.5pt;
+  letter-spacing: 0.1em;        /* V2: was 0.06em */
+  text-transform: uppercase;
+  color: var(--gx2-color-text-tertiary);
+}
+
+.gx2-metadata-value {
+  font-family: var(--gx2-font-sans);
+  font-weight: 500;             /* V2: was 400 */
+  font-size: 6.5pt;
+  color: var(--gx2-color-text-primary);
+}
+
+.gx2-version-strip {
+  font-family: var(--gx2-font-mono);
+  font-weight: 400;
+  font-size: 5.5pt;
+  letter-spacing: 0.03em;       /* V2: was 0.02em */
+  color: var(--gx2-color-strip-text);  /* V2: inverted */
+  background: var(--gx2-color-strip-bg); /* V2: dark strip */
+}
+
+/* ══════════════════════════════════════ */
+/* V2 ACCENT RULES                        */
+/* ══════════════════════════════════════ */
+
+.gx2-accent-rule {
+  width: var(--gx2-accent-width);
+  height: var(--gx2-stroke-accent);
+  margin-top: var(--gx2-space-micro);
+}
+
+/* ══════════════════════════════════════ */
+/* V2 ZONE 7 STRIP                        */
+/* ══════════════════════════════════════ */
+
+.gx2-zone7-strip {
+  background: var(--gx2-color-strip-bg);
+  color: var(--gx2-color-strip-text);
+  padding: 5px var(--gx2-margin-label-edge);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--gx2-font-mono);
+  font-size: 5.5pt;
+  letter-spacing: 0.03em;
+  /* Full bleed — negative margins cancel label padding */
+  margin-left: calc(-1 * var(--gx2-margin-label-edge));
+  margin-right: calc(-1 * var(--gx2-margin-label-edge));
+  margin-bottom: calc(-1 * var(--gx2-margin-label-edge));
+}

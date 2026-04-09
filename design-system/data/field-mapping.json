@@ -1,0 +1,160 @@
+{
+  "_meta": {
+    "system": "GenoMAX²",
+    "version": "1.0",
+    "description": "Field mapping from Excel source of truth to label component layers",
+    "sources": {
+      "maximo": "GENOMAX_MAXimo_LABEL_READY_v2.xlsx (Sheet: MAXimo²)",
+      "maxima": "GENOMAX_MAXima_LABEL_READY_v2.xlsx (Sheet: MAXima²)"
+    },
+    "critical_rules": [
+      "MAXimo² and MAXima² are SEPARATE product systems — NEVER merge",
+      "Ingredient name comes ONLY from 'Ingredient Name (Label)' — no interpretation",
+      "Units: mg, g, IU — do NOT uppercase",
+      "Brand is always: GenoMAX² — exact casing with superscript"
+    ]
+  },
+  "front_panel": {
+    "zone_1": {
+      "brand_name": { "source": "static", "value": "GenoMAX²" },
+      "module_code": { "source": "excel", "field": "module_code", "example": "CV-01" }
+    },
+    "zone_2": {
+      "biological_os_module": { "source": "static", "value": "BIOLOGICAL OS MODULE" }
+    },
+    "zone_3": {
+      "ingredient_name": {
+        "source": "excel",
+        "field": "ingredient_name_label",
+        "transform": "uppercase",
+        "example": "OMEGA-3 EPA 180mg + DHA 120mg",
+        "critical": "This is the ONLY field to use for product name. No fallback. No interpretation."
+      }
+    },
+    "zone_4": {
+      "descriptor": {
+        "source": "excel",
+        "field": "ingredient_descriptor",
+        "example": "Omega-3 EPA + DHA"
+      },
+      "biological_system": {
+        "source": "computed",
+        "fields": ["biological_system", "function_name"],
+        "template": "{biological_system} {function_name}",
+        "transform": "uppercase",
+        "example": "CARDIOVASCULAR LIPID METABOLISM"
+      }
+    },
+    "zone_5": {
+      "variant_name": {
+        "source": "excel",
+        "field": "product_line_os",
+        "example_maximo": "MAXimo²",
+        "example_maxima": "MAXima²",
+        "note": "Determines accent rule color: MAXimo² → #7A1E2E, MAXima² → #7A304A"
+      },
+      "accent_rule": {
+        "source": "derived",
+        "from": "product_line_os",
+        "maximo_color": "#7A1E2E",
+        "maxima_color": "#7A304A",
+        "weight": "1.5pt",
+        "width": "60px"
+      }
+    },
+    "zone_6": {
+      "type": {
+        "label": "TYPE",
+        "source": "excel",
+        "field": "supliful_product_form",
+        "example": "Softgels"
+      },
+      "function": {
+        "label": "FUNCTION",
+        "source": "excel",
+        "field": "function_name",
+        "example": "Lipid Metabolism"
+      },
+      "status": {
+        "label": "STATUS",
+        "source": "excel",
+        "field": "validation_status",
+        "transform": "map",
+        "mapping": { "VALID": "Active" },
+        "example": "Active"
+      }
+    },
+    "zone_7": {
+      "version_info": {
+        "source": "computed",
+        "template": "v1.0 | {module_code} | Clinical Grade",
+        "example": "v1.0 | CV-01 | Clinical Grade"
+      },
+      "net_quantity": {
+        "source": "computed",
+        "template": "DIETARY SUPPLEMENT | NET QTY: {net_quantity}",
+        "field": "net_quantity",
+        "example": "DIETARY SUPPLEMENT | NET QTY: 100 softgels"
+      }
+    }
+  },
+  "back_panel": {
+    "supplement_facts": {
+      "serving_info": {
+        "source": "excel",
+        "note": "Derived from net_quantity and product form — requires supplement facts data"
+      }
+    },
+    "directions": {
+      "source": "excel",
+      "field": "suggested_use",
+      "example": "With meals"
+    },
+    "safety": {
+      "source": "excel",
+      "field": "safety_notes",
+      "note": "Remove word 'Excellent'. Regulatory-only language.",
+      "static_append": "Keep out of reach of children."
+    },
+    "fda_disclaimer": {
+      "source": "excel",
+      "field": "fda_disclaimer"
+    },
+    "manufacturer": {
+      "source": "static",
+      "entity": "Genomax LLC",
+      "address": "95 Newfield Avenue, Suite A, Edison, NJ 08837 USA",
+      "web": "www.genomax.ai",
+      "contact": "support@genomax.ai"
+    }
+  },
+  "layer_naming_convention": {
+    "description": "All Figma layers and code component props must use these exact names",
+    "front_panel_layers": [
+      "brand_name",
+      "module_code",
+      "biological_os_module",
+      "ingredient_name",
+      "descriptor",
+      "biological_system",
+      "variant_name",
+      "accent_rule",
+      "type_label", "type_value",
+      "function_label", "function_value",
+      "status_label", "status_value",
+      "version_info",
+      "net_quantity"
+    ],
+    "back_panel_layers": [
+      "supplement_facts_title",
+      "serving_info",
+      "ingredient_row_N",
+      "other_ingredients",
+      "dv_footnote",
+      "directions_label", "directions_text",
+      "safety_label", "safety_text",
+      "manufacturer_label", "manufacturer_name", "manufacturer_address",
+      "fda_disclaimer"
+    ]
+  }
+}

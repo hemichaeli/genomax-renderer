@@ -1,0 +1,90 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "genomax2": {
+    "spacing": {
+      "micro": { "$value": 2, "$type": "dimension", "$description": "Accent rule offset from variant name" },
+      "tight": { "$value": 4, "$type": "dimension", "$description": "Between metadata label and value" },
+      "compact": { "$value": 6, "$type": "dimension", "$description": "Zone internal padding" },
+      "base": { "$value": 8, "$type": "dimension", "$description": "Standard element gap" },
+      "medium": { "$value": 12, "$type": "dimension", "$description": "Between zones" },
+      "section": { "$value": 16, "$type": "dimension", "$description": "Zone separator gap" },
+      "large": { "$value": 20, "$type": "dimension", "$description": "Top/bottom label margins" },
+      "panel": { "$value": 24, "$type": "dimension", "$description": "Front/back panel margin" }
+    },
+    "margin": {
+      "label_edge": { "$value": 12, "$type": "dimension", "$description": "Label edge safe margin (all formats)" }
+    },
+    "stroke": {
+      "divider": { "$value": 0.35, "$type": "dimension", "$description": "Zone divider hairline weight (pt)" },
+      "accent": { "$value": 1.5, "$type": "dimension", "$description": "MAXimo/MAXima accent rule weight (pt)" },
+      "accent_width": { "$value": 60, "$type": "dimension", "$description": "Accent rule width (px)" }
+    },
+    "format_dimensions": {
+      "BOTTLE": {
+        "label_width_in": 6,
+        "label_height_in": 2.5,
+        "label_width_mm": 152.4,
+        "label_height_mm": 63.5,
+        "bleed_in": 0.125,
+        "safe_zone_in": 0.125,
+        "print_width_in": 6.25,
+        "print_height_in": 2.75,
+        "sku_count_maximo": 38,
+        "sku_count_maxima": 39
+      },
+      "JAR": {
+        "label_width_in": 8.5,
+        "label_height_in": 2,
+        "label_width_mm": 215.9,
+        "label_height_mm": 50.8,
+        "bleed_in": 0.125,
+        "safe_zone_in": 0.125,
+        "print_width_in": 8.75,
+        "print_height_in": 2.25,
+        "sku_count_maximo": 20,
+        "sku_count_maxima": 20
+      },
+      "POUCH": {
+        "label_width_in": 5,
+        "label_height_in": 4,
+        "label_width_mm": 127,
+        "label_height_mm": 101.6,
+        "bleed_in": 0.125,
+        "safe_zone_in": 0.125,
+        "print_width_in": 5.25,
+        "print_height_in": 4.25,
+        "sku_count_maximo": 12,
+        "sku_count_maxima": 12
+      },
+      "DROPPER": {
+        "label_width_in": 2,
+        "label_height_in": 4,
+        "label_width_mm": 50.8,
+        "label_height_mm": 101.6,
+        "bleed_in": 0.125,
+        "safe_zone_in": 0.125,
+        "print_width_in": 2.25,
+        "print_height_in": 4.25,
+        "sku_count_maximo": 2,
+        "sku_count_maxima": 2
+      },
+      "STRIPS": {
+        "label_width_in": 4,
+        "label_height_in": 6.5,
+        "label_width_mm": 101.6,
+        "label_height_mm": 165.1,
+        "bleed_in": 0.125,
+        "safe_zone_in": 0.125,
+        "print_width_in": 4.25,
+        "print_height_in": 6.75,
+        "sku_count_maximo": 12,
+        "sku_count_maxima": 11
+      }
+    }
+  },
+  "_rules": {
+    "no_arbitrary": "All spacing must use these tokens. No arbitrary pixel values.",
+    "compression": "Prefer tighter spacing. Remove empty space. Create controlled tension.",
+    "bleed": "All formats include 0.125\" bleed and 0.125\" safe zone."
+  }
+}
