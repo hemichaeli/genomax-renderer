@@ -94,7 +94,7 @@ FORMAT_DIMS = {
 
 def _d(c, x, y, t, f, s, co):
     """Draw text at exact position. No safety — use _ds for safe drawing."""
-    o = c.beginText(x, y); o.setFont(f, s); o.setFillColor(co); o.textOut(t); c.drawText(o)
+    o = c.beginText(x, y); o.setFont(f, s); o.setFillColor(co); o.setCharSpace(0); o.textOut(t); c.drawText(o)
 
 def _tw(t, f, s):
     """Measure text width."""
@@ -136,9 +136,9 @@ def _dc(c, x, y, t, f, s, co, mw):
         s -= 0.25
     # Step 2: if still overflows, truncate with visible ellipsis
     if _tw(t, f, s) > mw:
-        while len(t) > 4 and _tw(t.rstrip() + "\u2026", f, s) > mw:
+        while len(t) > 4 and _tw(t.rstrip() + "...", f, s) > mw:
             t = t[:-1]
-        t = t.rstrip() + "\u2026"
+        t = t.rstrip() + "..."
     _d(c, x, y, t, f, s, co)
 
 def _w(t, f, s, mw):
@@ -246,7 +246,7 @@ def render_front(c, sku, dims, accent, tx, ty):
                 _d(c, left, cy-mls, lb, "PlexMono-Medium", mls, C["t3"]); cy -= mls + 1
                 _dc(c, left, cy-mvs, vl, "PlexSans-Medium", mvs, C["t1"], cw); cy -= mvs + 3
         else:
-            colw = cw / 3; ucol = colw - 4
+            colw = cw / 3; ucol = colw - 8
             for i, (lb, vl) in enumerate(items):
                 cx = left + i * colw
                 _dc(c, cx, cy-mls, lb, "PlexMono-Medium", mls, C["t3"], ucol)
