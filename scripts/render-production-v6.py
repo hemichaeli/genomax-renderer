@@ -101,27 +101,40 @@ def _tw(t, f, s):
     return pdfmetrics.stringWidth(t, f, s)
 
 def _dt(c, x, y, t, f, s, co, tr, mw=None):
-    """Draw tracked text. V6: correct charspace width calc, auto-shrink on overflow."""
-    if mw:
-        # Correct width: stringWidth + (len-1)*charspace (last char has no trailing space)
-        def _tracked_w(txt):
-            return _tw(txt, f, s) + max(0, len(txt)-1) * s * tr
-        # Step 1: try reducing tracking slightly (-50% of original)
-        orig_tr = tr
-        if _tracked_w(t) > mw and tr > 0:
-            tr = max(0, tr * 0.5)
-        # Step 2: auto-shrink font up to -10%
-        cur_s = s
-        while _tracked_w(t) > mw and cur_s > s * 0.9:
-            cur_s -= 0.25
-            tr = orig_tr  # reset tracking for new size test
-        s = cur_s
-        # Step 3: last resort — truncate with ellipsis
-        if _tracked_w(t) > mw:
-            while len(t) > 4 and _tracked_w(t + "...") > mw:
-                t = t[:-1]
-            if _tracked_w(t + "...") <= mw:
-                t = t + "..."
+    """Draw tracked text. V6.3: Cascading fit — NO TRUNCATION.
+    Order: tracking → shrink → condensed → shrink more."""
+    if mw and t:
+        def _tracked_w(txt, sz, trk):
+            return _tw(txt, f, sz) + max(0, len(txt)-1) * sz * trk
+        orig_s = s
+        # Step 1: reduce tracking progressively (to 0)
+        if _tracked_w(t, s, tr) > mw:
+            for test_tr in [tr * 0.6, tr * 0.3, 0]:
+                if _tracked_w(t, s, test_tr) <= mw:
+                    tr = test_tr
+                    break
+            else:
+                tr = 0
+        # Step 2: shrink font up to -25%
+        while _tracked_w(t, s, tr) > mw and s > orig_s * 0.75:
+            s -= 0.25
+        # Step 3: switch to condensed variant if available
+        if _tracked_w(t, s, tr) > mw:
+            cond_map = {"PlexMono-Bold":"PlexCondensed-Bold","PlexMono-Medium":"PlexCondensed-Medium",
+                        "PlexMono":"PlexCondensed","PlexSans":"PlexCondensed",
+                        "PlexSans-Medium":"PlexCondensed-Medium","PlexSans-SemiBold":"PlexCondensed-SemiBold",
+                        "PlexSans-Bold":"PlexCondensed-Bold"}
+            alt = cond_map.get(f)
+            if alt:
+                try:
+                    if _tracked_w(t, s, tr) > mw:  # re-test with condensed
+                        if _tw(t, alt, s) + max(0, len(t)-1) * s * tr <= mw:
+                            f = alt
+                except: pass
+        # Step 4: final emergency shrink to -40%
+        while _tracked_w(t, s, tr) > mw and s > orig_s * 0.60:
+            s -= 0.25
+        # NEVER truncate — draw at final size
     o = c.beginText(x, y); o.setFont(f, s); o.setFillColor(co); o.setCharSpace(s*tr); o.textOut(t); c.drawText(o)
 
 def _dr(c, xr, y, t, f, s, co):
@@ -129,16 +142,32 @@ def _dr(c, xr, y, t, f, s, co):
     _d(c, xr - _tw(t, f, s), y, t, f, s, co)
 
 def _dc(c, x, y, t, f, s, co, mw):
-    """Draw clamped text. V6: auto-shrink font up to -10%, then truncate with ellipsis."""
+    """Draw clamped text. V6.3: Cascading fit — NO TRUNCATION, NO ELLIPSIS.
+    Order: shrink → condensed → shrink more."""
     orig_s = s
-    # Step 1: try reducing font size up to -10%
-    while _tw(t, f, s) > mw and s > orig_s * 0.9:
+    orig_f = f
+    # Step 1: shrink font up to -20%
+    while _tw(t, f, s) > mw and s > orig_s * 0.80:
         s -= 0.25
-    # Step 2: if still overflows, truncate with visible ellipsis
+    # Step 2: switch to condensed variant if still overflowing
     if _tw(t, f, s) > mw:
-        while len(t) > 4 and _tw(t.rstrip() + "...", f, s) > mw:
-            t = t[:-1]
-        t = t.rstrip() + "..."
+        cond_map = {"PlexMono-Bold":"PlexCondensed-Bold","PlexMono-Medium":"PlexCondensed-Medium",
+                    "PlexMono":"PlexCondensed","PlexMono-SemiBold":"PlexCondensed-SemiBold",
+                    "PlexSans":"PlexCondensed","PlexSans-Medium":"PlexCondensed-Medium",
+                    "PlexSans-SemiBold":"PlexCondensed-SemiBold","PlexSans-Bold":"PlexCondensed-Bold",
+                    "PlexSans-Light":"PlexCondensed"}
+        alt = cond_map.get(f)
+        if alt:
+            # Reset size and try condensed at original size first
+            s_try = orig_s
+            while _tw(t, alt, s_try) > mw and s_try > orig_s * 0.80:
+                s_try -= 0.25
+            if _tw(t, alt, s_try) <= mw:
+                f = alt
+                s = s_try
+    # Step 3: emergency shrink to -40% (still no truncation)
+    while _tw(t, f, s) > mw and s > orig_s * 0.60:
+        s -= 0.25
     _d(c, x, y, t, f, s, co)
 
 def _w(t, f, s, mw):
@@ -188,7 +217,11 @@ def render_front(c, sku, dims, accent, tx, ty):
     fmt = sku["format"]["label_format"]
     narrow = fmt == "DROPPER"; tall = fmt in ("STRIPS", "POUCH"); short = fmt == "JAR"
     left, right_ = tx + MARGIN, tx + w - MARGIN
-    cw = right_ - left; top = ty + h - MARGIN; bot_safe = ty + STRIP_H + 2
+    cw = right_ - left; top = ty + h - MARGIN
+    # V6.3: bot_safe uses reduced strip height
+    _sh_est = int((STRIP_H if fmt != "DROPPER" else 18) * 0.55)
+    if _sh_est < 9: _sh_est = 9
+    bot_safe = ty + _sh_est + 4
 
     c.setFillColor(C["bg"]); c.rect(tx-BLEED, ty-BLEED, w+2*BLEED, h+2*BLEED, fill=1, stroke=0)
     c.setFillColor(accent); c.rect(tx-BLEED, ty+h-2, w+2*BLEED, 2, fill=1, stroke=0)
@@ -209,31 +242,46 @@ def render_front(c, sku, dims, accent, tx, ty):
     _dt(c, left, cy-z2s, sku["front_panel"]["zone_2"]["text"], "PlexMono-Medium", z2s, C["t2"], 0.18, mw=cw)
     cy -= z2s + (6 if not short else 3)
 
-    # ── V6.2: Product Name (26-28px, max 27px target) ──
+    # ── V6.3: TITLE — max 3 lines, cascading fit ──
     pf, ps = "PlexCondensed-Bold", min(dims["pn_pt"], 27)
-    if narrow: ps = 14  # DROPPER stays small
-    if short: ps = 22   # JAR stays at 22
+    if narrow: ps = 14
+    if short: ps = 22
     pn = sku["front_panel"]["zone_3"]["ingredient_name"]
-    lines = _w(pn, pf, ps, cw); ml = 3 if tall else 2
-    if len(lines) > ml: ps = ps * 0.75; lines = _w(pn, pf, ps, cw)
-    for ln in lines[:ml]: _dc(c, left, cy-ps, ln, pf, ps, C["t1"], cw); cy -= ps * 0.95
+    TITLE_MAX_LINES = 3
+    lines = _w(pn, pf, ps, cw)
+    # Cascading fit: shrink until fits in TITLE_MAX_LINES
+    while len(lines) > TITLE_MAX_LINES and ps > 10:
+        ps -= 0.5
+        lines = _w(pn, pf, ps, cw)
+    for ln in lines[:TITLE_MAX_LINES]:
+        _dc(c, left, cy-ps, ln, pf, ps, C["t1"], cw)
+        cy -= ps * 0.95
 
-    # ── V6.2: Title → Subtitle gap: 6px ──
+    # ── V6.3: Title → Subtitle: 6px ──
     cy -= 6
 
-    # ── V6.2: Subtitle at 14px, weight 500 (PlexSans-Medium) ──
+    # ── V6.3: SUBTITLE — max 2 lines, 14px Medium (weight 500) ──
     desc = sku["front_panel"]["zone_4"].get("descriptor", "")
     sub_sz = 14 if not narrow else 10
     if short: sub_sz = 11
+    SUBTITLE_MAX_LINES = 2
     if desc:
-        _dc(c, left, cy-sub_sz, desc, "PlexSans-Medium", sub_sz, C["t2"], cw); cy -= sub_sz
+        sub_lines = _w(desc, "PlexSans-Medium", sub_sz, cw)
+        # Shrink if exceeds max lines
+        while len(sub_lines) > SUBTITLE_MAX_LINES and sub_sz > 8:
+            sub_sz -= 0.5
+            sub_lines = _w(desc, "PlexSans-Medium", sub_sz, cw)
+        for sl in sub_lines[:SUBTITLE_MAX_LINES]:
+            _dc(c, left, cy-sub_sz, sl, "PlexSans-Medium", sub_sz, C["t2"], cw)
+            cy -= sub_sz * 1.1
     bio = sku["front_panel"]["zone_4"].get("biological_system", "")
     if bio:
         bio_sz = min(sub_sz - 1, 11) if not narrow else 7
         if short: bio_sz = 8
-        _dc(c, left, cy-bio_sz, bio, "PlexMono", bio_sz, C["t3"], cw); cy -= bio_sz
+        _dc(c, left, cy-bio_sz, bio, "PlexMono", bio_sz, C["t3"], cw)
+        cy -= bio_sz
 
-    # ── V6.2: Subtitle → Meta gap: 14px ──
+    # ── V6.3: Subtitle → Meta: 14px ──
     cy -= 14
 
     # ── V6.2: Compact meta block (TYPE / SYSTEM / FUNCTION) 10-11px ──
@@ -272,21 +320,23 @@ def render_front(c, sku, dims, accent, tx, ty):
     # ── V6.2: Meta → Footer gap: 18px ──
     cy -= 2 + 18
 
-    # V6.2: Footer strip — height -30%, color #3A3A3A, 10px vertical padding
-    sh_base = STRIP_H if not narrow else 22
-    sh = int(sh_base * 0.70)  # -30% height
-    if sh < 10: sh = 10  # minimum
+    # V6.3: Footer strip — compact (-45% vs V5), #3A3A3A, reduced contrast
+    sh_base = STRIP_H if not narrow else 18
+    sh = int(sh_base * 0.55)  # -45% height
+    if sh < 9: sh = 9  # minimum readable
     c.setFillColor(C["strip_bg"]); c.rect(tx-BLEED, ty-BLEED, w+2*BLEED, sh+BLEED, fill=1, stroke=0)
     ver, qty = sku["front_panel"]["zone_7"]["version_info"], sku["front_panel"]["zone_7"]["net_quantity"]
-    ssz = 5 if not narrow else 4
+    ssz = 4.5 if not narrow else 3.5
     footer_safe_w = cw - 8
-    foot_pad = 10  # 10px vertical padding
     if narrow:
-        st = ty + sh - foot_pad + 2
-        _dc(c, left, st, ver, "PlexMono", ssz, C["strip_tx"], footer_safe_w)
-        _dc(c, left, st-ssz-1, qty, "PlexMono", ssz, C["strip_tx"], footer_safe_w)
+        # Stack on narrow format
+        sty_1 = ty + sh - 2 - ssz
+        sty_2 = sty_1 - ssz - 1
+        _dc(c, left, sty_1, ver, "PlexMono", ssz, C["strip_tx"], footer_safe_w)
+        _dc(c, left, sty_2, qty, "PlexMono", ssz, C["strip_tx"], footer_safe_w)
     else:
-        sty = ty + (sh - ssz) / 2; hw = footer_safe_w * 0.48
+        sty = ty + (sh - ssz) / 2
+        hw = footer_safe_w * 0.48
         _dc(c, left, sty, ver, "PlexMono", ssz, C["strip_tx"], hw)
         _dc(c, right_ - hw, sty, qty, "PlexMono", ssz, C["strip_tx"], hw)
 
@@ -410,15 +460,15 @@ def render_back(c, sku, dims, accent, tx, ty):
     c.setFillColor(C["bg"]); c.rect(tx-BLEED, ty-BLEED, w+2*BLEED, h+2*BLEED, fill=1, stroke=0)
     c.setFillColor(accent); c.rect(tx-BLEED, ty+h-2, w+2*BLEED, 2, fill=1, stroke=0)
 
-    # ── Strip (V6.2: -30% height, #3A3A3A, 10px padding) ──
-    bsh_base = STRIP_H if not narrow else 20
-    bsh = int(bsh_base * 0.70)
-    if bsh < 10: bsh = 10
+    # ── Strip (V6.3: -45% height, #3A3A3A, reduced contrast) ──
+    bsh_base = STRIP_H if not narrow else 18
+    bsh = int(bsh_base * 0.55)
+    if bsh < 9: bsh = 9
     c.setFillColor(C["strip_bg"]); c.rect(tx-BLEED, ty-BLEED, w+2*BLEED, bsh+BLEED, fill=1, stroke=0)
-    stsz = 5 if not narrow else 4
+    stsz = 4.5 if not narrow else 3.5
     footer_w = cw - 8
     if narrow:
-        sty_n = ty + bsh - 3 - stsz
+        sty_n = ty + bsh - 2 - stsz
         _dc(c, left, sty_n, "genomax.ai", "PlexMono", stsz, C["strip_tx"], footer_w)
         _dc(c, left, sty_n-stsz-1, "Distributed by Genomax LLC", "PlexMono", stsz, C["strip_tx"], footer_w)
     else:
