@@ -72,7 +72,7 @@ C = {
     "bg": h2c("#F4F2EC"), "t1": h2c("#1A1815"), "t2": h2c("#4A4843"),
     "t3": h2c("#8A8880"), "div": h2c("#C5C2BA"),
     "ax_mo": h2c("#7A1E2E"), "ax_ma": h2c("#7A304A"),
-    "strip_bg": h2c("#3A3A3A"), "strip_tx": h2c("#C5C2BA"),
+    "strip_bg": h2c("#4A4A4A"), "strip_tx": h2c("#B0B0B0"),
     "white": CMYKColor(0,0,0,0),
 }
 
@@ -213,19 +213,26 @@ def crop_marks(c, tx, ty, w, h):
 # FRONT LABEL — UNCHANGED from V4 (V3-LOCKED)
 # ═══════════════════════════════════════════════════════════════════════════
 def render_front(c, sku, dims, accent, tx, ty):
+    """V6.4: Vertically balanced layout with stacked meta block on ALL formats."""
     w, h = dims["w"], dims["h"]
     fmt = sku["format"]["label_format"]
     narrow = fmt == "DROPPER"; tall = fmt in ("STRIPS", "POUCH"); short = fmt == "JAR"
     left, right_ = tx + MARGIN, tx + w - MARGIN
-    cw = right_ - left; top = ty + h - MARGIN
-    # V6.3: bot_safe uses reduced strip height
-    _sh_est = int((STRIP_H if fmt != "DROPPER" else 18) * 0.55)
-    if _sh_est < 9: _sh_est = 9
-    bot_safe = ty + _sh_est + 4
+    cw = right_ - left
 
+    # ── V6.4: Footer strip — lighter (#4A4A4A), -60% vs V5 ──
+    sh_base = STRIP_H if not narrow else 18
+    sh = int(sh_base * 0.42)  # -58% height
+    if sh < 8: sh = 8
+    footer_top = ty + sh  # y where strip ends and content area begins
+
+    # Background
     c.setFillColor(C["bg"]); c.rect(tx-BLEED, ty-BLEED, w+2*BLEED, h+2*BLEED, fill=1, stroke=0)
     c.setFillColor(accent); c.rect(tx-BLEED, ty+h-2, w+2*BLEED, 2, fill=1, stroke=0)
-    cy = top - 2 - (4 if not short else 2)
+
+    # ═══ HEADER BLOCK (top) ═══
+    header_top = ty + h - MARGIN - 2
+    cy = header_top - (4 if not short else 2)
 
     bsz = 12 if not narrow else 8
     if short: bsz = 10
@@ -240,98 +247,178 @@ def render_front(c, sku, dims, accent, tx, ty):
     z2s = 7 if not narrow else 5.5
     if short: z2s = 6
     _dt(c, left, cy-z2s, sku["front_panel"]["zone_2"]["text"], "PlexMono-Medium", z2s, C["t2"], 0.18, mw=cw)
-    cy -= z2s + (6 if not short else 3)
+    cy -= z2s
 
-    # ── V6.3: TITLE — max 3 lines, cascading fit ──
-    pf, ps = "PlexCondensed-Bold", min(dims["pn_pt"], 27)
-    if narrow: ps = 14
-    if short: ps = 22
+    header_bottom = cy  # Top of content block area
+    content_top = header_bottom - 4
+    content_bottom = footer_top + MARGIN  # Safe floor above strip
+
+    # ═══ PASS 1: MEASURE content block with adaptive sizing ═══
+    z6 = sku["front_panel"]["zone_6"]
+    available_h = content_top - content_bottom
+
+    # Base sizes by format
+    if narrow:
+        max_ps_base = 14; sub_sz_base = 10; meta_sz_base = 7; vs_base = 8
+    elif short:
+        max_ps_base = 20; sub_sz_base = 10; meta_sz_base = 8; vs_base = 8
+    else:
+        max_ps_base = min(dims["pn_pt"], 27); sub_sz_base = 13; meta_sz_base = 9.5; vs_base = 10
+
     pn = sku["front_panel"]["zone_3"]["ingredient_name"]
-    TITLE_MAX_LINES = 3
-    lines = _w(pn, pf, ps, cw)
-    # Cascading fit: shrink until fits in TITLE_MAX_LINES
-    while len(lines) > TITLE_MAX_LINES and ps > 10:
-        ps -= 0.5
-        lines = _w(pn, pf, ps, cw)
-    for ln in lines[:TITLE_MAX_LINES]:
-        _dc(c, left, cy-ps, ln, pf, ps, C["t1"], cw)
-        cy -= ps * 0.95
-
-    # ── V6.3: Title → Subtitle: 6px ──
-    cy -= 6
-
-    # ── V6.3: SUBTITLE — max 2 lines, 14px Medium (weight 500) ──
     desc = sku["front_panel"]["zone_4"].get("descriptor", "")
-    sub_sz = 14 if not narrow else 10
-    if short: sub_sz = 11
-    SUBTITLE_MAX_LINES = 2
-    if desc:
-        sub_lines = _w(desc, "PlexSans-Medium", sub_sz, cw)
-        # Shrink if exceeds max lines
-        while len(sub_lines) > SUBTITLE_MAX_LINES and sub_sz > 8:
-            sub_sz -= 0.5
-            sub_lines = _w(desc, "PlexSans-Medium", sub_sz, cw)
-        for sl in sub_lines[:SUBTITLE_MAX_LINES]:
+    bio = sku["front_panel"]["zone_4"].get("biological_system", "")
+    variant = sku["front_panel"]["zone_5"]["variant_name"]
+    meta_items = [
+        ("TYPE", z6["type"]["value"]),
+        ("SYSTEM", (sku["front_panel"]["zone_4"].get("biological_system","") or "").split("·")[0].strip() or z6.get("status",{}).get("value","") or "—"),
+        ("FUNCTION", z6["function"]["value"]),
+    ]
+
+    def measure(ps, sub_sz, meta_sz, vs):
+        pf = "PlexCondensed-Bold"
+        tl = _w(pn, pf, ps, cw)
+        # Shrink title to max 3 lines
+        _ps = ps
+        while len(tl) > 3 and _ps > 10:
+            _ps -= 0.5
+            tl = _w(pn, pf, _ps, cw)
+        tl = tl[:3]
+        t_h = len(tl) * _ps * 0.95
+
+        sl = []
+        _ssz = sub_sz
+        if desc:
+            sl = _w(desc, "PlexSans-Medium", _ssz, cw)
+            while len(sl) > 2 and _ssz > 8:
+                _ssz -= 0.5
+                sl = _w(desc, "PlexSans-Medium", _ssz, cw)
+            sl = sl[:2]
+        s_h = len(sl) * _ssz * 1.1
+        bs = _ssz - 1 if not narrow else 6
+        if short: bs = 7
+        b_h = bs * 1.1 if bio else 0
+
+        mlh = meta_sz * 1.45
+        m_h = 3 * mlh
+
+        v_h = vs + 4
+        return tl, _ps, sl, _ssz, bs, meta_sz, mlh, vs, (t_h + s_h + b_h + m_h + v_h), t_h, s_h, b_h, m_h, v_h
+
+    # Cascading shrink loop — find biggest sizes that fit
+    ps_try = max_ps_base
+    sub_try = sub_sz_base
+    meta_try = meta_sz_base
+    vs_try = vs_base
+    min_total_gaps = 12 + 14 + 16  # title→sub, sub→meta, meta→variant
+
+    for _ in range(80):  # hard iteration cap
+        tl, ps_final, sl, sub_final, bio_final, meta_final, mlh, vs_final, content_h, t_h, s_h, b_h, m_h, v_h = measure(ps_try, sub_try, meta_try, vs_try)
+        if content_h + min_total_gaps <= available_h:
+            break
+        # Shrink: reduce title first, then subtitle, then meta, then variant
+        if ps_try > 11:
+            ps_try -= 0.5
+        elif sub_try > 8:
+            sub_try -= 0.5
+        elif meta_try > 6.5:
+            meta_try -= 0.5
+        elif vs_try > 7:
+            vs_try -= 0.5
+        else:
+            break  # At minimums
+
+    title_lines, ps, sub_lines, sub_sz, bio_sz, meta_sz, meta_lh, vs, content_h, title_h, sub_h, bio_h, meta_h, variant_h = tl, ps_final, sl, sub_final, bio_final, meta_final, mlh, vs_final, content_h, t_h, s_h, b_h, m_h, v_h
+
+    # Distribute slack as gaps
+    slack = max(0, available_h - content_h)
+    min_gap_ts, min_gap_sm, min_gap_mv = 6, 10, 12
+    total_min = min_gap_ts + min_gap_sm + min_gap_mv
+    if slack > total_min:
+        extra = slack - total_min
+        gap_ts = min_gap_ts + extra * 0.15
+        gap_sm = min_gap_sm + extra * 0.35
+        gap_mv = min_gap_mv + extra * 0.50
+    else:
+        # Compress gaps proportionally
+        ratio = slack / total_min if total_min else 0
+        gap_ts = max(3, min_gap_ts * ratio)
+        gap_sm = max(5, min_gap_sm * ratio)
+        gap_mv = max(6, min_gap_mv * ratio)
+
+    # ═══ PASS 2: DRAW ═══
+    pf = "PlexCondensed-Bold"
+
+    if short:
+        # ── JAR: 2-column horizontal layout (title+sub left, meta+variant right) ──
+        col_split = left + cw * 0.58
+        left_col_w = col_split - left - 16
+        right_col_w = right_ - col_split
+
+        # Left column: title + subtitle
+        lcy = content_top
+        for ln in title_lines:
+            _dc(c, left, lcy-ps, ln, pf, ps, C["t1"], left_col_w)
+            lcy -= ps * 0.95
+        lcy -= 6
+        for sl in sub_lines:
+            _dc(c, left, lcy-sub_sz, sl, "PlexSans-Medium", sub_sz, C["t2"], left_col_w)
+            lcy -= sub_sz * 1.1
+        if bio:
+            _dc(c, left, lcy-bio_sz, bio, "PlexMono", bio_sz, C["t3"], left_col_w)
+            lcy -= bio_sz * 1.1
+
+        # Right column: stacked meta + variant
+        rcy = content_top
+        label_col_w = _tw("FUNCTION", "PlexMono-Medium", meta_sz * 0.85) + meta_sz * 0.8
+        for label, val in meta_items:
+            _d(c, col_split, rcy-meta_sz, label, "PlexMono-Medium", meta_sz * 0.85, C["t3"])
+            _dc(c, col_split + label_col_w, rcy-meta_sz, val, "PlexSans-Medium", meta_sz, C["t1"], right_col_w - label_col_w)
+            rcy -= meta_lh
+        rcy -= 8
+        _dc(c, col_split, rcy-vs, variant, "PlexSans-SemiBold", vs, C["t1"], right_col_w)
+        rcy -= vs + 2
+        c.setFillColor(accent); c.rect(col_split, rcy-2, 50, 2, fill=1, stroke=0)
+    else:
+        # ── BOTTLE/POUCH/DROPPER/STRIPS: Vertically balanced single-column layout ──
+        cy = content_top
+
+        # Title
+        for ln in title_lines:
+            _dc(c, left, cy-ps, ln, pf, ps, C["t1"], cw)
+            cy -= ps * 0.95
+        cy -= gap_ts
+
+        # Subtitle
+        for sl in sub_lines:
             _dc(c, left, cy-sub_sz, sl, "PlexSans-Medium", sub_sz, C["t2"], cw)
             cy -= sub_sz * 1.1
-    bio = sku["front_panel"]["zone_4"].get("biological_system", "")
-    if bio:
-        bio_sz = min(sub_sz - 1, 11) if not narrow else 7
-        if short: bio_sz = 8
-        _dc(c, left, cy-bio_sz, bio, "PlexMono", bio_sz, C["t3"], cw)
-        cy -= bio_sz
+        if bio:
+            _dc(c, left, cy-bio_sz, bio, "PlexMono", bio_sz, C["t3"], cw)
+            cy -= bio_sz * 1.1
+        cy -= gap_sm
 
-    # ── V6.3: Subtitle → Meta: 14px ──
-    cy -= 14
-
-    # ── V6.2: Compact meta block (TYPE / SYSTEM / FUNCTION) 10-11px ──
-    z6 = sku["front_panel"]["zone_6"]
-    meta_sz = 10.5 if not narrow else 7.5
-    if short: meta_sz = 9
-    meta_lh = meta_sz * 1.5  # line-height 1.5
-    if cy > bot_safe + meta_lh * 3 + 18:
-        meta_items = [
-            ("TYPE", z6["type"]["value"]),
-            ("SYSTEM", z6["function"]["label"].replace("FUNCTION","").strip() or z6["function"]["value"]),
-            ("FUNCTION", z6["function"]["value"]),
-        ]
-        if narrow:
-            for label, val in meta_items:
-                if cy < bot_safe + meta_lh + 18: break
-                meta_line = f"{label}: {val}"
-                _dc(c, left, cy-meta_sz, meta_line, "PlexMono-Medium", meta_sz, C["t2"], cw)
-                cy -= meta_lh
-        else:
-            # Single line: TYPE / SYSTEM / FUNCTION
-            type_val = z6["type"]["value"]
-            func_val = z6["function"]["value"]
-            status_val = z6["status"]["value"]
-            meta_line = f"{type_val}  ·  {func_val}  ·  {status_val}"
-            _dc(c, left, cy-meta_sz, meta_line, "PlexMono-Medium", meta_sz, C["t2"], cw)
+        # Meta block — STACKED (TYPE / SYSTEM / FUNCTION)
+        label_col_w = _tw("FUNCTION", "PlexMono-Medium", meta_sz * 0.85) + meta_sz * 0.8
+        for label, val in meta_items:
+            _d(c, left, cy-meta_sz, label, "PlexMono-Medium", meta_sz * 0.85, C["t3"])
+            _dc(c, left + label_col_w, cy-meta_sz, val, "PlexSans-Medium", meta_sz, C["t1"], cw - label_col_w)
             cy -= meta_lh
+        cy -= gap_mv
 
-    # ── V6.2: Variant name + accent bar ──
-    vs = 12 if not narrow else 8
-    if short: vs = 9
-    _dc(c, left, cy-vs, sku["front_panel"]["zone_5"]["variant_name"], "PlexSans-SemiBold", vs, C["t1"], cw)
-    cy -= vs + 2
-    c.setFillColor(accent); c.rect(left, cy-2, 70 if not narrow else 40, 2, fill=1, stroke=0)
+        # Variant + accent bar
+        _dc(c, left, cy-vs, variant, "PlexSans-SemiBold", vs, C["t1"], cw)
+        cy -= vs + 2
+        c.setFillColor(accent); c.rect(left, cy-2, 70 if not narrow else 40, 2, fill=1, stroke=0)
 
-    # ── V6.2: Meta → Footer gap: 18px ──
-    cy -= 2 + 18
-
-    # V6.3: Footer strip — compact (-45% vs V5), #3A3A3A, reduced contrast
-    sh_base = STRIP_H if not narrow else 18
-    sh = int(sh_base * 0.55)  # -45% height
-    if sh < 9: sh = 9  # minimum readable
+    # ═══ FOOTER STRIP ═══
     c.setFillColor(C["strip_bg"]); c.rect(tx-BLEED, ty-BLEED, w+2*BLEED, sh+BLEED, fill=1, stroke=0)
     ver, qty = sku["front_panel"]["zone_7"]["version_info"], sku["front_panel"]["zone_7"]["net_quantity"]
-    ssz = 4.5 if not narrow else 3.5
+    ssz = 4 if not narrow else 3.25
     footer_safe_w = cw - 8
     if narrow:
-        # Stack on narrow format
         sty_1 = ty + sh - 2 - ssz
-        sty_2 = sty_1 - ssz - 1
+        sty_2 = sty_1 - ssz - 0.5
         _dc(c, left, sty_1, ver, "PlexMono", ssz, C["strip_tx"], footer_safe_w)
         _dc(c, left, sty_2, qty, "PlexMono", ssz, C["strip_tx"], footer_safe_w)
     else:
@@ -460,12 +547,12 @@ def render_back(c, sku, dims, accent, tx, ty):
     c.setFillColor(C["bg"]); c.rect(tx-BLEED, ty-BLEED, w+2*BLEED, h+2*BLEED, fill=1, stroke=0)
     c.setFillColor(accent); c.rect(tx-BLEED, ty+h-2, w+2*BLEED, 2, fill=1, stroke=0)
 
-    # ── Strip (V6.3: -45% height, #3A3A3A, reduced contrast) ──
+    # ── Strip (V6.4: -58% height, #4A4A4A, lighter contrast) ──
     bsh_base = STRIP_H if not narrow else 18
-    bsh = int(bsh_base * 0.55)
-    if bsh < 9: bsh = 9
+    bsh = int(bsh_base * 0.42)
+    if bsh < 8: bsh = 8
     c.setFillColor(C["strip_bg"]); c.rect(tx-BLEED, ty-BLEED, w+2*BLEED, bsh+BLEED, fill=1, stroke=0)
-    stsz = 4.5 if not narrow else 3.5
+    stsz = 4 if not narrow else 3.25
     footer_w = cw - 8
     if narrow:
         sty_n = ty + bsh - 2 - stsz
