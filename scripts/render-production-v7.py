@@ -648,7 +648,19 @@ def main():
     if args.validate or args.validate_full:
         targets = FULL_VALIDATION if args.validate_full else VALIDATION_TARGETS
         mode_name = "FULL 7-SAMPLE" if args.validate_full else "V2 QA 5-FORMAT"
-        preview = args.preview_dir or "v7-preview-02"
+        if args.preview_dir:
+            preview = args.preview_dir
+        else:
+            # Auto-number: find next available v7-preview-XX
+            ds = BASE / "design-system"
+            existing = sorted(ds.glob("v7-preview-*"))
+            next_num = 1
+            for d in existing:
+                try:
+                    n = int(d.name.split("-")[-1])
+                    if n >= next_num: next_num = n + 1
+                except ValueError: pass
+            preview = f"v7-preview-{next_num:02d}"
         out_base = BASE / "design-system" / preview
         print("=" * 60)
         print(f"GenoMAX\u00b2 V7+V2 System Lock \u2014 {mode_name} VALIDATION")
