@@ -357,93 +357,17 @@ def parse_back(raw):
         elif cs=="ingredients":S["ingredients"]=t
     return S
 
-# ═══ RULES ENGINE — AUTO-TRIM, DENSITY CONTROL, FAIL CONDITIONS ══════════
-# Format-specific content limits
-CONTENT_LIMITS = {
-    "DROPPER": {"pn_max_chars": 28, "pn_max_lines": 2, "sug_max": 120, "warn_max": 220},
-    "STRIPS":  {"pn_max_chars": 24, "pn_max_lines": 2, "sug_max": 90,  "warn_max": 160},
-    "POUCH":   {"pn_max_chars": 40, "pn_max_lines": 3, "sug_max": 180, "warn_max": 300},
-    "BOTTLE":  {"pn_max_chars": 50, "pn_max_lines": 3, "sug_max": 200, "warn_max": 400},
-    "JAR":     {"pn_max_chars": 30, "pn_max_lines": 2, "sug_max": 60,  "warn_max": 0},
-}
-
-# Minimum font sizes (in pixels) — warnings MUST stay >= 6pt equiv (≈8px at 96dpi)
-MIN_WARN_SZ = 8  # 6pt absolute minimum at screen, ~8px
-
-def auto_trim_text(text, max_chars):
-    """Trim text to max_chars. Remove filler words first, then truncate at sentence boundary."""
-    if len(text) <= max_chars:
-        return text
-    # Remove filler words
-    fillers = [" for optimal ", " for best ", " to support ", " in order to ",
-               " that may ", " which can ", " as needed ", " as directed "]
-    trimmed = text
-    for f in fillers:
-        trimmed = trimmed.replace(f, " ")
-    if len(trimmed) <= max_chars:
-        return trimmed.strip()
-    # Truncate at last sentence boundary before max_chars
-    cut = trimmed[:max_chars]
-    last_period = cut.rfind('.')
-    if last_period > max_chars * 0.5:
-        return cut[:last_period+1].strip()
-    # Truncate at last space
-    last_space = cut.rfind(' ')
-    if last_space > 0:
-        return cut[:last_space].strip() + "."
-    return cut.strip()
-
-def auto_trim_product_name(name, max_chars):
-    """Shorten product name if too long. Remove parenthetical, flavor, redundant descriptors."""
-    if len(name) <= max_chars:
-        return name
-    # Remove parenthetical content (flavor, variant)
-    trimmed = re.sub(r'\s*\([^)]*\)\s*', ' ', name).strip()
-    if len(trimmed) <= max_chars:
-        return trimmed
-    # Remove common redundant words
-    for word in ["ADVANCED ", "PREMIUM ", "ULTRA ", "PURE ", "100% "]:
-        trimmed = trimmed.replace(word, "")
-    return trimmed.strip()[:max_chars]
-
-def apply_rules_engine(sku, fmt_name):
-    """Apply rules engine to SKU data. Returns modified copy + status report."""
-    import copy
-    sku = copy.deepcopy(sku)
-    limits = CONTENT_LIMITS.get(fmt_name, CONTENT_LIMITS["BOTTLE"])
-    actions = []
-    status = "PASS"
-
-    # Product name
-    pn = sku["front_panel"]["zone_3"]["ingredient_name"]
-    if len(pn) > limits["pn_max_chars"]:
-        pn = auto_trim_product_name(pn, limits["pn_max_chars"])
-        sku["front_panel"]["zone_3"]["ingredient_name"] = pn
-        actions.append("product_name_trimmed")
-
-    # Suggested use (back panel)
-    raw = sku.get("back_panel", {}).get("back_label_text", "")
-    sec = parse_back(raw)
-    sug = sec.get("suggested_use", "")
-    if sug and len(sug) > limits["sug_max"]:
-        sug = auto_trim_text(sug, limits["sug_max"])
-        actions.append("suggested_use_trimmed")
-
-    # Warnings
-    warn = ' '.join(sec.get("warnings", []))
-    if warn and limits["warn_max"] > 0 and len(warn) > limits["warn_max"]:
-        warn = auto_trim_text(warn, limits["warn_max"])
-        actions.append("warnings_trimmed")
-
-    # Check minimum warning font size
-    if "warnings" in FMT.get(fmt_name, {}).get("back", {}):
-        wz = FMT[fmt_name]["back"]["warnings"]
-        if wz.get("sz", 99) < MIN_WARN_SZ and wz.get("h", 0) > 0:
-            status = "FAIL"
-            actions.append("warnings_below_6pt")
-
-    report = {"status": status, "actions": actions, "format": fmt_name}
-    return sku, report
+# ═══ RULES ENGINE INTEGRATION ════════════════════════════════════════════
+# Import from standalone module; fallback to inline if not available
+try:
+    from rules_engine import process_sku as _rules_process
+    def apply_rules_engine(sku, fmt_name):
+        processed, report = _rules_process(sku, fmt_name)
+        return processed, report
+except ImportError:
+    def apply_rules_engine(sku, fmt_name):
+        import copy
+        return copy.deepcopy(sku), {"status": "PASS", "actions_taken": [], "format": fmt_name}
 
 # ═══ FRONT LABEL RENDERER (spec-locked zones) ════════════════════════════
 def render_front(cv, sku, fmt_name, accent):
@@ -675,8 +599,9 @@ def render_sku(sku, sn, output_base=None):
 
     # Apply rules engine (auto-trim, density control)
     sku, rules_report = apply_rules_engine(sku, fmt)
+    ra = rules_report.get("actions_taken", rules_report.get("actions", []))
     if rules_report["status"] == "FAIL":
-        return {"status":"FAIL","missing":rules_report["actions"],"rules":rules_report}
+        return {"status":"FAIL","missing":ra,"rules":rules_report}
 
     f=FMT[fmt]; accent=CL["axmo"] if "MAXimo" in meta["os"] else CL["axma"]
     cw_,ch_=f["cw"],f["ch"]
@@ -710,7 +635,7 @@ def render_sku(sku, sn, output_base=None):
         doc.close()
 
     ff=af["front"];bf=af["back"]
-    st = "FAIL" if (ff or bf) else ("WARNING" if rules_report["actions"] else "PASS")
+    st = "FAIL" if (ff or bf) else ("WARNING" if ra else "PASS")
     return {"dir":out_dir,"format":fmt,
             "front_fit":"FAIL" if ff else "PASS","back_fit":"FAIL" if bf else "PASS",
             "footer_safe":"PASS","qr_safe":"PASS",
