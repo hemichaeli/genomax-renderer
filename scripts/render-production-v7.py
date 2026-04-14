@@ -72,8 +72,8 @@ FMT = {
     "sys_line":{"x":136,"y":454,"w":1060,"h":34,"sz":20,"ld":24},
     "meta":{"x":136,"y":506,"w":620,"h":88,"rows":3,"row_h":28,"lbl_w":120,"val_w":500,
             "lbl_sz":18,"lbl_ld":24,"val_sz":22,"val_ld":28},
-    "os_badge":{"x":136,"y":550,"w":240,"h":32,"sz":28,"ld":32,
-                "ul_x":136,"ul_y":588,"ul_w":228,"ul_h":6},
+    "os_badge":{"x":136,"y":596,"w":240,"h":32,"sz":28,"ld":32,
+                "ul_x":136,"ul_y":632,"ul_w":228,"ul_h":6},
     "footer_l":{"x":136,"y":662,"w":380,"h":28,"sz":16,"ld":20},
     "footer_r":{"x":1040,"y":662,"w":424,"h":28,"sz":16,"ld":20,"align":"right"},
   },
@@ -84,13 +84,12 @@ FMT = {
     "url":{"x":136,"y":326,"w":240,"h":28,"sz":18,"ld":22},
     "qr":{"x":1268,"y":182,"w":160,"h":160,"pad":8},
     "sep":{"x":136,"y":402,"w":1040,"h":2},
-    "body":{"x":136,"y":444,"w":1040,"h":131,"sz":18,"ld":28},
-    "sug_use":{"x":136,"y":598,"w":1040,"h":74,"lbl_sz":20,"lbl_ld":24,"sz":18,"ld":28},
-    "warnings":{"x":136,"y":688,"w":1040,"h":88,"lbl_sz":20,"lbl_ld":24,"sz":18,"ld":28},
-    "ingredients":{"x":136,"y":444,"w":240,"h":110,"sz":18,"ld":28,
-                   "alt_x":136,"alt_y":776+88,"alt_w":1040},  # below warnings fallback
-    "footer_l":{"x":136,"y":662,"w":380,"h":28,"sz":16,"ld":20},
-    "footer_r":{"x":1040,"y":662,"w":424,"h":28,"sz":16,"ld":20,"align":"right"},
+    "body":{"x":136,"y":424,"w":1040,"h":80,"sz":18,"ld":28},
+    "sug_use":{"x":136,"y":512,"w":1040,"h":56,"lbl_sz":20,"lbl_ld":24,"sz":18,"ld":28},
+    "warnings":{"x":136,"y":576,"w":1040,"h":0,"lbl_sz":20,"lbl_ld":24,"sz":18,"ld":28},
+    "ingredients":{"x":136,"y":576,"w":1040,"h":0,"sz":18,"ld":28},
+    "footer_l":{"x":136,"y":640,"w":380,"h":28,"sz":16,"ld":20},
+    "footer_r":{"x":1040,"y":640,"w":424,"h":28,"sz":16,"ld":20,"align":"right"},
   }
 },
 "JAR": {
@@ -543,7 +542,7 @@ def render_back(cv, sku, fmt_name, accent):
                       "Mono", ac("#1A1815",.88), ch, max_body_lines, bd["w"])
 
     # 8. Suggested Use
-    if "sug_use" in bk:
+    if "sug_use" in bk and bk["sug_use"].get("h",0) > 0:
         su = bk["sug_use"]
         sug = sec.get("suggested_use","")
         if sug:
@@ -557,7 +556,7 @@ def render_back(cv, sku, fmt_name, accent):
                       "Mono", ac("#1A1815",.88), ch, max_sl, su["w"])
 
     # 9. Warnings
-    if "warnings" in bk:
+    if "warnings" in bk and bk["warnings"].get("h",0) > 0:
         wz = bk["warnings"]
         warn = ' '.join(sec.get("warnings",[]))
         if warn:
