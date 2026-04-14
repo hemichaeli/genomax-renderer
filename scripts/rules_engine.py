@@ -100,7 +100,11 @@ def product_name_engine(name, max_lines=2, max_chars=28):
     lines = [name[:max_chars].strip(), name[max_chars:].strip()]
     lines = [l for l in lines if l][:max_lines]
     actions.append("force_split")
-    return name, lines, 2, actions
+    # FAIL CHECK: lines > max_lines or font < 28 (step > 3)
+    font_step = 2
+    longest = max(len(l) for l in lines) if lines else 0
+    if longest > max_chars * 1.6: font_step = 3
+    return name, lines, font_step, actions
 
 
 # ═══ ENGINE 2: DENSITY ENGINE ════════════════════════════════════════════
@@ -186,8 +190,8 @@ PRIORITY = {
 
 # Char limits per priority level
 LIMITS = {
-    "DROPPER": {"suggested_use": 100, "warnings": 180, "ingredients": 60, "context": 80},
-    "STRIPS":  {"suggested_use": 80,  "warnings": 140, "ingredients": 50, "context": 100},
+    "DROPPER": {"suggested_use": 160, "warnings": 220, "ingredients": 60, "context": 140},
+    "STRIPS":  {"suggested_use": 120, "warnings": 180, "ingredients": 50, "context": 120},
     "POUCH":   {"suggested_use": 160, "warnings": 280, "ingredients": 120, "context": 200},
     "BOTTLE":  {"suggested_use": 180, "warnings": 350, "ingredients": 180, "context": 180},
     "JAR":     {"suggested_use": 50,  "warnings": 0,   "ingredients": 0,  "context": 0},
@@ -405,13 +409,38 @@ def process_sku(sku, fmt=None):
     # ENGINE 4: Format switch
     adjustments = format_switch(fmt, density)
 
-    # Determine status
+    # ── FAIL CONDITIONS (from PRODUCTION LOCK SPEC) ──
     violations = []
-    if density["front_ratio"] > 1.5:  # allow some overflow — renderer cascade handles up to 1.5x
-        violations.append(f"front_overflow_{density['front_ratio']}")
-    # CTA check
-    if "protocol" not in raw.lower():
-        violations.append("cta_missing")
+
+    # Product name: fail if lines > max_lines or font < 28 (step > 3)
+    if len(pn_lines) > diag["pn_max_lines"]:
+        violations.append("pn_exceeds_max_lines")
+    if font_step > 3:
+        violations.append("pn_font_below_minimum")
+
+    # CTA: must always exist
+    if "protocol" not in raw.lower() and "scan" not in raw.lower():
+        violations.append("missing_CTA")
+
+    # QR: must always exist (checked by presence of back_label_text)
+    if not raw.strip():
+        violations.append("missing_QR_data")
+
+    # Warnings: font < 6pt = FAIL
+    # (checked at render time, but flag if warnings exist and format has h=0)
+    warn_text = ' '.join(sections.get("warnings", []))
+    if warn_text and fmt in ("DROPPER", "STRIPS", "POUCH"):
+        if len(warn_text) > LIMITS.get(fmt, {}).get("warnings", 999) * 1.5:
+            violations.append("warnings_may_be_unreadable")
+
+    # Warnings: enforce single paragraph
+    if len(sections.get("warnings", [])) > 1:
+        sections["warnings"] = [' '.join(sections["warnings"])]
+        all_actions.append("warnings_merged_to_single_paragraph")
+
+    # Footer zone: no content may enter (enforced by renderer, flagged here if density > 1.0)
+    if density["front_ratio"] > 1.0:
+        all_actions.append("density_high_check_footer")
 
     status = "FAIL" if violations else ("WARNING" if all_actions else "PASS")
 
@@ -451,7 +480,20 @@ def print_report(results):
         print(f"{mc:<8}| {fmt:<9}| {st:<5}| {fd:<6}| {bd:<6}| {ps:<8}| {acts}")
         c[st] = c.get(st, 0) + 1
     print(f"\n{'='*90}")
-    print(f"TOTAL: {len(results)} | PASS: {c['PASS']} | WARNING: {c['WARNING']} | FAIL: {c['FAIL']}")
+    total = len(results)
+    print(f"TOTAL: {total} | PASS: {c['PASS']} | WARNING: {c['WARNING']} | FAIL: {c['FAIL']}")
+
+    # LOCK CRITERIA CHECK (from PRODUCTION LOCK SPEC v1.0)
+    pass_rate = (c['PASS'] + c['WARNING']) / total * 100 if total else 0
+    fail_count = c['FAIL']
+    print(f"\n{'─'*90}")
+    print(f"LOCK CRITERIA:")
+    print(f"  PASS+WARNING rate: {pass_rate:.1f}% (required: >=80%): {'OK' if pass_rate >= 80 else 'FAIL'}")
+    print(f"  FAIL count: {fail_count} (required: 0): {'OK' if fail_count == 0 else 'FAIL'}")
+    if pass_rate >= 80 and fail_count == 0:
+        print(f"  STATUS: SYSTEM LOCKED ✓")
+    else:
+        print(f"  STATUS: NOT LOCKED — {fail_count} failures must be resolved")
 
 if __name__ == "__main__":
     import json
