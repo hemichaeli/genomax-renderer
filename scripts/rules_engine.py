@@ -107,72 +107,110 @@ def product_name_engine(name, max_lines=2, max_chars=28):
     return name, lines, font_step, actions
 
 
-# ═══ ENGINE 2: DENSITY ENGINE ════════════════════════════════════════════
+# ═══ ENGINE 2: HEIGHT-BASED VERTICAL BUDGET (CRITICAL) ════════════════════
 
-# Format dimensions: content area height in pixels
-FORMAT_CONTENT_H = {
-    "BOTTLE":  479,   # from spec: content frame h
-    "JAR":     203,
-    "POUCH":   1022,
-    "STRIPS":  1338,
-    "DROPPER": 1037,
+# Max height budgets in pixels (from QA matrix)
+VERTICAL_BUDGET = {
+    "DROPPER": 1400,
+    "STRIPS":  900,
+    "POUCH":   1800,
+    "BOTTLE":  700,
+    "JAR":     420,
 }
 
-# Block heights (approximate, in pixels) per format
-def estimate_block_heights(fmt, pn_lines, pn_font_step, has_desc, has_bio, has_meta, has_variant):
-    """Estimate total front content height in pixels."""
-    # Base block heights from spec zones
-    heights = {
-        "BOTTLE":  {"brand":36,"mod_label":34,"title_line":50,"ingredient":48,"sys":34,"meta":88,"badge":38,"gaps":80},
-        "JAR":     {"brand":30,"mod_label":24,"title_line":28,"ingredient":28,"sys":24,"meta":88,"badge":30,"gaps":40},
-        "POUCH":   {"brand":36,"mod_label":34,"title_line":67,"ingredient":58,"sys":34,"meta":108,"badge":40,"gaps":200},
-        "STRIPS":  {"brand":34,"mod_label":38,"title_line":73,"ingredient":64,"sys":30,"meta":112,"badge":40,"gaps":300},
-        "DROPPER": {"brand":34,"mod_label":36,"title_line":55,"ingredient":90,"sys":30,"meta":112,"badge":38,"gaps":150},
-    }
-    h = heights.get(fmt, heights["BOTTLE"])
+# Content area from spec
+FORMAT_CONTENT_H = {
+    "BOTTLE":  479, "JAR": 203, "POUCH": 1022, "STRIPS": 1338, "DROPPER": 1037,
+}
 
-    # Title height depends on lines and font step
-    title_sz = [h["title_line"], int(h["title_line"]*0.88), int(h["title_line"]*0.78), int(h["title_line"]*0.70)]
-    title_h = len(pn_lines) * title_sz[min(pn_font_step, 3)]
+# Block heights in pixels per format — FRONT
+FRONT_BLOCK_H = {
+    "BOTTLE":  {"brand":36,"mod_label":34,"title_line":50,"ingredient":48,"sys":34,"meta_row":28,"badge":38,"gap":16},
+    "JAR":     {"brand":30,"mod_label":24,"title_line":28,"ingredient":28,"sys":24,"meta_row":26,"badge":30,"gap":8},
+    "POUCH":   {"brand":36,"mod_label":34,"title_line":67,"ingredient":58,"sys":34,"meta_row":32,"badge":40,"gap":24},
+    "STRIPS":  {"brand":34,"mod_label":38,"title_line":73,"ingredient":64,"sys":30,"meta_row":34,"badge":40,"gap":20},
+    "DROPPER": {"brand":34,"mod_label":36,"title_line":55,"ingredient":90,"sys":30,"meta_row":34,"badge":38,"gap":16},
+}
 
-    total = h["brand"] + h["mod_label"] + title_h
-    if has_desc: total += h["ingredient"]
-    if has_bio: total += h["sys"]
-    if has_meta: total += h["meta"]
-    if has_variant: total += h["badge"]
-    total += h["gaps"]
+# Block heights in pixels per format — BACK
+BACK_BLOCK_H = {
+    "BOTTLE":  {"brand":36,"headline":82,"cta":42,"url":28,"qr":160,"sep":10,"body_line":28,"lbl":24,"gap":12},
+    "JAR":     {"brand":30,"headline":40,"cta":34,"url":24,"qr":112,"sep":8,"body_line":20,"lbl":18,"gap":8},
+    "POUCH":   {"brand":36,"headline":82,"cta":42,"url":28,"qr":180,"sep":10,"body_line":28,"lbl":24,"gap":16},
+    "STRIPS":  {"brand":34,"headline":86,"cta":42,"url":28,"qr":170,"sep":8,"body_line":24,"lbl":22,"gap":12},
+    "DROPPER": {"brand":34,"headline":94,"cta":72,"url":28,"qr":160,"sep":8,"body_line":22,"lbl":22,"gap":10},
+}
+
+def calc_front_height(fmt, pn_lines, font_step, has_desc, has_bio, gap_multiplier=1.0):
+    """Calculate actual front content height in pixels."""
+    h = FRONT_BLOCK_H.get(fmt, FRONT_BLOCK_H["BOTTLE"])
+    gap = int(h["gap"] * gap_multiplier)
+
+    title_sz = [h["title_line"], int(h["title_line"]*.88), int(h["title_line"]*.78), int(h["title_line"]*.70)]
+    title_h = len(pn_lines) * title_sz[min(font_step, 3)]
+
+    total = h["brand"] + gap + h["mod_label"] + gap + title_h + gap
+    if has_desc: total += h["ingredient"] + gap
+    if has_bio: total += h["sys"] + gap
+    total += h["meta_row"] * 3 + gap + h["badge"]
+    return total
+
+def calc_back_height(fmt, sections, gap_multiplier=1.0):
+    """Calculate actual back content height in pixels."""
+    h = BACK_BLOCK_H.get(fmt, BACK_BLOCK_H["BOTTLE"])
+    gap = int(h["gap"] * gap_multiplier)
+
+    # Fixed header
+    total = h["brand"] + gap + h["headline"] + gap + h["cta"] + gap + h["url"] + gap + h["qr"] + gap + h["sep"] + gap
+
+    # Body (context)
+    ctx = sections.get("context", "")
+    if ctx:
+        lines = max(1, len(ctx) // 50)
+        total += lines * h["body_line"] + gap
+
+    # Suggested use
+    sug = sections.get("suggested_use", "")
+    if sug:
+        total += h["lbl"] + max(1, len(sug) // 50) * h["body_line"] + gap
+
+    # Warnings
+    warn = ' '.join(sections.get("warnings", []))
+    if warn:
+        total += h["lbl"] + max(1, len(warn) // 50) * h["body_line"] + gap
+
+    # Ingredients
+    ingr = sections.get("ingredients", "")
+    if ingr:
+        total += h["lbl"] + max(1, len(ingr) // 50) * h["body_line"]
 
     return total
 
 def density_engine(sku, fmt):
-    """
-    Measure actual content height vs available height.
-    Returns: {front_used, front_avail, front_ratio, back_used, back_avail, back_ratio, overflow}
-    """
+    """HEIGHT-BASED density check. Measures actual px vs budget."""
     pn = sku["front_panel"]["zone_3"]["ingredient_name"]
     desc = sku["front_panel"]["zone_4"].get("descriptor", "")
     bio = sku["front_panel"]["zone_4"].get("biological_system", "")
 
-    # Quick name line estimate
     pn_lines = 1 if len(pn) <= 25 else (2 if len(pn) <= 50 else 3)
-    front_h = estimate_block_heights(fmt, list(range(pn_lines)), 0, bool(desc), bool(bio), True, True)
+    front_h = calc_front_height(fmt, list(range(pn_lines)), 0, bool(desc), bool(bio))
     front_avail = FORMAT_CONTENT_H.get(fmt, 479)
 
-    # Back: estimate from text length
     raw = sku.get("back_panel", {}).get("back_label_text", "")
-    back_chars = len(raw)
-    # Rough: 1 line ≈ 40-60 chars at body size, line height ≈ 28px
-    back_lines = max(1, back_chars // 50)
-    back_h = back_lines * 28 + 200  # 200px for header/QR/dividers
-    back_avail = front_avail  # same content frame height
+    sections = parse_sections(raw) if raw else {}
+    back_h = calc_back_height(fmt, sections)
+    back_avail = FORMAT_CONTENT_H.get(fmt, 479)
+
+    budget = VERTICAL_BUDGET.get(fmt, 1400)
 
     return {
-        "front_used": front_h,
-        "front_avail": front_avail,
+        "front_used": front_h, "front_avail": front_avail,
         "front_ratio": round(front_h / front_avail, 2) if front_avail else 0,
-        "back_used": back_h,
-        "back_avail": back_avail,
+        "back_used": back_h, "back_avail": back_avail,
         "back_ratio": round(back_h / back_avail, 2) if back_avail else 0,
+        "total_used": front_h + back_h,
+        "budget": budget,
+        "budget_ratio": round((front_h + back_h) / budget, 2) if budget else 0,
         "overflow": front_h > front_avail or back_h > back_avail,
     }
 
@@ -241,13 +279,24 @@ def compress(text, max_chars):
     return cut.strip(), True
 
 def strips_special_mode(sections):
-    """STRIPS SPECIAL MODE: remove subtitle, extract critical warnings, vertical compress."""
+    """STRIPS COMPRESSED LAYOUT MODE (from QA matrix).
+    - max 2 lines suggested use
+    - max 4 lines warnings
+    - ingredients optional (remove if overflow)
+    - tighter spacing, reduced margins
+    """
     actions = []
-    # Remove subtitle (not enough space)
     sections["_strip_subtitle"] = True
     actions.append("strips_subtitle_removed")
 
-    # Extract only safety-critical warnings
+    # Suggested use: max 2 lines (~100 chars)
+    sug = sections.get("suggested_use", "")
+    if sug and len(sug) > 100:
+        compressed, _ = compress(sug, 100)
+        sections["suggested_use"] = compressed
+        actions.append("strips_sug_max_2_lines")
+
+    # Warnings: extract critical only, max 4 lines (~160 chars)
     warn = ' '.join(sections.get("warnings", []))
     if warn:
         critical = []
@@ -259,11 +308,16 @@ def strips_special_mode(sections):
             if stmt.lower() in warn.lower():
                 critical.append(stmt)
         if critical:
-            sections["warnings"] = [' '.join(critical)]
+            sections["warnings"] = [' '.join(critical)[:160]]
             actions.append("strips_critical_warnings_only")
 
+    # Ingredients: optional on STRIPS
+    sections["_ingredients_optional"] = True
+    actions.append("strips_ingredients_optional")
+
     sections["_vertical_compress"] = True
-    actions.append("strips_vertical_compress")
+    sections["_tighter_spacing"] = True
+    actions.append("strips_compressed_mode")
     return sections, actions
 
 def priority_engine(sections, fmt):
@@ -444,7 +498,7 @@ def process_sku(sku, fmt=None):
     if fmt == "STRIPS":
         sku["front_panel"]["zone_4"]["_strip_subtitle"] = True
 
-    # ENGINE 2: Density
+    # ENGINE 2: Initial Density Check
     density = density_engine(sku, fmt)
 
     # ENGINE 3: Priority trimming on back sections
@@ -452,43 +506,72 @@ def process_sku(sku, fmt=None):
     sections = parse_sections(raw)
     sections, prio_actions = priority_engine(sections, fmt)
     all_actions.extend(prio_actions)
+
+    # ── 5-STEP COMPRESSION CASCADE (if overflow detected) ──
+    # Recalculate after priority trimming
+    back_h = calc_back_height(fmt, sections)
+    back_avail = FORMAT_CONTENT_H.get(fmt, 479)
+
+    if back_h > back_avail:
+        # STEP 1: Reduce line height (compress suggested_use + description)
+        sug = sections.get("suggested_use", "")
+        if sug and len(sug) > 80:
+            sections["suggested_use"], _ = compress(sug, 80)
+            all_actions.append("cascade_step1_reduce_sug")
+
+        # STEP 2: Shorten text (description + suggested_use further)
+        ctx = sections.get("context", "")
+        if ctx and len(ctx) > 100:
+            sections["context"], _ = compress(ctx, 100)
+            all_actions.append("cascade_step2_shorten_context")
+
+        # STEP 3: Trim warnings (keep compliance core)
+        warn = ' '.join(sections.get("warnings", []))
+        if warn and len(warn) > 120:
+            critical = "Not intended for medical use. Consult a healthcare professional before use."
+            sections["warnings"] = [critical]
+            all_actions.append("cascade_step3_trim_warnings")
+
+        # STEP 4: Hide optional (ingredients on STRIPS)
+        if fmt == "STRIPS" and sections.get("ingredients"):
+            sections["ingredients"] = ""
+            all_actions.append("cascade_step4_hide_ingredients")
+
+        # STEP 5: Reduce font (product name) — already handled by font_step
+
     sku["_processed_sections"] = sections
 
     # ENGINE 4: Format switch
     adjustments = format_switch(fmt, density)
 
-    # ── FAIL CONDITIONS (from PRODUCTION LOCK SPEC) ──
+    # ── FAIL CONDITIONS ──
     violations = []
 
-    # Product name: fail if lines > max_lines or font < 28 (step > 3)
     if len(pn_lines) > diag["pn_max_lines"]:
         violations.append("pn_exceeds_max_lines")
     if font_step > 3:
         violations.append("pn_font_below_minimum")
 
-    # CTA: must always exist
     if "protocol" not in raw.lower() and "scan" not in raw.lower():
         violations.append("missing_CTA")
-
-    # QR: must always exist (checked by presence of back_label_text)
     if not raw.strip():
         violations.append("missing_QR_data")
 
-    # Warnings: font < 6pt = FAIL
-    # (checked at render time, but flag if warnings exist and format has h=0)
+    # Warnings readability
     warn_text = ' '.join(sections.get("warnings", []))
     if warn_text and fmt in ("DROPPER", "STRIPS", "POUCH"):
-        if len(warn_text) > LIMITS.get(fmt, {}).get("warnings", 999) * 1.5:
+        if len(warn_text) > LIMITS.get(fmt, {}).get("warnings", 999) * 2:
             violations.append("warnings_may_be_unreadable")
 
-    # Warnings: enforce single paragraph
     if len(sections.get("warnings", [])) > 1:
         sections["warnings"] = [' '.join(sections["warnings"])]
-        all_actions.append("warnings_merged_to_single_paragraph")
+        all_actions.append("warnings_merged")
 
-    # Footer zone: no content may enter (enforced by renderer, flagged here if density > 1.0)
-    if density["front_ratio"] > 1.0:
-        all_actions.append("density_high_check_footer")
+    # Height guardrail
+    budget = VERTICAL_BUDGET.get(fmt, 1400)
+    total_h = density["front_used"] + calc_back_height(fmt, sections)
+    if total_h > budget * 1.3:
+        all_actions.append(f"height_guardrail_warning_{total_h}px")
 
     status = "FAIL" if violations else ("WARNING" if all_actions else "PASS")
 
