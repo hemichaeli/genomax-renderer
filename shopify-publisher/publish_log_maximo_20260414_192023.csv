@@ -1,0 +1,8 @@
+sku,store,status,error_message,product_id,handle,timestamp
+CV-01_MO_OMEGA-3,maximo,BLOCKED,missing front image: assets/CV-01_MO_OMEGA-3/front.jpg; missing back image: assets/CV-01_MO_OMEGA-3/back.jpg,,omega-3-epa-dha-lipid-metabolism-maximo,2026-04-14T19:20:23.245437+00:00
+CV-04_MO_COLON,maximo,BLOCKED,missing front image: assets/CV-04_MO_COLON/front.jpg; missing back image: assets/CV-04_MO_COLON/back.jpg,,colon-gentle-cleanse-gut-motility-maximo,2026-04-14T19:20:23.245451+00:00
+GL-01_MO_BERBERINE,maximo,BLOCKED,missing front image: assets/GL-01_MO_BERBERINE/front.jpg; missing back image: assets/GL-01_MO_BERBERINE/back.jpg,,berberine-glucose-regulation-maximo,2026-04-14T19:20:23.245459+00:00
+GL-04_MO_IRON,maximo,BLOCKED,missing front image: assets/GL-04_MO_IRON/front.jpg; missing back image: assets/GL-04_MO_IRON/back.jpg,,iron-strips-iron-status-maximo,2026-04-14T19:20:23.245465+00:00
+GL-10_MO_DENTAL,maximo,BLOCKED,missing front image: assets/GL-10_MO_DENTAL/front.jpg; missing back image: assets/GL-10_MO_DENTAL/back.jpg,,dental-oral-health-chewables-maximo,2026-04-14T19:20:23.245471+00:00
+MT-09_MO_WHEY,maximo,BLOCKED,missing front image: assets/MT-09_MO_WHEY/front.jpg; missing back image: assets/MT-09_MO_WHEY/back.jpg,,whey-protein-isolate-chocolate-maximo,2026-04-14T19:20:23.245477+00:00
+IN-04_MO_RESPIRATORY,maximo,BLOCKED,missing front image: assets/IN-04_MO_RESPIRATORY/front.jpg; missing back image: assets/IN-04_MO_RESPIRATORY/back.jpg,,respiratory-lung-health-drops-maximo,2026-04-14T19:20:23.245483+00:00
