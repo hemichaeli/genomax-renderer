@@ -188,13 +188,18 @@ PRIORITY = {
     "JAR":     ["suggested_use"],  # JAR back = CTA only
 }
 
-# Char limits per priority level
+# Char limits per priority level — from QA MATRIX
 LIMITS = {
-    "DROPPER": {"suggested_use": 160, "warnings": 220, "ingredients": 60, "context": 140},
-    "STRIPS":  {"suggested_use": 120, "warnings": 180, "ingredients": 50, "context": 120},
-    "POUCH":   {"suggested_use": 160, "warnings": 280, "ingredients": 120, "context": 200},
-    "BOTTLE":  {"suggested_use": 180, "warnings": 350, "ingredients": 180, "context": 180},
-    "JAR":     {"suggested_use": 50,  "warnings": 0,   "ingredients": 0,  "context": 0},
+    "DROPPER": {"suggested_use": 130, "warnings": 200, "ingredients": 50, "context": 100,
+                "description": 140, "subtitle": 60},
+    "STRIPS":  {"suggested_use": 100, "warnings": 160, "ingredients": 40, "context": 100,
+                "description": 120, "subtitle": 0},  # subtitle removed on STRIPS
+    "POUCH":   {"suggested_use": 180, "warnings": 280, "ingredients": 120, "context": 220,
+                "description": 200, "subtitle": 120},
+    "BOTTLE":  {"suggested_use": 180, "warnings": 350, "ingredients": 180, "context": 180,
+                "description": 200, "subtitle": 120},
+    "JAR":     {"suggested_use": 50,  "warnings": 0,   "ingredients": 0,  "context": 0,
+                "description": 100, "subtitle": 60},
 }
 
 FILLER_WORDS = [
@@ -235,11 +240,42 @@ def compress(text, max_chars):
         return cut[:s].strip() + ".", True
     return cut.strip(), True
 
+def strips_special_mode(sections):
+    """STRIPS SPECIAL MODE: remove subtitle, extract critical warnings, vertical compress."""
+    actions = []
+    # Remove subtitle (not enough space)
+    sections["_strip_subtitle"] = True
+    actions.append("strips_subtitle_removed")
+
+    # Extract only safety-critical warnings
+    warn = ' '.join(sections.get("warnings", []))
+    if warn:
+        critical = []
+        for stmt in [
+            "Not intended for medical use.",
+            "Consult a qualified healthcare professional before use",
+            "especially if pregnant, nursing, or taking medication.",
+        ]:
+            if stmt.lower() in warn.lower():
+                critical.append(stmt)
+        if critical:
+            sections["warnings"] = [' '.join(critical)]
+            actions.append("strips_critical_warnings_only")
+
+    sections["_vertical_compress"] = True
+    actions.append("strips_vertical_compress")
+    return sections, actions
+
 def priority_engine(sections, fmt):
     """Apply priority-ordered trimming to back sections."""
     actions = []
     limits = LIMITS.get(fmt, LIMITS["BOTTLE"])
     order = PRIORITY.get(fmt, PRIORITY["BOTTLE"])
+
+    # STRIPS SPECIAL MODE
+    if fmt == "STRIPS":
+        sections, strips_acts = strips_special_mode(sections)
+        actions.extend(strips_acts)
 
     for field in order:
         if field == "suggested_use":
@@ -395,6 +431,18 @@ def process_sku(sku, fmt=None):
     if new_pn != pn:
         sku["front_panel"]["zone_3"]["ingredient_name"] = new_pn
     all_actions.extend(pn_actions)
+
+    # AUTO-TRIM FRONT: descriptor and subtitle
+    limits = LIMITS.get(fmt, LIMITS["BOTTLE"])
+    desc = sku["front_panel"]["zone_4"].get("descriptor", "")
+    if desc and limits.get("description", 999) < len(desc):
+        trimmed, _ = compress(desc, limits["description"])
+        sku["front_panel"]["zone_4"]["descriptor"] = trimmed
+        all_actions.append("descriptor_trimmed")
+
+    # STRIPS: remove subtitle flag
+    if fmt == "STRIPS":
+        sku["front_panel"]["zone_4"]["_strip_subtitle"] = True
 
     # ENGINE 2: Density
     density = density_engine(sku, fmt)
