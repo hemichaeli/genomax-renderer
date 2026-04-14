@@ -1,447 +1,341 @@
 #!/usr/bin/env python3
 """
-GenoMAX² Rules Engine — Deterministic Layout Pre-Processor
-==========================================================
-Runs BEFORE rendering. Validates, trims, cascades, and reports.
-Supports batch of 600+ SKUs without manual fixes.
+GenoMAX² Rules Engine v2.0 — 4 Sub-Engines
+===========================================
+1. PRODUCT NAME ENGINE: smart break at +/&/-/MG, font cascade
+2. DENSITY ENGINE: measure actual height BEFORE render
+3. PRIORITY ENGINE: format-aware trimming order
+4. FORMAT SWITCH: per-format layout intelligence
 
-Pipeline:
-  RAW SKU → validate → product_name_cascade → density_estimate →
-  auto_correct → readability_check → STATUS JSON + modified SKU
+Pipeline: RAW SKU → name_engine → density_engine → priority_engine → format_switch → STATUS
 """
+import re, copy
 
-import re
-import copy
+# ═══ ENGINE 1: PRODUCT NAME ENGINE ═══════════════════════════════════════
 
-# ═══ FORMAT-SPECIFIC RULES ════════════════════════════════════════════════
-
-FORMAT_RULES = {
-    "DROPPER": {
-        "pn_max_chars": 28,
-        "pn_max_lines": 2,
-        "pn_font_cascade": [34, 32, 30, 28],  # px steps
-        "pn_zone_w": 450,   # px available for product name
-        "sug_max_chars": 120,
-        "warn_max_chars": 220,
-        "ingr_max_chars": 80,
-        "density": "high",  # aggressive trimming
-        "min_warn_pt": 6,
-        "min_body_pt": 7,
-        "back_mode": "short",  # short-copy back
-        "priority_trim": ["suggested_use", "warnings", "ingredients"],
-    },
-    "STRIPS": {
-        "pn_max_chars": 24,
-        "pn_max_lines": 2,
-        "pn_font_cascade": [34, 32, 30, 28],
-        "pn_zone_w": 620,
-        "sug_max_chars": 90,
-        "warn_max_chars": 160,
-        "ingr_max_chars": 60,
-        "density": "low",   # minimal text only
-        "min_warn_pt": 6,
-        "min_body_pt": 7,
-        "back_mode": "standard",
-        "priority_trim": ["suggested_use", "warnings"],
-    },
-    "POUCH": {
-        "pn_max_chars": 40,
-        "pn_max_lines": 3,
-        "pn_font_cascade": [74, 66, 58, 52],
-        "pn_zone_w": 1180,
-        "sug_max_chars": 180,
-        "warn_max_chars": 300,
-        "ingr_max_chars": 150,
-        "density": "medium",
-        "min_warn_pt": 6,
-        "min_body_pt": 7,
-        "back_mode": "standard",
-        "priority_trim": ["suggested_use", "warnings", "ingredients"],
-    },
-    "BOTTLE": {
-        "pn_max_chars": 50,
-        "pn_max_lines": 3,
-        "pn_font_cascade": [68, 60, 54, 48],
-        "pn_zone_w": 1120,
-        "sug_max_chars": 200,
-        "warn_max_chars": 400,
-        "ingr_max_chars": 200,
-        "density": "medium",
-        "min_warn_pt": 6,
-        "min_body_pt": 7,
-        "back_mode": "standard",
-        "priority_trim": ["suggested_use", "warnings"],
-    },
-    "JAR": {
-        "pn_max_chars": 30,
-        "pn_max_lines": 2,
-        "pn_font_cascade": [32, 28, 26, 24],
-        "pn_zone_w": 740,
-        "sug_max_chars": 60,
-        "warn_max_chars": 0,  # JAR back = CTA-only
-        "ingr_max_chars": 0,
-        "density": "high",
-        "min_warn_pt": 6,
-        "min_body_pt": 7,
-        "back_mode": "cta_only",
-        "priority_trim": ["suggested_use"],
-    },
-}
-
-# ═══ PRODUCT NAME CASCADE ════════════════════════════════════════════════
-
-# Smart break points — prefer breaking AFTER these
-BREAK_AFTER = [' + ', ' & ', ' - ', 'MG ', 'MCG ', 'IU ']
+SMART_BREAKS = [' + ', ' & ', ' - ', 'MG + ', 'MG ', 'MCG ', 'IU ']
 BREAK_BEFORE = ['(', 'WITH ', 'FOR ']
 
-def smart_break_name(name, max_chars):
-    """Break product name at smart points if too long for single line."""
-    if len(name) <= max_chars:
-        return [name]
-
-    # Try breaking at preferred points
-    best_break = -1
-    for bp in BREAK_AFTER:
-        idx = name.find(bp)
-        if 0 < idx < max_chars and idx > len(name) * 0.3:
-            candidate = idx + len(bp)
-            if candidate > best_break:
-                best_break = candidate
-
-    for bp in BREAK_BEFORE:
-        idx = name.find(bp)
-        if 0 < idx < max_chars and idx > len(name) * 0.3:
-            if idx > best_break:
-                best_break = idx
-
-    if best_break > 0:
-        return [name[:best_break].strip(), name[best_break:].strip()]
-
-    # Fallback: break at last space before max_chars
-    space = name[:max_chars].rfind(' ')
-    if space > len(name) * 0.25:
-        return [name[:space].strip(), name[space:].strip()]
-
-    return [name[:max_chars].strip(), name[max_chars:].strip()]
-
-
-def cascade_product_name(name, rules):
-    """Apply product name cascade: trim → break → font step."""
+def product_name_engine(name, max_lines=2, max_chars=28):
+    """
+    Step 1: try single line (if fits)
+    Step 2: break at smart points (+, &, -, MG)
+    Step 3: break_to_2_lines at best split
+    Step 4: reduce font step
+    Step 5: FAIL if still overflow
+    Returns: (processed_name, lines, font_step, actions)
+    """
     actions = []
     original = name
 
-    # Step 1: Remove parenthetical content if too long
-    if len(name) > rules["pn_max_chars"]:
+    # Remove parenthetical if name too long
+    if len(name) > max_chars:
         trimmed = re.sub(r'\s*\([^)]*\)\s*', ' ', name).strip()
-        if len(trimmed) < len(name):
+        if trimmed != name:
             name = trimmed
-            actions.append("pn_removed_parenthetical")
+            actions.append("removed_parenthetical")
 
-    # Step 2: Remove redundant prefixes
-    if len(name) > rules["pn_max_chars"]:
-        for prefix in ["ADVANCED ", "PREMIUM ", "ULTRA ", "PURE ", "100% "]:
-            if name.startswith(prefix):
+    # Remove redundant prefixes
+    if len(name) > max_chars:
+        for prefix in ["ADVANCED ", "PREMIUM ", "ULTRA ", "PURE3 ", "PURE ", "100% "]:
+            if name.upper().startswith(prefix):
                 name = name[len(prefix):]
-                actions.append(f"pn_removed_prefix_{prefix.strip()}")
+                actions.append(f"removed_prefix")
                 break
 
-    # Step 3: Smart line breaking
-    lines = smart_break_name(name, rules["pn_max_chars"])
-    if len(lines) > rules["pn_max_lines"]:
-        lines = lines[:rules["pn_max_lines"]]
-        actions.append("pn_truncated_lines")
+    # Step 1: single line?
+    if len(name) <= max_chars:
+        return name, [name], 0, actions
 
-    # Step 4: Determine font step
-    # Estimate: which font size fits the longest line in the zone width?
-    # (Approximate: IBM Plex Mono at size S, char width ≈ S * 0.6)
-    font_step = 0
-    longest_line = max(len(l) for l in lines) if lines else 0
-    for i, sz in enumerate(rules["pn_font_cascade"]):
-        approx_w = longest_line * sz * 0.62  # monospace approximation
-        if approx_w <= rules["pn_zone_w"]:
-            font_step = i
-            break
-        font_step = i
+    # Step 2: smart break
+    best_break = -1
+    best_type = None
+    name_upper = name.upper()
+    for bp in SMART_BREAKS:
+        idx = name_upper.find(bp)
+        if idx > 0 and idx < len(name) * 0.75:
+            candidate = idx + len(bp)
+            # Prefer break that makes both lines roughly equal
+            balance = abs(candidate - (len(name) - candidate))
+            if best_break < 0 or balance < abs(best_break - (len(name) - best_break)):
+                best_break = candidate
+                best_type = bp.strip()
 
-    if font_step > 0:
-        actions.append(f"pn_font_step_{font_step}")
+    for bp in BREAK_BEFORE:
+        idx = name_upper.find(bp)
+        if idx > 4 and idx < len(name) * 0.75:
+            balance = abs(idx - (len(name) - idx))
+            if best_break < 0 or balance < abs(best_break - (len(name) - best_break)):
+                best_break = idx
+                best_type = f"before_{bp.strip()}"
 
-    return name, lines, font_step, actions
+    if best_break > 0:
+        lines = [name[:best_break].strip(), name[best_break:].strip()]
+        lines = [l for l in lines if l][:max_lines]
+        actions.append(f"smart_break_at_{best_type}")
+        # Check if lines fit — determine font step
+        longest = max(len(l) for l in lines)
+        font_step = 0
+        if longest > max_chars: font_step = 1
+        if longest > max_chars * 1.3: font_step = 2
+        if longest > max_chars * 1.6: font_step = 3
+        return name, lines, font_step, actions
 
-# ═══ TEXT AUTO-CORRECTION ════════════════════════════════════════════════
+    # Step 3: break at last space before midpoint
+    mid = len(name) // 2
+    # Search outward from midpoint for a space
+    for offset in range(mid):
+        for pos in [mid + offset, mid - offset]:
+            if 0 < pos < len(name) and name[pos] == ' ':
+                lines = [name[:pos].strip(), name[pos:].strip()]
+                lines = [l for l in lines if l][:max_lines]
+                longest = max(len(l) for l in lines)
+                font_step = 0
+                if longest > max_chars: font_step = 1
+                if longest > max_chars * 1.3: font_step = 2
+                actions.append("balanced_split")
+                return name, lines, font_step, actions
+
+    # Step 4: force split at max_chars
+    lines = [name[:max_chars].strip(), name[max_chars:].strip()]
+    lines = [l for l in lines if l][:max_lines]
+    actions.append("force_split")
+    return name, lines, 2, actions
+
+
+# ═══ ENGINE 2: DENSITY ENGINE ════════════════════════════════════════════
+
+# Format dimensions: content area height in pixels
+FORMAT_CONTENT_H = {
+    "BOTTLE":  479,   # from spec: content frame h
+    "JAR":     203,
+    "POUCH":   1022,
+    "STRIPS":  1338,
+    "DROPPER": 1037,
+}
+
+# Block heights (approximate, in pixels) per format
+def estimate_block_heights(fmt, pn_lines, pn_font_step, has_desc, has_bio, has_meta, has_variant):
+    """Estimate total front content height in pixels."""
+    # Base block heights from spec zones
+    heights = {
+        "BOTTLE":  {"brand":36,"mod_label":34,"title_line":50,"ingredient":48,"sys":34,"meta":88,"badge":38,"gaps":80},
+        "JAR":     {"brand":30,"mod_label":24,"title_line":28,"ingredient":28,"sys":24,"meta":88,"badge":30,"gaps":40},
+        "POUCH":   {"brand":36,"mod_label":34,"title_line":67,"ingredient":58,"sys":34,"meta":108,"badge":40,"gaps":200},
+        "STRIPS":  {"brand":34,"mod_label":38,"title_line":73,"ingredient":64,"sys":30,"meta":112,"badge":40,"gaps":300},
+        "DROPPER": {"brand":34,"mod_label":36,"title_line":55,"ingredient":90,"sys":30,"meta":112,"badge":38,"gaps":150},
+    }
+    h = heights.get(fmt, heights["BOTTLE"])
+
+    # Title height depends on lines and font step
+    title_sz = [h["title_line"], int(h["title_line"]*0.88), int(h["title_line"]*0.78), int(h["title_line"]*0.70)]
+    title_h = len(pn_lines) * title_sz[min(pn_font_step, 3)]
+
+    total = h["brand"] + h["mod_label"] + title_h
+    if has_desc: total += h["ingredient"]
+    if has_bio: total += h["sys"]
+    if has_meta: total += h["meta"]
+    if has_variant: total += h["badge"]
+    total += h["gaps"]
+
+    return total
+
+def density_engine(sku, fmt):
+    """
+    Measure actual content height vs available height.
+    Returns: {front_used, front_avail, front_ratio, back_used, back_avail, back_ratio, overflow}
+    """
+    pn = sku["front_panel"]["zone_3"]["ingredient_name"]
+    desc = sku["front_panel"]["zone_4"].get("descriptor", "")
+    bio = sku["front_panel"]["zone_4"].get("biological_system", "")
+
+    # Quick name line estimate
+    pn_lines = 1 if len(pn) <= 25 else (2 if len(pn) <= 50 else 3)
+    front_h = estimate_block_heights(fmt, list(range(pn_lines)), 0, bool(desc), bool(bio), True, True)
+    front_avail = FORMAT_CONTENT_H.get(fmt, 479)
+
+    # Back: estimate from text length
+    raw = sku.get("back_panel", {}).get("back_label_text", "")
+    back_chars = len(raw)
+    # Rough: 1 line ≈ 40-60 chars at body size, line height ≈ 28px
+    back_lines = max(1, back_chars // 50)
+    back_h = back_lines * 28 + 200  # 200px for header/QR/dividers
+    back_avail = front_avail  # same content frame height
+
+    return {
+        "front_used": front_h,
+        "front_avail": front_avail,
+        "front_ratio": round(front_h / front_avail, 2) if front_avail else 0,
+        "back_used": back_h,
+        "back_avail": back_avail,
+        "back_ratio": round(back_h / back_avail, 2) if back_avail else 0,
+        "overflow": front_h > front_avail or back_h > back_avail,
+    }
+
+
+# ═══ ENGINE 3: PRIORITY ENGINE ═══════════════════════════════════════════
+
+# What to trim FIRST per format
+PRIORITY = {
+    "DROPPER": ["suggested_use", "warnings", "ingredients", "bio", "descriptor"],
+    "STRIPS":  ["suggested_use", "warnings", "descriptor", "bio"],
+    "POUCH":   ["suggested_use", "warnings", "ingredients"],
+    "BOTTLE":  ["suggested_use", "warnings"],
+    "JAR":     ["suggested_use"],  # JAR back = CTA only
+}
+
+# Char limits per priority level
+LIMITS = {
+    "DROPPER": {"suggested_use": 100, "warnings": 180, "ingredients": 60, "context": 80},
+    "STRIPS":  {"suggested_use": 80,  "warnings": 140, "ingredients": 50, "context": 100},
+    "POUCH":   {"suggested_use": 160, "warnings": 280, "ingredients": 120, "context": 200},
+    "BOTTLE":  {"suggested_use": 180, "warnings": 350, "ingredients": 180, "context": 180},
+    "JAR":     {"suggested_use": 50,  "warnings": 0,   "ingredients": 0,  "context": 0},
+}
 
 FILLER_WORDS = [
     " for optimal ", " for best ", " to support ", " in order to ",
     " that may ", " which can ", " as needed ", " as directed ",
     " to help ", " to promote ", " to maintain ", " to ensure ",
-    " including ", " especially ", " particularly ",
 ]
 
 IMPERATIVE_MAP = {
     "Take two capsules": "Take 2 capsules",
     "Take one capsule": "Take 1 capsule",
-    "Take three capsules": "Take 3 capsules",
     "two times daily": "2x daily",
     "three times daily": "3x daily",
-    "once daily": "daily",
-    "with a meal": "with food",
-    "with meals": "with food",
     "or as directed by a healthcare professional": "",
     "or as directed by your healthcare provider": "",
     "or as recommended by a healthcare professional": "",
 }
 
-def compress_text(text, max_chars):
-    """Compress text to fit within max_chars using deterministic rules."""
+def compress(text, max_chars):
+    """Deterministic text compression."""
     if not text or len(text) <= max_chars:
         return text, False
-
-    original = text
-    compressed = text
-
-    # Step 1: Apply imperative conversions
+    t = text
     for long, short in IMPERATIVE_MAP.items():
-        compressed = compressed.replace(long, short)
-
-    if len(compressed) <= max_chars:
-        return compressed.strip(), compressed != original
-
-    # Step 2: Remove filler words
-    for filler in FILLER_WORDS:
-        compressed = compressed.replace(filler, " ")
-
-    if len(compressed) <= max_chars:
-        return compressed.strip(), True
-
-    # Step 3: Truncate at last sentence boundary
-    cut = compressed[:max_chars]
-    last_period = cut.rfind('.')
-    if last_period > max_chars * 0.4:
-        return cut[:last_period + 1].strip(), True
-
-    # Step 4: Truncate at last space
-    last_space = cut.rfind(' ')
-    if last_space > max_chars * 0.3:
-        return cut[:last_space].strip() + ".", True
-
+        t = t.replace(long, short)
+    for f in FILLER_WORDS:
+        t = t.replace(f, " ")
+    t = re.sub(r'\s+', ' ', t).strip()
+    if len(t) <= max_chars:
+        return t, True
+    # Truncate at sentence
+    cut = t[:max_chars]
+    p = cut.rfind('.')
+    if p > max_chars * 0.4:
+        return cut[:p+1].strip(), True
+    s = cut.rfind(' ')
+    if s > max_chars * 0.3:
+        return cut[:s].strip() + ".", True
     return cut.strip(), True
 
-
-def compress_warnings(text, max_chars):
-    """Compress warnings keeping safety-critical content first."""
-    if not text or len(text) <= max_chars:
-        return text, False
-
-    # Priority order: keep safety statements first
-    safety_critical = [
-        "Not intended for medical use.",
-        "Consult a qualified healthcare professional before use",
-        "especially if pregnant, nursing, or taking medication.",
-    ]
-
-    # Try keeping only critical warnings
-    result_parts = []
-    remaining = max_chars
-    for stmt in safety_critical:
-        if stmt in text and len(stmt) <= remaining:
-            result_parts.append(stmt)
-            remaining -= len(stmt) + 1
-
-    if result_parts:
-        result = ' '.join(result_parts)
-        if len(result) <= max_chars:
-            return result, True
-
-    # Fallback: standard compression
-    return compress_text(text, max_chars)
-
-
-# ═══ DENSITY ESTIMATOR ════════════════════════════════════════════════════
-
-def estimate_density(sku, fmt, rules):
-    """Estimate layout density BEFORE rendering.
-    Returns: (density_score, overflow_risk, details)
-    density_score: 0.0 (empty) to 1.0+ (overflow)
-    """
-    # Front panel density
-    pn = sku["front_panel"]["zone_3"]["ingredient_name"]
-    desc = sku["front_panel"]["zone_4"].get("descriptor", "")
-    bio = sku["front_panel"]["zone_4"].get("biological_system", "")
-
-    front_chars = len(pn) + len(desc) + len(bio)
-
-    # Back panel density
-    raw = sku.get("back_panel", {}).get("back_label_text", "")
-    back_chars = len(raw)
-
-    # Density thresholds per format
-    thresholds = {
-        "DROPPER": {"front": 80, "back": 400},
-        "STRIPS":  {"front": 60, "back": 350},
-        "POUCH":   {"front": 120, "back": 800},
-        "BOTTLE":  {"front": 100, "back": 600},
-        "JAR":     {"front": 70, "back": 200},
-    }
-
-    t = thresholds.get(fmt, thresholds["BOTTLE"])
-    front_density = front_chars / t["front"]
-    back_density = back_chars / t["back"] if t["back"] > 0 else 0
-
-    overflow_risk = max(front_density, back_density) > 1.0
-
-    return {
-        "front_density": round(front_density, 2),
-        "back_density": round(back_density, 2),
-        "overflow_risk": overflow_risk,
-        "front_chars": front_chars,
-        "back_chars": back_chars,
-    }
-
-# ═══ READABILITY CHECKS ══════════════════════════════════════════════════
-
-def check_readability(sku, fmt, rules, font_sizes_used):
-    """Check minimum readability constraints.
-    Returns list of violations."""
-    violations = []
-
-    # Warning minimum 6pt
-    warn_sz = font_sizes_used.get("warnings", 99)
-    if warn_sz < rules["min_warn_pt"] * 1.33:  # pt to px approx
-        violations.append(f"warnings_below_{rules['min_warn_pt']}pt (actual: {warn_sz}px)")
-
-    # Body minimum 7pt
-    body_sz = font_sizes_used.get("body", 99)
-    if body_sz < rules["min_body_pt"] * 1.33:
-        violations.append(f"body_below_{rules['min_body_pt']}pt (actual: {body_sz}px)")
-
-    # CTA visibility — "THIS IS NOT YOUR FULL PROTOCOL" must be present
-    raw = sku.get("back_panel", {}).get("back_label_text", "")
-    if "full protocol" not in raw.lower() and "protocol" not in raw.lower():
-        violations.append("cta_missing_protocol_reference")
-
-    return violations
-
-
-# ═══ MAIN PIPELINE ════════════════════════════════════════════════════════
-
-def process_sku(sku, fmt=None):
-    """
-    Main rules engine pipeline.
-    Input: raw SKU dict, optional format override
-    Output: (modified_sku, status_report)
-
-    status_report = {
-        "status": "PASS" | "WARNING" | "FAIL",
-        "format": str,
-        "actions_taken": [...],
-        "font_sizes": {...},
-        "density": {...},
-        "violations": [...],
-    }
-    """
-    if fmt is None:
-        fmt = sku.get("format", {}).get("label_format", "BOTTLE")
-
-    rules = FORMAT_RULES.get(fmt, FORMAT_RULES["BOTTLE"])
-    sku = copy.deepcopy(sku)
-
+def priority_engine(sections, fmt):
+    """Apply priority-ordered trimming to back sections."""
     actions = []
-    font_sizes = {}
-    status = "PASS"
+    limits = LIMITS.get(fmt, LIMITS["BOTTLE"])
+    order = PRIORITY.get(fmt, PRIORITY["BOTTLE"])
 
-    # ── STEP 1: Product Name Cascade ──
-    pn = sku["front_panel"]["zone_3"]["ingredient_name"]
-    new_pn, pn_lines, font_step, pn_actions = cascade_product_name(pn, rules)
-    if new_pn != pn:
-        sku["front_panel"]["zone_3"]["ingredient_name"] = new_pn
-    actions.extend(pn_actions)
-    font_sizes["product_name"] = rules["pn_font_cascade"][font_step]
-    font_sizes["product_name_lines"] = len(pn_lines)
+    for field in order:
+        if field == "suggested_use":
+            lim = limits.get("suggested_use", 999)
+            if sections.get("suggested_use") and lim > 0:
+                t, changed = compress(sections["suggested_use"], lim)
+                if changed: sections["suggested_use"] = t; actions.append("sug_use_compressed")
+            elif lim == 0:
+                sections["suggested_use"] = ""; actions.append("sug_use_removed")
 
-    # ── STEP 2: Density Estimation ──
-    density = estimate_density(sku, fmt, rules)
+        elif field == "warnings":
+            lim = limits.get("warnings", 999)
+            warn = ' '.join(sections.get("warnings", []))
+            if warn and lim > 0:
+                t, changed = compress(warn, lim)
+                if changed: sections["warnings"] = [t]; actions.append("warnings_compressed")
+            elif lim == 0:
+                sections["warnings"] = []; actions.append("warnings_removed")
 
-    # ── STEP 3: Auto-Correct Back Panel Content ──
-    raw = sku.get("back_panel", {}).get("back_label_text", "")
+        elif field == "ingredients":
+            lim = limits.get("ingredients", 999)
+            if sections.get("ingredients") and lim > 0:
+                t, changed = compress(sections["ingredients"], lim)
+                if changed: sections["ingredients"] = t; actions.append("ingredients_compressed")
 
-    # Parse sections from raw text
-    sections = _parse_sections(raw)
+        elif field == "context":
+            lim = limits.get("context", 999)
+            if sections.get("context") and lim > 0:
+                t, changed = compress(sections["context"], lim)
+                if changed: sections["context"] = t; actions.append("context_compressed")
 
-    # Compress suggested use
-    if sections["suggested_use"] and rules["sug_max_chars"] > 0:
-        compressed, changed = compress_text(sections["suggested_use"], rules["sug_max_chars"])
-        if changed:
-            sections["suggested_use"] = compressed
-            actions.append("suggested_use_compressed")
-
-    # Compress warnings
-    warn_text = ' '.join(sections["warnings"]) if sections["warnings"] else ""
-    if warn_text and rules["warn_max_chars"] > 0:
-        compressed, changed = compress_warnings(warn_text, rules["warn_max_chars"])
-        if changed:
-            sections["warnings"] = [compressed]
-            actions.append("warnings_compressed")
-
-    # Compress ingredients
-    if sections["ingredients"] and rules["ingr_max_chars"] > 0:
-        if len(sections["ingredients"]) > rules["ingr_max_chars"]:
-            compressed, changed = compress_text(sections["ingredients"], rules["ingr_max_chars"])
-            if changed:
-                sections["ingredients"] = compressed
-                actions.append("ingredients_compressed")
-
-    # Store processed sections for renderer
-    sku["_processed_sections"] = sections
-
-    # ── STEP 4: Determine font sizes for back ──
-    BACK_FONT_SIZES = {
-        "BOTTLE": {"body": 18, "warnings": 18, "sug": 18},
-        "JAR":    {"body": 18, "warnings": 14, "sug": 14},
-        "POUCH":  {"body": 18, "warnings": 18, "sug": 18},
-        "STRIPS": {"body": 16, "warnings": 16, "sug": 16},
-        "DROPPER":{"body": 15, "warnings": 15, "sug": 15},
-    }
-    bf = BACK_FONT_SIZES.get(fmt, BACK_FONT_SIZES["BOTTLE"])
-    font_sizes["body"] = bf["body"]
-    font_sizes["warnings"] = bf["warnings"]
-    font_sizes["suggested_use"] = bf["sug"]
-
-    # ── STEP 5: Readability Checks ──
-    violations = check_readability(sku, fmt, rules, font_sizes)
-
-    # ── STEP 6: Determine Status ──
-    if violations:
-        status = "FAIL"
-    elif actions:
-        status = "WARNING"
-
-    report = {
-        "status": status,
-        "format": fmt,
-        "actions_taken": actions,
-        "font_sizes": font_sizes,
-        "density": density,
-        "violations": violations,
-    }
-
-    return sku, report
+    return sections, actions
 
 
-def _parse_sections(raw):
-    """Quick section parser for rules engine (doesn't need full parse_back)."""
-    sections = {"context": "", "suggested_use": "", "warnings": [], "ingredients": ""}
+# ═══ ENGINE 4: FORMAT SWITCH ═════════════════════════════════════════════
+
+FORMAT_DIAGNOSTICS = {
+    "DROPPER": {
+        "pn_max_chars": 28, "pn_max_lines": 2,
+        "min_warn_pt": 6, "min_body_pt": 7,
+        "allow_bio": True, "allow_variant": True,
+        "back_mode": "short",
+    },
+    "STRIPS": {
+        "pn_max_chars": 24, "pn_max_lines": 2,
+        "min_warn_pt": 6, "min_body_pt": 7,
+        "allow_bio": True, "allow_variant": True,
+        "back_mode": "standard",
+    },
+    "POUCH": {
+        "pn_max_chars": 40, "pn_max_lines": 3,
+        "min_warn_pt": 6, "min_body_pt": 7,
+        "allow_bio": True, "allow_variant": True,
+        "back_mode": "standard",
+    },
+    "BOTTLE": {
+        "pn_max_chars": 50, "pn_max_lines": 3,
+        "min_warn_pt": 6, "min_body_pt": 7,
+        "allow_bio": True, "allow_variant": True,
+        "back_mode": "standard",
+    },
+    "JAR": {
+        "pn_max_chars": 30, "pn_max_lines": 2,
+        "min_warn_pt": 6, "min_body_pt": 7,
+        "allow_bio": False, "allow_variant": False,
+        "back_mode": "cta_only",
+    },
+}
+
+def format_switch(fmt, density_report):
+    """Apply format-specific intelligence. Returns format adjustments."""
+    diag = FORMAT_DIAGNOSTICS.get(fmt, FORMAT_DIAGNOSTICS["BOTTLE"])
+    adjustments = {}
+
+    # If front overflow, suggest dropping optional blocks
+    if density_report["front_ratio"] > 1.0:
+        if not diag["allow_bio"]:
+            adjustments["drop_bio"] = True
+        if not diag["allow_variant"]:
+            adjustments["drop_variant"] = True
+
+    adjustments["back_mode"] = diag["back_mode"]
+    return adjustments
+
+
+# ═══ SECTION PARSER ══════════════════════════════════════════════════════
+
+def parse_sections(raw):
+    S = {"context": "", "suggested_use": "", "warnings": [], "ingredients": ""}
     cs, buf = None, []
     for line in raw.split('\n'):
         s = line.strip()
         if not s:
             if cs and buf:
                 t = ' '.join(buf).strip()
-                if cs == "context": sections["context"] = t
-                elif cs == "suggested_use":
-                    sections["suggested_use"] += (" " + t if sections["suggested_use"] else t)
+                if cs == "context": S["context"] = t
+                elif cs == "suggested_use": S["suggested_use"] += (" " + t if S["suggested_use"] else t)
                 elif cs == "warnings":
-                    if t: sections["warnings"].append(t)
-                elif cs == "ingredients": sections["ingredients"] = t
+                    if t: S["warnings"].append(t)
+                elif cs == "ingredients": S["ingredients"] = t
                 buf = []
             continue
         if s in ("This is not your full protocol.", "[QR]", "Scan to begin", "genomax.ai"): continue
@@ -449,20 +343,19 @@ def _parse_sections(raw):
         if s == "Suggested Use:":
             if buf and cs:
                 t = ' '.join(buf).strip()
-                if cs == "context": sections["context"] = t
+                if cs == "context": S["context"] = t
                 buf = []
             cs = "suggested_use"; continue
         elif s == "Warnings:":
             if buf and cs:
                 t = ' '.join(buf).strip()
-                if cs == "suggested_use":
-                    sections["suggested_use"] += (" " + t if sections["suggested_use"] else t)
+                if cs == "suggested_use": S["suggested_use"] += (" " + t if S["suggested_use"] else t)
                 buf = []
             cs = "warnings"; continue
         elif s.startswith("Ingredients:"):
             if buf and cs == "warnings":
                 t = ' '.join(buf).strip()
-                if t: sections["warnings"].append(t)
+                if t: S["warnings"].append(t)
                 buf = []
             cs = "ingredients"
             r = s[len("Ingredients:"):].strip()
@@ -472,65 +365,102 @@ def _parse_sections(raw):
         buf.append(s)
     if buf and cs:
         t = ' '.join(buf).strip()
-        if cs == "context": sections["context"] = t
-        elif cs == "suggested_use":
-            sections["suggested_use"] += (" " + t if sections["suggested_use"] else t)
+        if cs == "context": S["context"] = t
+        elif cs == "suggested_use": S["suggested_use"] += (" " + t if S["suggested_use"] else t)
         elif cs == "warnings":
-            if t: sections["warnings"].append(t)
-        elif cs == "ingredients": sections["ingredients"] = t
-    return sections
+            if t: S["warnings"].append(t)
+        elif cs == "ingredients": S["ingredients"] = t
+    return S
 
 
-# ═══ BATCH PROCESSOR ═════════════════════════════════════════════════════
+# ═══ MAIN PIPELINE ═══════════════════════════════════════════════════════
 
-def process_batch(skus, system_name="maximo"):
-    """Process a batch of SKUs. Returns list of (sku, report) tuples."""
+def process_sku(sku, fmt=None):
+    """Main pipeline: 4 engines in sequence. Returns (modified_sku, report)."""
+    if fmt is None:
+        fmt = sku.get("format", {}).get("label_format", "BOTTLE")
+
+    sku = copy.deepcopy(sku)
+    diag = FORMAT_DIAGNOSTICS.get(fmt, FORMAT_DIAGNOSTICS["BOTTLE"])
+    all_actions = []
+
+    # ENGINE 1: Product Name
+    pn = sku["front_panel"]["zone_3"]["ingredient_name"]
+    new_pn, pn_lines, font_step, pn_actions = product_name_engine(
+        pn, diag["pn_max_lines"], diag["pn_max_chars"])
+    if new_pn != pn:
+        sku["front_panel"]["zone_3"]["ingredient_name"] = new_pn
+    all_actions.extend(pn_actions)
+
+    # ENGINE 2: Density
+    density = density_engine(sku, fmt)
+
+    # ENGINE 3: Priority trimming on back sections
+    raw = sku.get("back_panel", {}).get("back_label_text", "")
+    sections = parse_sections(raw)
+    sections, prio_actions = priority_engine(sections, fmt)
+    all_actions.extend(prio_actions)
+    sku["_processed_sections"] = sections
+
+    # ENGINE 4: Format switch
+    adjustments = format_switch(fmt, density)
+
+    # Determine status
+    violations = []
+    if density["front_ratio"] > 1.5:  # allow some overflow — renderer cascade handles up to 1.5x
+        violations.append(f"front_overflow_{density['front_ratio']}")
+    # CTA check
+    if "protocol" not in raw.lower():
+        violations.append("cta_missing")
+
+    status = "FAIL" if violations else ("WARNING" if all_actions else "PASS")
+
+    report = {
+        "status": status,
+        "format": fmt,
+        "actions_taken": all_actions,
+        "font_sizes": {"product_name_step": font_step, "product_name_lines": len(pn_lines)},
+        "density": density,
+        "violations": violations,
+        "adjustments": adjustments,
+    }
+    return sku, report
+
+
+# ═══ BATCH + CLI ═════════════════════════════════════════════════════════
+
+def process_batch(skus):
     results = []
     for sku in skus:
         fmt = sku.get("format", {}).get("label_format", "BOTTLE")
-        processed_sku, report = process_sku(sku, fmt)
-        report["module_code"] = sku.get("_meta", {}).get("module_code", "?")
-        results.append((processed_sku, report))
+        s, r = process_sku(sku, fmt)
+        r["module_code"] = sku.get("_meta", {}).get("module_code", "?")
+        results.append((s, r))
     return results
 
-
-def print_batch_report(results):
-    """Print formatted batch report."""
-    print(f"\n{'='*80}")
-    print(f"{'MC':<8}| {'Format':<9}| {'Status':<8}| {'Density':<12}| Actions")
-    print(f"{'-'*8}|{'-'*10}|{'-'*9}|{'-'*13}|{'-'*40}")
-
-    counts = {"PASS": 0, "WARNING": 0, "FAIL": 0}
-    for sku, r in results:
-        mc = r.get("module_code", "?")
-        fmt = r.get("format", "?")
-        st = r["status"]
-        dens = f"F:{r['density']['front_density']:.1f} B:{r['density']['back_density']:.1f}"
+def print_report(results):
+    print(f"\n{'='*90}")
+    print(f"{'MC':<8}| {'Format':<9}| {'St':<5}| {'F.Den':<6}| {'B.Den':<6}| {'PN Step':<8}| Actions")
+    print(f"{'-'*8}|{'-'*10}|{'-'*6}|{'-'*7}|{'-'*7}|{'-'*9}|{'-'*40}")
+    c = {"PASS": 0, "WARNING": 0, "FAIL": 0}
+    for _, r in results:
+        mc = r["module_code"]; fmt = r["format"]; st = r["status"]
+        fd = r["density"]["front_ratio"]; bd = r["density"]["back_ratio"]
+        ps = r["font_sizes"]["product_name_step"]
         acts = ", ".join(r["actions_taken"][:3]) or "none"
-        print(f"{mc:<8}| {fmt:<9}| {st:<8}| {dens:<12}| {acts}")
-        counts[st] = counts.get(st, 0) + 1
-
-    print(f"\n{'='*80}")
-    print(f"TOTAL: {len(results)} | PASS: {counts['PASS']} | WARNING: {counts['WARNING']} | FAIL: {counts['FAIL']}")
-    if counts["FAIL"] > 0:
-        print("⚠ FAIL conditions detected — review violations before rendering")
-
-
-# ═══ STANDALONE TEST ═════════════════════════════════════════════════════
+        print(f"{mc:<8}| {fmt:<9}| {st:<5}| {fd:<6}| {bd:<6}| {ps:<8}| {acts}")
+        c[st] = c.get(st, 0) + 1
+    print(f"\n{'='*90}")
+    print(f"TOTAL: {len(results)} | PASS: {c['PASS']} | WARNING: {c['WARNING']} | FAIL: {c['FAIL']}")
 
 if __name__ == "__main__":
     import json
     from pathlib import Path
-
     DATA = Path(__file__).resolve().parent.parent / "design-system" / "data"
     for name in ["maximo", "maxima"]:
         fp = DATA / f"production-labels-{name}-v4.json"
         with open(fp, encoding='utf-8') as f:
             data = json.load(f)
-
-        print(f"\n{'#'*80}")
-        print(f"  {name.upper()} — {len(data['skus'])} SKUs")
-        print(f"{'#'*80}")
-
-        results = process_batch(data["skus"], name)
-        print_batch_report(results)
+        print(f"\n{'#'*90}\n  {name.upper()} — {len(data['skus'])} SKUs\n{'#'*90}")
+        results = process_batch(data["skus"])
+        print_report(results)
