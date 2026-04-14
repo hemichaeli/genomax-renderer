@@ -21,6 +21,9 @@ FONTS_DIR = BASE / "design-system" / "fonts"
 DATA_DIR = BASE / "design-system" / "data"
 OUTPUT_BASE = BASE / "design-system" / "production-v7"
 
+# Google Drive sync target (Windows local)
+DRIVE_DEST = Path("G:/My Drive/Work/GenoMAX²/Design/Lables/design-system")
+
 FONT_MAP = {"Mono":"IBMPlexMono-Regular.ttf","Mono-Med":"IBMPlexMono-Medium.ttf",
     "Mono-SB":"IBMPlexMono-SemiBold.ttf","Mono-Bold":"IBMPlexMono-Bold.ttf",
     "Mono-Light":"IBMPlexMono-Light.ttf","Cond":"IBMPlexSansCondensed-Regular.ttf",
@@ -546,6 +549,40 @@ def render_sku(sku, system_name, output_base=None):
         "status": "FAIL" if (front_f or back_f) else "PASS",
     }
 
+# ═══ GOOGLE DRIVE AUTO-SYNC ═══════════════════════════════════════════════
+def sync_to_drive(local_dir, preview_name=None):
+    """Copy rendered output to Google Drive if available.
+    Auto-numbers: finds next vXX folder in Drive target."""
+    import shutil
+    if not DRIVE_DEST.parent.exists():
+        print(f"\n  [SYNC] Google Drive not available ({DRIVE_DEST.parent})")
+        return None
+    if preview_name:
+        dest = DRIVE_DEST / preview_name
+    else:
+        # Auto-number in Drive
+        existing = sorted(DRIVE_DEST.glob("v7-preview-*")) if DRIVE_DEST.exists() else []
+        nn = 1
+        for d in existing:
+            try:
+                n = int(d.name.split("-")[-1])
+                if n >= nn: nn = n + 1
+            except: pass
+        dest = DRIVE_DEST / f"v7-preview-{nn:02d}"
+    # Copy only JPGs in correct structure
+    count = 0
+    for root, dirs, files in os.walk(local_dir):
+        for f in files:
+            if f.endswith(".jpg"):
+                src = Path(root) / f
+                rel = src.relative_to(local_dir)
+                dst = dest / rel
+                dst.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(src, dst)
+                count += 1
+    print(f"\n  [SYNC] {count} files \u2192 {dest}")
+    return dest
+
 # ═══ VALIDATION TARGETS ═══════════════════════════════════════════════════
 QA5 = [("maximo","CV-01"),("maximo","CV-04"),("maximo","MT-09"),("maxima","IN-04"),("maximo","GL-04")]
 QA7 = QA5 + [("maximo","GL-01"),("maximo","GL-10")]
@@ -612,6 +649,9 @@ def main():
         else: print("FAIL CONDITIONS DETECTED")
         print(f"Output: {out}")
 
+        # Auto-sync to Google Drive
+        sync_to_drive(out, preview)
+
     elif args.full:
         print("="*70); print("GenoMAX\u00b2 V7 Frame-Lock \u2014 FULL PRODUCTION"); print("="*70)
         ok, err = 0, 0
@@ -623,6 +663,8 @@ def main():
                 if r["status"] == "PASS": ok += 1; print(" OK")
                 else: err += 1; print(f" FAIL: {r.get('missing_blocks',[])}")
         print(f"\n{ok} OK, {err} FAILED \u2192 {OUTPUT_BASE}")
+        # Auto-sync full production to Google Drive
+        sync_to_drive(OUTPUT_BASE)
     else:
         parser.print_help()
 
