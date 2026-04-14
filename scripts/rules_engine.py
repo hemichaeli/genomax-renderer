@@ -558,6 +558,47 @@ def process_sku(sku, fmt=None):
 
         # Step 6: Font cascade (product_name) — already applied by engine 1
 
+    # ── FIX #2: STRIPS = ALWAYS COMPRESSED (not "if needed") ──
+    if fmt == "STRIPS":
+        # Always enforce max lines
+        sug = sections.get("suggested_use", "")
+        if sug:
+            sug_lines = sug.split('. ')
+            if len(sug) > 100:
+                sections["suggested_use"], _ = compress(sug, 100)
+                all_actions.append("strips_always_max_2_lines_sug")
+        warn = ' '.join(sections.get("warnings", []))
+        if warn and len(warn) > 150:
+            sections["warnings"] = [compress(warn, 150)[0]]
+            all_actions.append("strips_always_max_4_lines_warn")
+        # Always remove ingredients if needed for space
+        if sections.get("ingredients"):
+            sections["ingredients"] = ""
+            all_actions.append("strips_always_remove_ingredients")
+
+    # ── FIX #3: PRIORITY = REMOVE, not just TRIM ──
+    # If still overflow after compression, REMOVE in priority order
+    back_h_post = calc_back_height(fmt, sections)
+    back_avail = FORMAT_CONTENT_H.get(fmt, 479)
+    if back_h_post > back_avail:
+        # Remove ingredients first
+        if sections.get("ingredients"):
+            sections["ingredients"] = ""
+            all_actions.append("priority_remove_ingredients")
+        # Then trim suggested_use to minimum
+        if sections.get("suggested_use") and len(sections["suggested_use"]) > 60:
+            sections["suggested_use"], _ = compress(sections["suggested_use"], 60)
+            all_actions.append("priority_trim_sug_use")
+        # Then trim description/context
+        if sections.get("context") and len(sections["context"]) > 60:
+            sections["context"], _ = compress(sections["context"], 60)
+            all_actions.append("priority_trim_context")
+        # Then trim warnings (keep only critical)
+        warn = ' '.join(sections.get("warnings", []))
+        if warn and len(warn) > 100:
+            sections["warnings"] = ["Not intended for medical use. Consult a healthcare professional."]
+            all_actions.append("priority_trim_warnings_critical_only")
+
     # Enforce single paragraph warnings
     if len(sections.get("warnings", [])) > 1:
         sections["warnings"] = [' '.join(sections["warnings"])]
@@ -587,13 +628,17 @@ def process_sku(sku, fmt=None):
 
     # Warnings readability
     warn_text = ' '.join(sections.get("warnings", []))
-    # Density score threshold (FINAL SPEC section 10)
-    # Only FAIL if density > 0.98 AND compression was applied AND it still didn't help
-    if density_score > 0.98 and need_compression:
-        # Check if compression actually reduced the score
-        if density_score > density["density_score"] * 0.95:
-            # Compression didn't help enough — but renderer cascade will handle it
-            all_actions.append(f"density_high_{density_score}_renderer_cascade")
+    # ── FIX #1: HARD FAIL — if content physically can't fit AFTER all compression ──
+    # Recalculate with actual compressed sections
+    final_back_h = calc_back_height(fmt, sections)
+    final_front_h = density_post["front_used"]
+    front_avail = FORMAT_CONTENT_H.get(fmt, 479)
+    # Only hard fail if the COMPRESSED content still exceeds 2x the available space
+    # (renderer cascade handles up to ~1.5x through font/spacing reduction)
+    if final_back_h > back_avail * 2.0:
+        violations.append(f"HARD_FAIL_back_{final_back_h}px_vs_{back_avail}px")
+    if final_front_h > front_avail * 2.0:
+        violations.append(f"HARD_FAIL_front_{final_front_h}px_vs_{front_avail}px")
 
     # CTA not visible
     if "protocol" not in raw.lower() and "scan" not in raw.lower():
