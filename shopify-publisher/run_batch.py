@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 from datetime import datetime, timezone
 
-from catalog_loader import load_store_catalog, check_handle_uniqueness
+from catalog_loader import load_store_catalog, load_store_from_github, check_handle_uniqueness
 from asset_validator import validate_batch
 from publisher import publish_sku, write_log
 
@@ -28,8 +28,10 @@ def main():
     parser = argparse.ArgumentParser(description="GenoMAX\u00b2 Shopify Batch Publisher")
     parser.add_argument("--store", required=True, choices=["maximo", "maxima"],
                         help="Target Shopify store")
-    parser.add_argument("--file", required=True,
+    parser.add_argument("--file", default=None,
                         help="Path to store-specific CSV (e.g., shopify_maximo.csv)")
+    parser.add_argument("--from-github", action="store_true",
+                        help="Fetch CSV directly from GitHub raw URL (no local file needed)")
     parser.add_argument("--assets", default="assets",
                         help="Path to assets directory (default: assets)")
     parser.add_argument("--dry-run", action="store_true",
@@ -40,25 +42,35 @@ def main():
                         help="Path to output log CSV (default: publish_log_{store}_{timestamp}.csv)")
     args = parser.parse_args()
 
-    # Resolve paths
-    csv_path = Path(args.file)
+    # Resolve source
     assets_dir = Path(args.assets)
+    source = "GitHub" if args.from_github else (args.file or "")
 
-    if not csv_path.exists():
-        logger.error(f"CSV file not found: {csv_path}")
+    if not args.from_github and not args.file:
+        logger.error("Must specify --file or --from-github")
         sys.exit(1)
+
+    if args.file and not args.from_github:
+        csv_path = Path(args.file)
+        if not csv_path.exists():
+            logger.error(f"CSV file not found: {csv_path}")
+            sys.exit(1)
 
     mode = "DRY RUN" if args.dry_run else "LIVE PUBLISH"
     print("=" * 70)
     print(f"GenoMAX\u00b2 Shopify Publisher \u2014 {mode}")
     print(f"Store: {args.store}")
-    print(f"Input: {csv_path}")
+    print(f"Source: {source}")
     print(f"Assets: {assets_dir}")
     print("=" * 70)
 
     # Phase 1: Load & validate catalog
-    logger.info(f"Loading {csv_path}...")
-    models = load_store_catalog(str(csv_path), args.store, str(assets_dir))
+    if args.from_github:
+        logger.info(f"Fetching {args.store} catalog from GitHub...")
+        models = load_store_from_github(args.store, str(assets_dir))
+    else:
+        logger.info(f"Loading {args.file}...")
+        models = load_store_catalog(str(args.file), args.store, str(assets_dir))
     models = check_handle_uniqueness(models)
     logger.info(f"Loaded {len(models)} SKUs")
 

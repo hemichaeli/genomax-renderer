@@ -1,10 +1,19 @@
 """
 GenoMAX² Catalog Loader — Module A
-Reads store-specific CSVs, normalizes to internal model, validates required fields.
+Reads store-specific CSVs (local or GitHub raw URL), normalizes to internal model.
 """
 import csv
+import io
 from pathlib import Path
 from typing import List, Dict, Optional
+from urllib.request import urlopen
+
+# GitHub raw URLs (locked to branch)
+CATALOG_URLS = {
+    "master": "https://raw.githubusercontent.com/hemichaeli/genomax-renderer/claude/implement-design-system-nFj8Y/catalog/products_master.csv",
+    "maximo": "https://raw.githubusercontent.com/hemichaeli/genomax-renderer/claude/implement-design-system-nFj8Y/catalog/shopify_maximo.csv",
+    "maxima": "https://raw.githubusercontent.com/hemichaeli/genomax-renderer/claude/implement-design-system-nFj8Y/catalog/shopify_maxima.csv",
+}
 
 
 REQUIRED_FIELDS = ["sku", "title", "handle", "shopify_store"]
@@ -18,13 +27,40 @@ INTERNAL_MODEL_KEYS = [
 
 
 def load_csv(filepath: str) -> List[Dict]:
-    """Load CSV file and return list of row dicts."""
+    """Load CSV from local file and return list of row dicts."""
     rows = []
     with open(filepath, encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
         for row in reader:
             rows.append(dict(row))
     return rows
+
+
+def load_csv_from_url(url: str) -> List[Dict]:
+    """Load CSV from GitHub raw URL. Returns list of row dicts."""
+    with urlopen(url, timeout=30) as resp:
+        text = resp.read().decode("utf-8-sig")
+    reader = csv.DictReader(io.StringIO(text))
+    return [dict(row) for row in reader]
+
+
+def load_store_from_github(store_name: str, assets_dir: str = "assets") -> List[Dict]:
+    """Load store catalog directly from GitHub raw URL."""
+    url = CATALOG_URLS.get(store_name.lower())
+    if not url:
+        raise ValueError(f"Unknown store: {store_name}. Available: {list(CATALOG_URLS.keys())}")
+    raw_rows = load_csv_from_url(url)
+    models = []
+    for row in raw_rows:
+        model = normalize_row(row, store_name, assets_dir)
+        errors = validate_row(model)
+        if errors:
+            model["_status"] = "BLOCKED"
+            model["_error"] = "; ".join(errors)
+        else:
+            model["_status"] = "VALIDATED"
+        models.append(model)
+    return models
 
 
 def normalize_row(row: Dict, store_name: str, assets_dir: str = "assets") -> Dict:
