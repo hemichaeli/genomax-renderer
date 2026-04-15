@@ -20,23 +20,25 @@ BASE = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE / "design-system" / "data"
 CATALOG_DIR = BASE / "catalog"
 
-# 12 Hero SKUs — function-first naming
+# 12 Hero SKUs — FINAL DB-ALIGNED (PRODUCTION LOCKED)
+# Naming rules: Regulation/Initiation/Synthesis/Response/Adaptation only
+# No: Support, Balance (except Neurochemical), Cleanse, Detox, Defense
 HERO_SKUS = {
-    "CV-01": {"function_name_locked": "Lipid Metabolism Module", "format": "BOTTLE"},
-    "CV-04": {"function_name_locked": "Gut Motility Module", "format": "JAR"},
-    "GL-01": {"function_name_locked": "Glucose Regulation Module", "format": "DROPPER"},
-    "GL-04": {"function_name_locked": "Iron Status Module", "format": "STRIPS"},
-    "GL-10": {"function_name_locked": "Oral Microbiome Module", "format": "BOTTLE"},
-    "MT-04": {"function_name_locked": "Metabolic Support Module", "format": "POUCH"},
-    "MT-09": {"function_name_locked": "Muscle Protein Synthesis Module", "format": "POUCH"},
-    "IN-04": {"function_name_locked": "Respiratory Defense Module", "format": "DROPPER"},
-    "COG-01": {"function_name_locked": "Cognitive Function Module", "format": "STRIPS"},
-    "SL-01": {"function_name_locked": "Sleep Architecture Module", "format": "BOTTLE"},
-    "HR-02": {"function_name_locked": "Hormonal Balance Module", "format": "BOTTLE"},
-    "IN-03": {"function_name_locked": "Immune Optimization Module", "format": "STRIPS"},
+    "CV-01": {"function_name_locked": "Lipid Regulation Module",         "format": "BOTTLE", "ingredient": "Omega-3 (EPA+DHA)"},
+    "CV-02": {"function_name_locked": "Calcium Regulation Module",       "format": "BOTTLE", "ingredient": "Vitamin D3 + K2"},
+    "GL-01": {"function_name_locked": "Glucose Regulation Module",       "format": "DROPPER","ingredient": "Berberine"},
+    "GL-02": {"function_name_locked": "Insulin Sensitivity Module",      "format": "BOTTLE", "ingredient": "Chromium"},
+    "MT-01": {"function_name_locked": "Cellular Energy Module",          "format": "POUCH",  "ingredient": "Creatine"},
+    "MT-09": {"function_name_locked": "Muscle Protein Synthesis Module", "format": "POUCH",  "ingredient": "Whey Protein Isolate"},
+    "IN-01": {"function_name_locked": "Inflammatory Response Module",    "format": "BOTTLE", "ingredient": "Curcumin"},
+    "IN-02": {"function_name_locked": "Systemic Inflammation Module",    "format": "BOTTLE", "ingredient": "Omega-3 (High Dose)"},
+    "NT-01": {"function_name_locked": "Neurochemical Balance Module",    "format": "BOTTLE", "ingredient": "L-Theanine"},
+    "NT-02": {"function_name_locked": "Stress Adaptation Module",        "format": "BOTTLE", "ingredient": "Rhodiola"},
+    "SL-01": {"function_name_locked": "Sleep Initiation Module",         "format": "BOTTLE", "ingredient": "Magnesium Glycinate"},
+    "HR-01": {"function_name_locked": "Cortisol Regulation Module",      "format": "BOTTLE", "ingredient": "Ashwagandha"},
 }
 
-NAMING_VERSION = "v3.1"
+NAMING_VERSION = "v1_hero"
 
 
 def load_all_skus():
