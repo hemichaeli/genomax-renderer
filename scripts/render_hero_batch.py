@@ -22,7 +22,7 @@ HERO_CONFIG = {
     "CV-02": {"fn": "Calcium Regulation Module",       "fmt": "BOTTLE"},
     "GL-01": {"fn": "Glucose Regulation Module",       "fmt": "DROPPER"},
     "GL-02": {"fn": "Insulin Sensitivity Module",      "fmt": "BOTTLE"},
-    "MT-01": {"fn": "Cellular Energy Module",          "fmt": "BOTTLE"},  # BOTTLE in data; POUCH variant not available
+    "MT-01": {"fn": "Cellular Energy Module",          "fmt": "POUCH"},   # POUCH only (powder)
     "MT-09": {"fn": "Muscle Protein Synthesis Module",  "fmt": "POUCH"},
     "IN-01": {"fn": "Inflammatory Response Module",    "fmt": "BOTTLE"},
     "IN-02": {"fn": "Systemic Inflammation Module",    "fmt": "BOTTLE"},
