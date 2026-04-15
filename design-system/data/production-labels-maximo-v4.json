@@ -2,7 +2,7 @@
   "_meta": {
     "system": "GenoMAX² MAXimo²",
     "version": "4.0-CLINICAL",
-    "total_skus": 84,
+    "total_skus": 86,
     "source_file": "GENOMAX_MAXimo_LABEL_READY_v4_CLINICAL.xlsx"
   },
   "skus": [
@@ -5044,6 +5044,126 @@
       "back_panel": {
         "back_label_text": "This is not your full protocol.\n\nSupports deep sleep architecture through circadian rhythm signaling and initiation of sleep-wake cycle regulation.\n\nSuggested Use:\nTake two (2) capsules once a day. For best results, take 20-30 min before bedtime with an 8oz glass of water.\n\nOften used in early neurotransmission & cognitive circuits protocols.\n\nScan to begin\n[QR]\ngenomax.ai\n\nWarnings:\nNot intended for medical use. Consult a qualified healthcare professional before use, especially if pregnant, nursing, or taking medication.\nThis statement has not been evaluated by the Food and Drug Administration. This product is not intended to diagnose treat cure or prevent any disease.\n\nIngredients:\nSleep Support\n\nDistributed by Genomax LLC",
         "front_label_text": "Biological OS Module · Sleep System\nGenoMAX²\nDeep Sleep Architecture\n\nBiological OS Module\nCapsules · 0.15 lb (68 g)"
+      }
+    },
+    {
+      "_meta": {
+        "module_code": "NT-01",
+        "os": "MAXimo²",
+        "product_line": "BOTH",
+        "supliful_handle": "l-theanine-capsules",
+        "status": "VALID"
+      },
+      "format": {
+        "label_format": "BOTTLE",
+        "container_type": "bottle",
+        "product_form": "Capsules",
+        "dimensions": {
+          "label_w_in": 6.0,
+          "label_h_in": 2.5
+        }
+      },
+      "front_panel": {
+        "zone_1": {
+          "brand_name": "GenoMAX²",
+          "module_code": "NT-01"
+        },
+        "zone_2": {
+          "text": "BIOLOGICAL OS MODULE"
+        },
+        "zone_3": {
+          "ingredient_name": "L-THEANINE"
+        },
+        "zone_4": {
+          "descriptor": "L-Theanine 200mg",
+          "biological_system": "NEUROTRANSMITTER SYSTEM · NEUROCHEMICAL BALANCE"
+        },
+        "zone_5": {
+          "variant_name": "MAXimo²",
+          "accent_color": "#7A1E2E"
+        },
+        "zone_6": {
+          "type": {
+            "label": "TYPE",
+            "value": "Capsules"
+          },
+          "function": {
+            "label": "FUNCTION",
+            "value": "Neurochemical Balance"
+          },
+          "status": {
+            "label": "STATUS",
+            "value": "Active"
+          }
+        },
+        "zone_7": {
+          "version_info": "v1.0 · NT-01 · Clinical Grade",
+          "net_quantity": "DIETARY SUPPLEMENT · 60 capsules"
+        }
+      },
+      "back_panel": {
+        "back_label_text": "This is not your full protocol.\n\nModulates GABAergic and glutamatergic neurotransmission to promote alpha-wave activity and attentional focus without sedation.\n\nSuggested Use:\n1 capsule daily\n\nScan to begin\n[QR]\ngenomax.ai\n\nWarnings:\nNot intended for medical use. Consult a qualified healthcare professional before use, especially if pregnant, nursing, or taking medication.\nThis statement has not been evaluated by the Food and Drug Administration. This product is not intended to diagnose treat cure or prevent any disease.\n\nIngredients:\nL-Theanine 200mg\n\nDistributed by Genomax LLC",
+        "front_label_text": ""
+      }
+    },
+    {
+      "_meta": {
+        "module_code": "NT-02",
+        "os": "MAXimo²",
+        "product_line": "BOTH",
+        "supliful_handle": "rhodiola-capsules",
+        "status": "VALID"
+      },
+      "format": {
+        "label_format": "BOTTLE",
+        "container_type": "bottle",
+        "product_form": "Capsules",
+        "dimensions": {
+          "label_w_in": 6.0,
+          "label_h_in": 2.5
+        }
+      },
+      "front_panel": {
+        "zone_1": {
+          "brand_name": "GenoMAX²",
+          "module_code": "NT-02"
+        },
+        "zone_2": {
+          "text": "BIOLOGICAL OS MODULE"
+        },
+        "zone_3": {
+          "ingredient_name": "RHODIOLA ROSEA"
+        },
+        "zone_4": {
+          "descriptor": "Rhodiola Rosea Extract",
+          "biological_system": "NEUROTRANSMITTER SYSTEM · STRESS ADAPTATION"
+        },
+        "zone_5": {
+          "variant_name": "MAXimo²",
+          "accent_color": "#7A1E2E"
+        },
+        "zone_6": {
+          "type": {
+            "label": "TYPE",
+            "value": "Capsules"
+          },
+          "function": {
+            "label": "FUNCTION",
+            "value": "Stress Adaptation"
+          },
+          "status": {
+            "label": "STATUS",
+            "value": "Active"
+          }
+        },
+        "zone_7": {
+          "version_info": "v1.0 · NT-02 · Clinical Grade",
+          "net_quantity": "DIETARY SUPPLEMENT · 60 capsules"
+        }
+      },
+      "back_panel": {
+        "back_label_text": "This is not your full protocol.\n\nModulates cortisol response and enhances adaptive capacity through regulation of HPA axis signaling and monoamine neurotransmitter balance.\n\nSuggested Use:\n1 capsule daily with food\n\nScan to begin\n[QR]\ngenomax.ai\n\nWarnings:\nNot intended for medical use. Consult a qualified healthcare professional before use, especially if pregnant, nursing, or taking medication.\nThis statement has not been evaluated by the Food and Drug Administration. This product is not intended to diagnose treat cure or prevent any disease.\n\nIngredients:\nRhodiola Rosea Extract 500mg\n\nDistributed by Genomax LLC",
+        "front_label_text": ""
       }
     }
   ]
