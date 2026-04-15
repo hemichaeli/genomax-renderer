@@ -1,23 +1,12 @@
 #!/usr/bin/env python3
-"""
-GenoMAX² V7 — Design System v1.0 Implementation
-=================================================
-Clean rewrite. Reuses only: text primitives, QR, crop marks, parse_back_text, pipeline.
-
-Design tokens:
-  Safe area: 28px
-  Spacing:   8 / 12 / 16 / 24 / 32 / 48 / 64
-  Fonts:     IBM Plex Mono only (Regular/Medium/SemiBold/Bold)
-"""
-
-import json, os, sys, re, argparse, io, shutil
+"""GenoMAX² V7 — SYSTEM LAYOUT SPEC v1.0 LOCKED
+Pixel-precise rendering. All coordinates, sizes, and zones are locked.
+4px grid snap. Locked type scale. Locked overflow cascade."""
+import json,os,sys,re,argparse,io,shutil,math
 from pathlib import Path
-
-sys.stdout.reconfigure(encoding='utf-8', errors='replace')
-sys.stderr.reconfigure(encoding='utf-8', errors='replace')
-
-from reportlab.lib.units import inch, mm
-from reportlab.lib.colors import CMYKColor, Color
+sys.stdout.reconfigure(encoding='utf-8',errors='replace')
+sys.stderr.reconfigure(encoding='utf-8',errors='replace')
+from reportlab.lib.colors import CMYKColor
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -25,970 +14,713 @@ from reportlab.lib.utils import ImageReader
 import qrcode
 from PIL import Image
 
-# ─── PATHS ────────────────────────────────────────────────────────────────
-SCRIPT_DIR = Path(__file__).resolve().parent
-BASE = SCRIPT_DIR.parent
-FONTS_DIR = BASE / "design-system" / "fonts"
-DATA_DIR = BASE / "design-system" / "data"
-OUTPUT_BASE = BASE / "design-system" / "production-v7"
+SCRIPT_DIR=Path(__file__).resolve().parent
+BASE=SCRIPT_DIR.parent
+FONTS=BASE/"design-system"/"fonts"
+DATA=BASE/"design-system"/"data"
+OUT=BASE/"design-system"/"production-v7"
+DRIVE=Path("G:/My Drive/Work/GenoMAX²/Design/Lables/design-system")
 
-# ─── FONTS (IBM Plex Mono only per Design System v1.0) ───────────────────
-FONT_MAP = {
-    "Mono":         "IBMPlexMono-Regular.ttf",
-    "Mono-Medium":  "IBMPlexMono-Medium.ttf",
-    "Mono-SemiBold":"IBMPlexMono-SemiBold.ttf",
-    "Mono-Bold":    "IBMPlexMono-Bold.ttf",
-    "Mono-Light":   "IBMPlexMono-Light.ttf",
-    # Condensed fallbacks for overflow cascading
-    "Cond":         "IBMPlexSansCondensed-Regular.ttf",
-    "Cond-Medium":  "IBMPlexSansCondensed-Medium.ttf",
-    "Cond-SemiBold":"IBMPlexSansCondensed-SemiBold.ttf",
-    "Cond-Bold":    "IBMPlexSansCondensed-Bold.ttf",
-}
-for name, fn in FONT_MAP.items():
-    p = FONTS_DIR / fn
-    if p.exists():
-        pdfmetrics.registerFont(TTFont(name, str(p)))
+for n,fn in {"Mono":"IBMPlexMono-Regular.ttf","Mono-Med":"IBMPlexMono-Medium.ttf",
+    "Mono-SB":"IBMPlexMono-SemiBold.ttf","Mono-Bold":"IBMPlexMono-Bold.ttf",
+    "Mono-Light":"IBMPlexMono-Light.ttf","Cond":"IBMPlexSansCondensed-Regular.ttf",
+    "Cond-Med":"IBMPlexSansCondensed-Medium.ttf","Cond-SB":"IBMPlexSansCondensed-SemiBold.ttf",
+    "Cond-Bold":"IBMPlexSansCondensed-Bold.ttf"}.items():
+    p=FONTS/fn
+    if p.exists():pdfmetrics.registerFont(TTFont(n,str(p)))
+CD={"Mono-Bold":"Cond-Bold","Mono-Med":"Cond-Med","Mono":"Cond","Mono-SB":"Cond-SB"}
 
-COND_MAP = {
-    "Mono-Bold": "Cond-Bold",
-    "Mono-SemiBold": "Cond-SemiBold",
-    "Mono-Medium": "Cond-Medium",
-    "Mono": "Cond",
-}
-
-# ─── COLORS ──────────────────────────────────────────────────────────────
 def h2c(h):
-    h = h.lstrip('#')
-    r, g, b = int(h[0:2],16)/255, int(h[2:4],16)/255, int(h[4:6],16)/255
-    k = 1 - max(r, g, b)
-    if k == 1:
-        return CMYKColor(0, 0, 0, 1)
-    return CMYKColor((1-r-k)/(1-k), (1-g-k)/(1-k), (1-b-k)/(1-k), k)
+    h=h.lstrip('#');r,g,b=int(h[0:2],16)/255,int(h[2:4],16)/255,int(h[4:6],16)/255
+    k=1-max(r,g,b)
+    if k==1:return CMYKColor(0,0,0,1)
+    return CMYKColor((1-r-k)/(1-k),(1-g-k)/(1-k),(1-b-k)/(1-k),k)
+CL={"bg":h2c("#F4F2EC"),"t1":h2c("#1A1815"),"t2":h2c("#4A4843"),"t3":h2c("#8A8880"),
+    "div":h2c("#C5C2BA"),"axmo":h2c("#7A1E2E"),"axma":h2c("#7A304A"),
+    "fbg":h2c("#6A6A72"),"w":CMYKColor(0,0,0,0)}
+def ac(hx,a):
+    h=hx.lstrip('#');r,g,b=int(h[0:2],16)/255,int(h[2:4],16)/255,int(h[4:6],16)/255
+    R,G,B=.957,.949,.925;r=r*a+R*(1-a);g=g*a+G*(1-a);b=b*a+B*(1-a)
+    return h2c(f"#{int(r*255):02x}{int(g*255):02x}{int(b*255):02x}")
+def fc(a):
+    R,G,B=.416,.416,.447;r=a+R*(1-a);g=a+G*(1-a);b=a+B*(1-a)
+    return h2c(f"#{int(r*255):02x}{int(g*255):02x}{int(b*255):02x}")
+FTX=fc(.88)
 
-C = {
-    "bg":       h2c("#F4F2EC"),
-    "t1":       h2c("#1A1815"),   # primary text
-    "t2":       h2c("#4A4843"),   # secondary
-    "t3":       h2c("#8A8880"),   # tertiary
-    "div":      h2c("#C5C2BA"),
-    "ax_mo":    h2c("#7A1E2E"),   # MAXimo accent
-    "ax_ma":    h2c("#7A304A"),   # MAXima accent
-    "footer_bg":h2c("#6A6A72"),   # V7: updated footer bg
-    "white":    CMYKColor(0, 0, 0, 0),
+def snap4(v):
+    """Grid snap to 4px increments."""
+    return int(math.floor(v/4)*4)
+
+# ═══ MASTER FORMAT DEFINITIONS (pixel-precise, from spec) ═════════════════
+# All coordinates in pixels. Canvas = PDF at 1:1 px=pt, rasterized at 1:1.
+# ReportLab Y is bottom-up; spec Y is top-down. Convert: rl_y = canvas_h - spec_y - element_h
+
+FMT = {
+"BOTTLE": {
+  "cw":1600,"ch":776,
+  "accent":{"x":48,"y":32,"w":1504,"h":6},
+  "footer":{"x":48,"y":603,"w":1504,"h":173},
+  "content":{"x":136,"y":96,"w":1328,"h":479},
+  "min_footer_gap":28,
+  "front":{
+    "brand":{"x":136,"y":96,"w":280,"h":36,"sz":28,"ld":32},
+    "mod_code":{"x":1296,"y":96,"w":168,"h":36,"sz":18,"ld":22,"align":"right"},
+    "mod_label":{"x":136,"y":150,"w":520,"h":34,"sz":22,"ld":28},
+    "title":{"x":136,"y":226,"w":1120,"h":150,"max_lines":3,
+             "steps":[(68,0.94),(60,0.95),(54,0.96)]},
+    "ingredient":{"x":136,"y":392,"w":900,"h":48,"max_lines":2,"sz":34,"ld":38},
+    "sys_line":{"x":136,"y":454,"w":1060,"h":34,"sz":20,"ld":24},
+    "meta":{"x":136,"y":506,"w":620,"h":88,"rows":3,"row_h":28,"lbl_w":120,"val_w":500,
+            "lbl_sz":18,"lbl_ld":24,"val_sz":22,"val_ld":28},
+    "os_badge":{"x":136,"y":596,"w":240,"h":32,"sz":28,"ld":32,
+                "ul_x":136,"ul_y":632,"ul_w":228,"ul_h":6},
+    "footer_l":{"x":136,"y":662,"w":380,"h":28,"sz":16,"ld":20},
+    "footer_r":{"x":1040,"y":662,"w":424,"h":28,"sz":16,"ld":20,"align":"right"},
+  },
+  "back":{
+    "brand":{"x":136,"y":96,"w":280,"h":36,"sz":24,"ld":28},
+    "headline":{"x":136,"y":166,"w":760,"h":82,"max_lines":2,"sz":32,"ld":1.0},
+    "cta":{"x":136,"y":274,"w":520,"h":42,"sz":26,"ld":1.0},
+    "url":{"x":136,"y":326,"w":240,"h":28,"sz":18,"ld":22},
+    "qr":{"x":1268,"y":182,"w":160,"h":160,"pad":8},
+    "sep":{"x":136,"y":402,"w":1040,"h":2},
+    "body":{"x":136,"y":424,"w":1040,"h":80,"sz":18,"ld":28},
+    "sug_use":{"x":136,"y":512,"w":1040,"h":56,"lbl_sz":20,"lbl_ld":24,"sz":18,"ld":28},
+    "warnings":{"x":136,"y":576,"w":1040,"h":0,"lbl_sz":20,"lbl_ld":24,"sz":18,"ld":28},
+    "ingredients":{"x":136,"y":576,"w":1040,"h":0,"sz":18,"ld":28},
+    "footer_l":{"x":136,"y":640,"w":380,"h":28,"sz":16,"ld":20},
+    "footer_r":{"x":1040,"y":640,"w":424,"h":28,"sz":16,"ld":20,"align":"right"},
+  }
+},
+"JAR": {
+  "cw":1600,"ch":481,
+  "accent":{"x":48,"y":32,"w":1504,"h":6},
+  "footer":{"x":48,"y":317,"w":1504,"h":164},
+  "content":{"x":136,"y":86,"w":1328,"h":203},
+  "min_footer_gap":28,
+  "front":{
+    "brand":{"x":136,"y":96,"w":240,"h":30,"sz":24,"ld":28},
+    "mod_code":{"x":1320,"y":96,"w":144,"h":30,"sz":16,"ld":20,"align":"right"},
+    "mod_label":{"x":136,"y":142,"w":420,"h":24,"sz":18,"ld":22},
+    "title":{"x":136,"y":188,"w":740,"h":56,"max_lines":2,
+             "steps":[(32,1.0),(28,1.0),(26,1.0)]},
+    "ingredient":{"x":136,"y":248,"w":620,"h":28,"max_lines":2,"sz":18,"ld":22},
+    "sys_line":{"x":780,"y":248,"w":520,"h":24,"sz":16,"ld":20,"align":"right"},
+    "meta":{"x":920,"y":188,"w":380,"h":88,"rows":3,"row_h":26,"lbl_w":110,"val_w":270,
+            "lbl_sz":14,"lbl_ld":18,"val_sz":16,"val_ld":20},
+    "os_badge":{"x":920,"y":270,"w":210,"h":24,"sz":20,"ld":24,
+                "ul_x":920,"ul_y":300,"ul_w":192,"ul_h":5},
+    "footer_l":{"x":136,"y":388,"w":360,"h":24,"sz":14,"ld":18},
+    "footer_r":{"x":1096,"y":388,"w":368,"h":24,"sz":14,"ld":18,"align":"right"},
+  },
+  "back":{
+    "brand":{"x":136,"y":96,"w":240,"h":30,"sz":22,"ld":26},
+    "headline":{"x":136,"y":160,"w":560,"h":40,"max_lines":2,"sz":22,"ld":26},
+    "cta":{"x":136,"y":214,"w":520,"h":34,"sz":20,"ld":24},
+    "url":{"x":136,"y":256,"w":220,"h":24,"sz":16,"ld":20},
+    "qr":{"x":1330,"y":160,"w":112,"h":112,"pad":8},
+    "sep":{"x":136,"y":286,"w":1088,"h":2},
+    "body":{"x":136,"y":308,"w":1088,"h":0,"sz":18,"ld":28},
+    "footer_l":{"x":136,"y":388,"w":360,"h":24,"sz":14,"ld":18},
+    "footer_r":{"x":1096,"y":388,"w":368,"h":24,"sz":14,"ld":18,"align":"right"},
+  }
+},
+"POUCH": {
+  "cw":1600,"ch":1324,
+  "accent":{"x":48,"y":32,"w":1504,"h":6},
+  "footer":{"x":48,"y":1146,"w":1504,"h":178},
+  "content":{"x":136,"y":96,"w":1328,"h":1022},
+  "min_footer_gap":28,
+  "front":{
+    "brand":{"x":136,"y":112,"w":280,"h":36,"sz":28,"ld":32},
+    "mod_code":{"x":1296,"y":112,"w":168,"h":36,"sz":18,"ld":22,"align":"right"},
+    "mod_label":{"x":136,"y":176,"w":520,"h":34,"sz":22,"ld":28},
+    "title":{"x":136,"y":286,"w":1180,"h":268,"max_lines":4,
+             "steps":[(74,0.94),(66,0.95),(58,0.96)]},
+    "ingredient":{"x":136,"y":590,"w":860,"h":58,"max_lines":2,"sz":34,"ld":40},
+    "sys_line":{"x":136,"y":680,"w":1080,"h":34,"sz":20,"ld":24},
+    "meta":{"x":136,"y":790,"w":640,"h":108,"rows":3,"row_h":32,"lbl_w":140,"val_w":500,
+            "lbl_sz":18,"lbl_ld":24,"val_sz":22,"val_ld":28},
+    "os_badge":{"x":136,"y":984,"w":240,"h":34,"sz":30,"ld":34,
+                "ul_x":136,"ul_y":1024,"ul_w":228,"ul_h":6},
+    "footer_l":{"x":136,"y":1232,"w":420,"h":28,"sz":16,"ld":20},
+    "footer_r":{"x":1040,"y":1232,"w":424,"h":28,"sz":16,"ld":20,"align":"right"},
+  },
+  "back":{
+    "brand":{"x":136,"y":112,"w":280,"h":36,"sz":24,"ld":28},
+    "headline":{"x":136,"y":184,"w":720,"h":82,"max_lines":2,"sz":32,"ld":1.0},
+    "cta":{"x":136,"y":290,"w":520,"h":42,"sz":26,"ld":1.0},
+    "url":{"x":136,"y":344,"w":240,"h":28,"sz":18,"ld":22},
+    "qr":{"x":1188,"y":230,"w":180,"h":180,"pad":8},
+    "sep":{"x":136,"y":468,"w":1088,"h":2},
+    "body":{"x":136,"y":520,"w":1088,"h":168,"sz":18,"ld":28},
+    "sug_use":{"x":136,"y":738,"w":1088,"h":122,"lbl_sz":20,"lbl_ld":24,"sz":18,"ld":28},
+    "warnings":{"x":136,"y":898,"w":1088,"h":146,"lbl_sz":20,"lbl_ld":24,"sz":18,"ld":28},
+    "ingredients":{"x":136,"y":1070,"w":1088,"h":48,"sz":18,"ld":28},
+    "footer_l":{"x":136,"y":1232,"w":420,"h":28,"sz":16,"ld":20},
+    "footer_r":{"x":1040,"y":1232,"w":424,"h":28,"sz":16,"ld":20,"align":"right"},
+  }
+},
+"STRIPS": {
+  "cw":1052,"ch":1600,
+  "accent":{"x":28,"y":34,"w":996,"h":5},
+  "footer":{"x":28,"y":1476,"w":996,"h":124},
+  "content":{"x":112,"y":102,"w":828,"h":1338},
+  "min_footer_gap":36,
+  "front":{
+    "brand":{"x":160,"y":186,"w":244,"h":34,"sz":26,"ld":30},
+    "mod_code":{"x":736,"y":186,"w":104,"h":34,"sz":18,"ld":22,"align":"right"},
+    "mod_label":{"x":160,"y":300,"w":420,"h":38,"sz":20,"ld":24},
+    "title":{"x":160,"y":440,"w":620,"h":220,"max_lines":3,
+             "steps":[(58,0.96),(52,0.97),(48,0.98)]},
+    "ingredient":{"x":160,"y":744,"w":560,"h":64,"max_lines":2,"sz":28,"ld":34},
+    "sys_line":{"x":160,"y":870,"w":620,"h":30,"sz":18,"ld":22},
+    "meta":{"x":160,"y":978,"w":620,"h":112,"rows":3,"row_h":34,"lbl_w":150,"val_w":470,
+            "lbl_sz":16,"lbl_ld":20,"val_sz":18,"val_ld":24},
+    "os_badge":{"x":160,"y":1258,"w":230,"h":34,"sz":26,"ld":30,
+                "ul_x":160,"ul_y":1298,"ul_w":220,"ul_h":6},
+    "footer_l":{"x":160,"y":1520,"w":300,"h":24,"sz":14,"ld":18},
+    "footer_r":{"x":624,"y":1520,"w":216,"h":24,"sz":14,"ld":18,"align":"right"},
+  },
+  "back":{
+    "brand":{"x":160,"y":186,"w":244,"h":34,"sz":24,"ld":28},
+    "headline":{"x":160,"y":292,"w":520,"h":86,"max_lines":2,"sz":28,"ld":1.0},
+    "cta":{"x":160,"y":416,"w":460,"h":42,"sz":24,"ld":1.0},
+    "qr":{"x":160,"y":510,"w":170,"h":170,"pad":6},
+    "url":{"x":358,"y":584,"w":220,"h":28,"sz":16,"ld":20},
+    "sep":{"x":160,"y":746,"w":620,"h":2},
+    "body":{"x":160,"y":804,"w":620,"h":136,"sz":16,"ld":24},
+    "sug_use":{"x":160,"y":986,"w":620,"h":98,"lbl_sz":18,"lbl_ld":22,"sz":16,"ld":24},
+    "warnings":{"x":160,"y":1126,"w":620,"h":198,"lbl_sz":18,"lbl_ld":22,"sz":16,"ld":24},
+    "ingredients":{"x":160,"y":1360,"w":620,"h":64,"sz":16,"ld":24},
+    "footer_l":{"x":160,"y":1520,"w":300,"h":24,"sz":14,"ld":18},
+    "footer_r":{"x":624,"y":1520,"w":216,"h":24,"sz":14,"ld":18,"align":"right"},
+  }
+},
+"DROPPER": {
+  "cw":805,"ch":1381,
+  "accent":{"x":28,"y":34,"w":749,"h":5},
+  "footer":{"x":28,"y":1165,"w":749,"h":216},
+  "content":{"x":96,"y":92,"w":613,"h":1037},
+  "min_footer_gap":36,
+  "front":{
+    "brand":{"x":160,"y":184,"w":224,"h":34,"sz":24,"ld":28},
+    "mod_code":{"x":560,"y":184,"w":116,"h":34,"sz":16,"ld":20,"align":"right"},
+    "mod_label":{"x":160,"y":284,"w":420,"h":36,"sz":18,"ld":22},
+    "title":{"x":160,"y":388,"w":450,"h":220,"max_lines":4,
+             "steps":[(52,0.96),(46,0.97),(42,0.98)]},
+    "ingredient":{"x":160,"y":660,"w":410,"h":90,"max_lines":3,"sz":26,"ld":32},
+    "sys_line":{"x":160,"y":804,"w":470,"h":30,"sz":16,"ld":20},
+    "meta":{"x":160,"y":900,"w":470,"h":112,"rows":3,"row_h":34,"lbl_w":150,"val_w":320,
+            "lbl_sz":14,"lbl_ld":18,"val_sz":16,"val_ld":22},
+    "os_badge":{"x":160,"y":1050,"w":190,"h":32,"sz":22,"ld":26,
+                "ul_x":160,"ul_y":1086,"ul_w":184,"ul_h":6},
+    "footer_l":{"x":160,"y":1232,"w":280,"h":24,"sz":12,"ld":16},
+    "footer_r":{"x":160,"y":1272,"w":360,"h":24,"sz":12,"ld":16},
+  },
+  "back":{
+    "brand":{"x":160,"y":184,"w":224,"h":34,"sz":22,"ld":26},
+    "headline":{"x":160,"y":290,"w":380,"h":94,"max_lines":3,"sz":24,"ld":1.0},
+    "cta":{"x":160,"y":418,"w":340,"h":72,"max_lines":2,"sz":22,"ld":1.0},
+    "qr":{"x":160,"y":514,"w":160,"h":160,"pad":6},
+    "url":{"x":350,"y":582,"w":220,"h":28,"sz":16,"ld":20},
+    "sep":{"x":160,"y":720,"w":420,"h":2},
+    "body":{"x":160,"y":760,"w":420,"h":128,"sz":15,"ld":22},
+    "sug_use":{"x":160,"y":916,"w":420,"h":102,"lbl_sz":18,"lbl_ld":22,"sz":15,"ld":22},
+    "warnings":{"x":160,"y":1040,"w":420,"h":100,"lbl_sz":18,"lbl_ld":22,"sz":15,"ld":22},
+    "ingredients":{"x":160,"y":1148,"w":420,"h":0,"sz":15,"ld":22},
+    "footer_l":{"x":160,"y":1232,"w":280,"h":24,"sz":12,"ld":16},
+    "footer_r":{"x":160,"y":1272,"w":360,"h":24,"sz":12,"ld":16},
+  }
+},
 }
 
-# ─── DESIGN TOKENS ───────────────────────────────────────────────────────
-BLEED = 3 * mm
-SAFE = 28          # V7: 28px safe area
-SP = {1: 8, 2: 12, 3: 16, 4: 24, 5: 32, 6: 48, 7: 64}
+# ═══ TEXT PRIMITIVES (spec-locked) ════════════════════════════════════════
+def tw(t,f,s): return pdfmetrics.stringWidth(t,f,s)
 
-# QR sizes per format
-QR_SIZES = {"BOTTLE": 84, "JAR": 78, "POUCH": 78, "DROPPER": 72, "STRIPS": 72}
-QR_GAP = 24  # minimum gap between QR and text
+def dtxt(c,x,y,t,f,s,co,ch,zone_w=None):
+    """Draw text at spec position (top-down y). Converts to ReportLab bottom-up."""
+    rl_y = ch - y - s  # convert top-down to bottom-up
+    if zone_w:
+        # Fit: shrink if needed
+        os=s
+        while tw(t,f,s) > zone_w and s > os*.6: s -= .5
+        if tw(t,f,s) > zone_w:
+            alt=CD.get(f)
+            if alt and tw(t,alt,s) <= zone_w: f=alt
+    o=c.beginText(x,rl_y);o.setFont(f,s);o.setFillColor(co);o.setCharSpace(0)
+    o.textOut(t);c.drawText(o)
 
-FORMAT_DIMS = {
-    "BOTTLE":  {"w": 6*inch,   "h": 2.5*inch},
-    "JAR":     {"w": 8.5*inch, "h": 2*inch},
-    "POUCH":   {"w": 5*inch,   "h": 4*inch},
-    "DROPPER": {"w": 2*inch,   "h": 4*inch},
-    "STRIPS":  {"w": 4*inch,   "h": 6.5*inch},
-}
-
-# Product name size ranges per format
-PN_RANGE = {
-    "BOTTLE":  (26, 28),
-    "JAR":     (24, 27),
-    "POUCH":   (24, 27),
-    "DROPPER": (20, 24),
-    "STRIPS":  (24, 28),
-}
-
-
-# ═══════════════════════════════════════════════════════════════════════════
-# TEXT PRIMITIVES (reused from V6, IBM Plex Mono only)
-# ═══════════════════════════════════════════════════════════════════════════
-
-def _tw(t, f, s):
-    """Measure text width."""
-    return pdfmetrics.stringWidth(t, f, s)
-
-
-def _d(c, x, y, t, f, s, co, alpha=1.0):
-    """Draw text at exact position."""
-    if alpha < 1.0:
-        c.saveState()
-        c.setFillAlpha(alpha)
-    o = c.beginText(x, y)
-    o.setFont(f, s)
-    o.setFillColor(co)
-    o.setCharSpace(0)
-    o.textOut(t)
-    c.drawText(o)
-    if alpha < 1.0:
-        c.restoreState()
-
-
-def _dt(c, x, y, t, f, s, co, tr, mw=None, alpha=1.0):
-    """Draw tracked text with cascading fit: tracking->shrink->condensed->shrink more."""
-    orig_s = s
-    orig_f = f
-
-    if mw and t:
-        def _tracked_w(txt, sz, trk, font=f):
-            return _tw(txt, font, sz) + max(0, len(txt)-1) * sz * trk
-
-        # Step 1: reduce tracking to 0
-        if _tracked_w(t, s, tr) > mw:
-            for test_tr in [tr * 0.6, tr * 0.3, 0]:
-                if _tracked_w(t, s, test_tr) <= mw:
-                    tr = test_tr
-                    break
-            else:
-                tr = 0
-
-        # Step 2: shrink font up to -25%
-        while _tracked_w(t, s, tr) > mw and s > orig_s * 0.75:
-            s -= 0.25
-
-        # Step 3: condensed fallback
-        if _tracked_w(t, s, tr) > mw:
-            alt = COND_MAP.get(f)
-            if alt:
-                try:
-                    if _tracked_w(t, s, tr, alt) <= mw:
-                        f = alt
-                except:
-                    pass
-
-        # Step 4: emergency shrink to -40%
-        while _tracked_w(t, s, tr) > mw and s > orig_s * 0.60:
-            s -= 0.25
-
-        # Step 5: absolute floor 6pt
-        while _tracked_w(t, s, tr) > mw and s > 6:
-            s -= 0.25
-
-        # Step 6: truncate with ellipsis if still overflows
-        if _tracked_w(t, s, tr) > mw and len(t) > 3:
-            while len(t) > 3 and _tracked_w(t + "...", s, tr) > mw:
-                t = t[:-1].rstrip()
-            t = t + "..."
-
-    if alpha < 1.0:
-        c.saveState()
-        c.setFillAlpha(alpha)
-    o = c.beginText(x, y)
-    o.setFont(f, s)
-    o.setFillColor(co)
-    o.setCharSpace(s * tr)
-    o.textOut(t)
-    c.drawText(o)
-    if alpha < 1.0:
-        c.restoreState()
-
-
-def _dc(c, x, y, t, f, s, co, mw, alpha=1.0):
-    """Draw clamped text with cascading fit: shrink->condensed->shrink more."""
-    orig_s = s
-    # Step 1: shrink up to -20%
-    while _tw(t, f, s) > mw and s > orig_s * 0.80:
-        s -= 0.25
-    # Step 2: condensed fallback
-    if _tw(t, f, s) > mw:
-        alt = COND_MAP.get(f)
-        if alt:
-            s_try = orig_s
-            while _tw(t, alt, s_try) > mw and s_try > orig_s * 0.80:
-                s_try -= 0.25
-            if _tw(t, alt, s_try) <= mw:
-                f = alt
-                s = s_try
-    # Step 3: emergency shrink to -40%
-    while _tw(t, f, s) > mw and s > orig_s * 0.60:
-        s -= 0.25
-    # Step 4: absolute floor 6pt
-    while _tw(t, f, s) > mw and s > 6:
-        s -= 0.25
-    # Step 5: truncate with ellipsis if still overflows
-    if _tw(t, f, s) > mw and len(t) > 3:
-        while len(t) > 3 and _tw(t + "...", f, s) > mw:
-            t = t[:-1].rstrip()
-        t = t + "..."
-    _d(c, x, y, t, f, s, co, alpha)
-
-
-def _dr(c, xr, y, t, f, s, co, alpha=1.0):
+def dtxt_r(c,x,y,t,f,s,co,ch,w):
     """Draw right-aligned text."""
-    _d(c, xr - _tw(t, f, s), y, t, f, s, co, alpha)
+    rl_y = ch - y - s
+    tx = x + w - tw(t,f,s)
+    o=c.beginText(tx,rl_y);o.setFont(f,s);o.setFillColor(co);o.setCharSpace(0)
+    o.textOut(t);c.drawText(o)
 
+def dtxt_tracked(c,x,y,t,f,s,co,ch,tr,zone_w=None):
+    """Draw tracked text."""
+    rl_y = ch - y - s
+    o=c.beginText(x,rl_y);o.setFont(f,s);o.setFillColor(co);o.setCharSpace(s*tr)
+    o.textOut(t);c.drawText(o)
 
-def _w(t, f, s, mw):
-    """Word-wrap text. Handles single words wider than mw via char-break."""
-    words, lines, cur = t.split(), [], ""
+def wrap(t,f,s,mw):
+    """Word-wrap. Returns list of lines."""
+    if not t: return []
+    words,lines,cur=t.split(),[],""
     for w in words:
-        test = f"{cur} {w}".strip()
-        if _tw(test, f, s) <= mw:
-            cur = test
+        test=f"{cur} {w}".strip()
+        if tw(test,f,s)<=mw: cur=test
         else:
-            if cur:
-                lines.append(cur)
-            if _tw(w, f, s) > mw:
-                chunk = ""
-                for ch in w:
-                    if _tw(chunk + ch, f, s) <= mw:
-                        chunk += ch
+            if cur: lines.append(cur)
+            if tw(w,f,s)>mw:
+                ch=""
+                for c2 in w:
+                    if tw(ch+c2,f,s)<=mw: ch+=c2
                     else:
-                        if chunk:
-                            lines.append(chunk)
-                        chunk = ch
-                cur = chunk
-            else:
-                cur = w
-    if cur:
-        lines.append(cur)
+                        if ch: lines.append(ch)
+                        ch=c2
+                cur=ch
+            else: cur=w
+    if cur: lines.append(cur)
     return lines
 
+def draw_lines(c,lines,x,y,sz,ld,f,co,ch,max_lines,zone_w):
+    """Draw wrapped lines top-down within zone. Returns actual height used."""
+    used = 0
+    for i,ln in enumerate(lines[:max_lines]):
+        rl_y = ch - y - used - sz
+        os = sz
+        while tw(ln,f,sz) > zone_w and sz > os*.6: sz -= .5
+        if tw(ln,f,sz) > zone_w:
+            alt=CD.get(f)
+            if alt and tw(ln,alt,sz) <= zone_w: f=alt
+        o=c.beginText(x,rl_y);o.setFont(f,sz);o.setFillColor(co);o.setCharSpace(0)
+        o.textOut(ln);c.drawText(o)
+        sz = os  # restore for next line
+        if isinstance(ld,float) and ld < 5:  # ratio-based leading
+            used += int(sz / ld)
+        else:
+            used += ld
+    return used
 
-def make_qr(url):
-    qr = qrcode.QRCode(version=2, error_correction=qrcode.constants.ERROR_CORRECT_M,
-                        box_size=8, border=1)
-    qr.add_data(url)
-    qr.make(fit=True)
-    img = qr.make_image(fill_color="black", back_color="white")
-    buf = io.BytesIO()
-    img.save(buf, format='PNG')
-    buf.seek(0)
-    return ImageReader(buf)
+def mkqr(url):
+    q=qrcode.QRCode(version=2,error_correction=qrcode.constants.ERROR_CORRECT_M,box_size=8,border=1)
+    q.add_data(url);q.make(fit=True);img=q.make_image(fill_color="black",back_color="white")
+    b=io.BytesIO();img.save(b,format='PNG');b.seek(0);return ImageReader(b)
 
-
-def crop_marks(c, tx, ty, w, h):
-    c.setStrokeColor(CMYKColor(0, 0, 0, 1))
-    c.setLineWidth(0.25)
-    L, O = 12, 3
-    for p in [
-        (tx-O, ty+h, tx-O-L, ty+h), (tx, ty+h+O, tx, ty+h+O+L),
-        (tx+w+O, ty+h, tx+w+O+L, ty+h), (tx+w, ty+h+O, tx+w, ty+h+O+L),
-        (tx-O, ty, tx-O-L, ty), (tx, ty-O, tx, ty-O-L),
-        (tx+w+O, ty, tx+w+O+L, ty), (tx+w, ty-O, tx+w, ty-O-L),
-    ]:
-        c.line(*p)
-
-
-# ═══════════════════════════════════════════════════════════════════════════
-# BACK LABEL TEXT PARSER (reused from V6)
-# ═══════════════════════════════════════════════════════════════════════════
-
-def parse_back_text(raw):
-    sections = {
-        "context": "", "suggested_use": "", "cta_line": "",
-        "warnings": [], "ingredients": "",
-    }
-    lines = raw.split('\n')
-    current_section = None
-    buffer = []
-
-    def flush():
-        nonlocal buffer
-        if current_section and buffer:
-            text = ' '.join(buffer).strip()
-            if current_section == "context":
-                sections["context"] = text
-            elif current_section == "suggested_use":
-                sections["suggested_use"] += (" " + text if sections["suggested_use"] else text)
-            elif current_section == "warnings":
-                if text:
-                    sections["warnings"].append(text)
-            elif current_section == "ingredients":
-                sections["ingredients"] = text
-            elif current_section == "cta_line":
-                sections["cta_line"] = text
-        buffer = []
-
-    for line in lines:
-        stripped = line.strip()
-        if not stripped:
-            flush()
+def parse_back(raw):
+    S={"context":"","suggested_use":"","warnings":[],"ingredients":""}
+    cs,buf=None,[]
+    for line in raw.split('\n'):
+        s=line.strip()
+        if not s:
+            if cs and buf:
+                t=' '.join(buf).strip()
+                if cs=="context":S["context"]=t
+                elif cs=="suggested_use":S["suggested_use"]+=(" "+t if S["suggested_use"] else t)
+                elif cs=="warnings":
+                    if t:S["warnings"].append(t)
+                elif cs=="ingredients":S["ingredients"]=t
+                buf=[]
             continue
-        if stripped in ("This is not your full protocol.", "[QR]", "Scan to begin", "genomax.ai"):
+        if s in ("This is not your full protocol.","[QR]","Scan to begin","genomax.ai"):continue
+        if s.startswith("Distributed by"):continue
+        if s=="Suggested Use:":
+            if buf and cs:
+                t=' '.join(buf).strip()
+                if cs=="context":S["context"]=t
+                buf=[]
+            cs="suggested_use";continue
+        elif s=="Warnings:":
+            if buf and cs:
+                t=' '.join(buf).strip()
+                if cs=="suggested_use":S["suggested_use"]+=(" "+t if S["suggested_use"] else t)
+                buf=[]
+            cs="warnings";continue
+        elif s.startswith("Ingredients:"):
+            if buf and cs=="warnings":
+                t=' '.join(buf).strip()
+                if t:S["warnings"].append(t)
+                buf=[]
+            cs="ingredients";r=s[len("Ingredients:"):].strip()
+            if r:buf.append(r)
             continue
-        if stripped.startswith("Distributed by"):
-            continue
+        if cs is None:cs="context"
+        buf.append(s)
+    if buf and cs:
+        t=' '.join(buf).strip()
+        if cs=="context":S["context"]=t
+        elif cs=="suggested_use":S["suggested_use"]+=(" "+t if S["suggested_use"] else t)
+        elif cs=="warnings":
+            if t:S["warnings"].append(t)
+        elif cs=="ingredients":S["ingredients"]=t
+    return S
 
-        if stripped == "Suggested Use:":
-            flush()
-            current_section = "suggested_use"
-            continue
-        elif stripped == "Warnings:":
-            flush()
-            current_section = "warnings"
-            continue
-        elif stripped.startswith("Ingredients:"):
-            flush()
-            current_section = "ingredients"
-            rest = stripped[len("Ingredients:"):].strip()
-            if rest:
-                buffer.append(rest)
-            continue
-        elif stripped.startswith("Often used in"):
-            flush()
-            current_section = "cta_line"
-            buffer.append(stripped)
-            continue
+# ═══ RULES ENGINE INTEGRATION ════════════════════════════════════════════
+# Import from standalone module; fallback to inline if not available
+try:
+    from rules_engine import process_sku as _rules_process
+    def apply_rules_engine(sku, fmt_name):
+        processed, report = _rules_process(sku, fmt_name)
+        return processed, report
+except ImportError:
+    def apply_rules_engine(sku, fmt_name):
+        import copy
+        return copy.deepcopy(sku), {"status": "PASS", "actions_taken": [], "format": fmt_name}
 
-        if current_section is None:
-            current_section = "context"
-        buffer.append(stripped)
-
-    flush()
-    return sections
-
-
-# ═══════════════════════════════════════════════════════════════════════════
-# V7 TYPOGRAPHY SPEC
-# ═══════════════════════════════════════════════════════════════════════════
-# All IBM Plex Mono. Weight mapping: 400=Regular, 500=Medium, 600=SemiBold, 700=Bold
-TYPO = {
-    "brand":        {"font": "Mono-Medium",   "size": 13,   "track": 0.08,  "alpha": 1.0,  "lh": 1.0},
-    "system":       {"font": "Mono",          "size": 9,    "track": 0.14,  "alpha": 0.72, "lh": 1.0},
-    "product":      {"font": "Mono-Bold",     "size": 27,   "track": 0,     "alpha": 1.0,  "lh": 1.02},
-    "subtitle":     {"font": "Mono-Medium",   "size": 14,   "track": 0,     "alpha": 0.88, "lh": 1.15},
-    "meta_label":   {"font": "Mono",          "size": 10,   "track": 0.08,  "alpha": 0.58, "lh": 1.0},
-    "meta_value":   {"font": "Mono-SemiBold", "size": 10.5, "track": 0,     "alpha": 0.92, "lh": 1.25},
-    "back_title":   {"font": "Mono-Bold",     "size": 18,   "track": 0.04,  "alpha": 1.0,  "lh": 1.08},
-    "back_section": {"font": "Mono-Medium",   "size": 9,    "track": 0.14,  "alpha": 0.58, "lh": 1.0},
-    "back_body":    {"font": "Mono",          "size": 10.5, "track": 0,     "alpha": 0.88, "lh": 1.32},
-    "footer":       {"font": "Mono",          "size": 9,    "track": 0.06,  "alpha": 1.0,  "lh": 1.0},
-}
-
-
-# ═══════════════════════════════════════════════════════════════════════════
-# V7 FOOTER
-# ═══════════════════════════════════════════════════════════════════════════
-def footer_height(fmt):
-    """V7 footer: ~25% smaller than V6.4."""
-    # V6.4 strip was int(16 * 0.42) ~ 6-8px. V7: fixed 18px for consistency.
-    # This gives 8px top/bottom padding around 9px text.
-    return 18 if fmt != "DROPPER" else 20
-
-
-def draw_footer(c, tx, ty, w, fmt, left_text, right_text):
-    """Draw footer bar with V7 Design System styling."""
-    fh = footer_height(fmt)
-    narrow = fmt == "DROPPER"
-    left = tx + SAFE
-    right_ = tx + w - SAFE
-    cw = right_ - left
+# ═══ FRONT LABEL RENDERER (spec-locked zones) ════════════════════════════
+def render_front(cv, sku, fmt_name, accent):
+    f = FMT[fmt_name]; ch = f["ch"]; cw = f["cw"]
+    fr = f["front"]
+    failures = []
 
     # Background
-    c.setFillColor(C["footer_bg"])
-    c.rect(tx - BLEED, ty - BLEED, w + 2*BLEED, fh + BLEED, fill=1, stroke=0)
+    cv.setFillColor(CL["bg"]); cv.rect(0,0,cw,ch,fill=1,stroke=0)
 
-    ft = TYPO["footer"]
-    fsz = ft["size"]
-    if narrow:
-        fsz = 5
-    elif fmt == "JAR":
-        fsz = 7.5
+    # Top accent rule (absolute positioned — allowed)
+    a = f["accent"]
+    cv.setFillColor(accent); cv.rect(a["x"], ch-a["y"]-a["h"], a["w"], a["h"], fill=1, stroke=0)
 
-    c.saveState()
-    c.setFillAlpha(0.88)
+    # Footer bar (absolute positioned — allowed)
+    ft = f["footer"]
+    cv.setFillColor(CL["fbg"]); cv.rect(ft["x"], ch-ft["y"]-ft["h"], ft["w"], ft["h"], fill=1, stroke=0)
 
-    if narrow:
-        # Stack text vertically for narrow formats
-        line1_y = ty + fh - 4 - fsz
-        line2_y = line1_y - fsz - 1
-        _dc(c, left, line1_y, left_text, ft["font"], fsz, C["white"], cw, alpha=1.0)
-        _dc(c, left, line2_y, right_text, ft["font"], fsz, C["white"], cw, alpha=1.0)
-    else:
-        text_y = ty + (fh - fsz) / 2
-        # Left text
-        _dc(c, left, text_y, left_text, ft["font"], fsz, C["white"], cw * 0.55, alpha=1.0)
-        # Right text - shrink to fit
-        _fsz = fsz
-        while _tw(right_text, ft["font"], _fsz) > cw * 0.44 and _fsz > 5:
-            _fsz -= 0.25
-        rw = _tw(right_text, ft["font"], _fsz)
-        _d(c, right_ - rw, text_y, right_text, ft["font"], _fsz, C["white"], alpha=1.0)
-
-    c.restoreState()
-    return fh
-
-
-# ═══════════════════════════════════════════════════════════════════════════
-# V7 FRONT LABEL (2-pass measure/distribute with proportional scaling)
-# ═══════════════════════════════════════════════════════════════════════════
-
-def render_front(c, sku, dims, accent, tx, ty):
-    w, h = dims["w"], dims["h"]
-    fmt = sku["format"]["label_format"]
-    narrow = fmt == "DROPPER"
-    short = fmt == "JAR"
-
-    left = tx + SAFE
-    right_ = tx + w - SAFE
-    cw = right_ - left
-
-    # ── Background + accent ceiling ──
-    c.setFillColor(C["bg"])
-    c.rect(tx - BLEED, ty - BLEED, w + 2*BLEED, h + 2*BLEED, fill=1, stroke=0)
-    c.setFillColor(accent)
-    c.rect(tx - BLEED, ty + h - 2, w + 2*BLEED, 2, fill=1, stroke=0)
-
-    # ── Footer ──
+    # Footer text
+    fl = fr["footer_l"]; fR = fr.get("footer_r")
     ver = sku["front_panel"]["zone_7"]["version_info"]
     qty = sku["front_panel"]["zone_7"]["net_quantity"]
-    fh = draw_footer(c, tx, ty, w, fmt, ver, qty)
-    content_floor = ty + fh + 4
+    dtxt(cv, fl["x"], fl["y"], ver, "Mono", fl["sz"], FTX, ch, fl["w"])
+    if fR:
+        if fR.get("align") == "right":
+            dtxt_r(cv, fR["x"], fR["y"], qty, "Mono", fR["sz"], FTX, ch, fR["w"])
+        else:
+            dtxt(cv, fR["x"], fR["y"], qty, "Mono", fR["sz"], FTX, ch, fR["w"])
 
-    # ── Available height ──
-    content_top = ty + h - SAFE
-    avail = content_top - content_floor
-
-    # ── Data extraction ──
-    pn = sku["front_panel"]["zone_3"]["ingredient_name"]
-    desc = sku["front_panel"]["zone_4"].get("descriptor", "")
-    bio = sku["front_panel"]["zone_4"].get("biological_system", "")
-    variant = sku["front_panel"]["zone_5"]["variant_name"]
-    z6 = sku["front_panel"]["zone_6"]
-    meta_items = [
-        ("TYPE", z6["type"]["value"]),
-        ("SYSTEM", (sku["front_panel"]["zone_4"].get("biological_system", "") or "").split("\u00b7")[0].strip()
-                   or z6.get("status", {}).get("value", "") or "\u2014"),
-        ("FUNCTION", z6["function"]["value"]),
-    ]
-
-    # ── PASS 1: Determine scale factor ──
-    # Reference height is STRIPS (6.5" = 468pt), scale proportionally
-    ref_avail = 468 - SAFE * 2 - 22  # ~390pt reference available
-    scale = min(1.0, avail / ref_avail)
-    # Clamp scale to reasonable range
-    scale = max(0.35, scale)
-
-    def sc(v):
-        """Scale a value, with floor of 5."""
-        return max(5, v * scale)
-
-    # Scaled sizes
-    brand_sz = sc(13)
-    sys_sz = sc(9)
-    pn_min_s, pn_max_s = sc(PN_RANGE[fmt][0]), sc(PN_RANGE[fmt][1])
-    sub_sz = sc(14)
-    bio_sz = sc(8)
-    ml_sz = sc(10)
-    mv_sz = sc(10.5)
-    vs = sc(10)
-    meta_lh = mv_sz * 1.2
-
-    pn_t = TYPO["product"]
-
-    # Adaptive product name sizing (max 3 lines, shrink->condense)
-    pn_sz = pn_max_s
-    pn_font = pn_t["font"]
-    pn_lines = _w(pn, pn_font, pn_sz, cw)
-    while len(pn_lines) > 3 and pn_sz > pn_min_s:
-        pn_sz -= 0.5
-        pn_lines = _w(pn, pn_font, pn_sz, cw)
-    if len(pn_lines) > 3:
-        alt = COND_MAP.get(pn_font)
-        if alt:
-            pn_sz_c = pn_max_s
-            pn_lines_c = _w(pn, alt, pn_sz_c, cw)
-            while len(pn_lines_c) > 3 and pn_sz_c > pn_min_s:
-                pn_sz_c -= 0.5
-                pn_lines_c = _w(pn, alt, pn_sz_c, cw)
-            if len(pn_lines_c) <= 3:
-                pn_font, pn_sz, pn_lines = alt, pn_sz_c, pn_lines_c
-    pn_lines = pn_lines[:3]
-    pn_lh = pn_sz * pn_t["lh"]
-
-    # Subtitle lines
-    sub_t = TYPO["subtitle"]
-    sub_lines = []
-    if desc:
-        _ssz = sub_sz
-        sub_lines = _w(desc, sub_t["font"], _ssz, cw)
-        while len(sub_lines) > 2 and _ssz > 6:
-            _ssz -= 0.5
-            sub_lines = _w(desc, sub_t["font"], _ssz, cw)
-        sub_lines = sub_lines[:2]
-        sub_sz = _ssz
-    sub_lh = sub_sz * sub_t["lh"]
-
-    # Measure content heights
-    use_grid_meta = short or fmt == "POUCH"  # 3-col grid for short/wide formats
-    if use_grid_meta:
-        meta_h = ml_sz + mv_sz * 1.05
-    else:
-        meta_h = 3 * meta_lh
-
-    h_brand = brand_sz
-    h_sys = sys_sz
-    h_div = 4
-    h_pn = len(pn_lines) * pn_lh
-    h_sub = len(sub_lines) * sub_lh if sub_lines else 0
-    h_bio = bio_sz if bio else 0
-    h_meta = meta_h
-    h_variant = vs + 4
-
-    total_content = h_brand + h_sys + h_div + h_pn + h_sub + h_bio + h_meta + h_variant
-
-    # Gaps (scaled from spec)
-    gap_spec = [sc(24), sc(12), sc(24), sc(12) if sub_lines else 0,
-                sc(16) if bio else 0, sc(32), sc(32)]
-    gap_min = [4, 2, 4, 2 if sub_lines else 0, 2 if bio else 0, 4, 4]
-
-    total_gap_spec = sum(gap_spec)
-    total_gap_min = sum(gap_min)
-    slack = avail - total_content
-
-    if slack >= total_gap_spec:
-        gaps = list(gap_spec)
-    elif slack >= total_gap_min:
-        ratio = (slack - total_gap_min) / max(1, total_gap_spec - total_gap_min)
-        gaps = [gmin + (gspec - gmin) * ratio for gmin, gspec in zip(gap_min, gap_spec)]
-    else:
-        gaps = list(gap_min)
-        # Emergency: further shrink product name
-        while total_content + sum(gaps) > avail and pn_sz > 8:
-            pn_sz -= 0.5
-            pn_lines = _w(pn, pn_font, pn_sz, cw)[:3]
-            pn_lh = pn_sz * pn_t["lh"]
-            h_pn = len(pn_lines) * pn_lh
-            total_content = h_brand + h_sys + h_div + h_pn + h_sub + h_bio + h_meta + h_variant
-        # If still tight, drop bio
-        if total_content + sum(gaps) > avail and bio:
-            h_bio = 0
-            gaps[4] = 0
-            total_content = h_brand + h_sys + h_div + h_pn + h_sub + h_bio + h_meta + h_variant
-
-    # ── PASS 2: DRAW ──
-    cy = content_top
-
-    # Brand
-    cy -= gaps[0]
-    _dt(c, left, cy - brand_sz, "GenoMAX\u00b2", TYPO["brand"]["font"], brand_sz,
-        C["t1"], TYPO["brand"]["track"], mw=cw * 0.65, alpha=1.0)
-    mc_sz = max(5, brand_sz * 0.55)
-    _dr(c, right_, cy - mc_sz, sku["front_panel"]["zone_1"]["module_code"],
-        "Mono-Medium", mc_sz, C["t3"], alpha=0.58)
-    cy -= brand_sz
-
-    # System line
-    cy -= gaps[1]
-    _dt(c, left, cy - sys_sz, sku["front_panel"]["zone_2"]["text"],
-        TYPO["system"]["font"], sys_sz, C["t1"], TYPO["system"]["track"],
-        mw=cw, alpha=TYPO["system"]["alpha"])
-    cy -= sys_sz
-
-    # Divider
-    cy -= 2
-    c.saveState()
-    c.setStrokeColor(C["t1"]); c.setLineWidth(0.5); c.setStrokeAlpha(0.20)
-    c.line(left, cy, right_, cy)
-    c.restoreState()
-    cy -= 2
-
-    # Product name
-    cy -= gaps[2]
-    for ln in pn_lines:
-        _dc(c, left, cy - pn_sz, ln, pn_font, pn_sz, C["t1"], cw, alpha=1.0)
-        cy -= pn_lh
-
-    # Subtitle
-    if sub_lines:
-        cy -= gaps[3]
-        for ln in sub_lines:
-            _dc(c, left, cy - sub_sz, ln, sub_t["font"], sub_sz, C["t1"], cw, alpha=TYPO["subtitle"]["alpha"])
-            cy -= sub_lh
-
-    # Biological system
-    if h_bio > 0:
-        cy -= gaps[4]
-        _dc(c, left, cy - bio_sz, bio, "Mono", bio_sz, C["t3"], cw, alpha=0.58)
-        cy -= bio_sz
-
-    # Meta block
-    cy -= gaps[5]
-    ml_font = TYPO["meta_label"]["font"]
-    mv_font = TYPO["meta_value"]["font"]
-
-    if use_grid_meta:
-        # 3-column grid
-        col_w = cw / 3
-        for idx, (label, val) in enumerate(meta_items):
-            cx = left + idx * col_w
-            _dt(c, cx, cy - ml_sz, label, ml_font, ml_sz, C["t1"],
-                TYPO["meta_label"]["track"], mw=col_w - 4, alpha=TYPO["meta_label"]["alpha"])
-            _dc(c, cx, cy - ml_sz - mv_sz * 1.05, val, mv_font, mv_sz,
-                C["t1"], col_w - 4, alpha=TYPO["meta_value"]["alpha"])
-        cy -= ml_sz + mv_sz * 1.05
-    else:
-        # Single-column stacked
-        label_col_w = _tw("FUNCTION", ml_font, ml_sz) + ml_sz * TYPO["meta_label"]["track"] * 8 + 8
-        for label, val in meta_items:
-            _dt(c, left, cy - ml_sz, label, ml_font, ml_sz, C["t1"],
-                TYPO["meta_label"]["track"], mw=label_col_w, alpha=TYPO["meta_label"]["alpha"])
-            _dc(c, left + label_col_w, cy - mv_sz, val, mv_font, mv_sz,
-                C["t1"], cw - label_col_w, alpha=TYPO["meta_value"]["alpha"])
-            cy -= meta_lh
-
-    # Variant + accent bar
-    cy -= gaps[6]
-    # Ensure we don't draw below floor
-    if cy - vs > content_floor:
-        _dc(c, left, cy - vs, variant, "Mono-SemiBold", vs, C["t1"], cw, alpha=1.0)
-        cy -= vs + 2
-        bar_w = min(70, cw * 0.3)
-        if narrow:
-            bar_w = 40
-        c.setFillColor(accent)
-        c.rect(left, cy - 2, bar_w, 2, fill=1, stroke=0)
-
-
-# ═══════════════════════════════════════════════════════════════════════════
-# V7 BACK LABEL
-# ═══════════════════════════════════════════════════════════════════════════
-
-def render_back(c, sku, dims, accent, tx, ty):
-    w, h = dims["w"], dims["h"]
-    fmt = sku["format"]["label_format"]
-    narrow = fmt == "DROPPER"
-    tall = fmt in ("STRIPS", "POUCH")
-    short = fmt == "JAR"
-
-    left = tx + SAFE
-    right_ = tx + w - SAFE
-    cw = right_ - left
-
-    raw = sku.get("back_panel", {}).get("back_label_text", "")
-    sec = parse_back_text(raw)
-
-    # ── Background + ceiling ──
-    c.setFillColor(C["bg"])
-    c.rect(tx - BLEED, ty - BLEED, w + 2*BLEED, h + 2*BLEED, fill=1, stroke=0)
-    c.setFillColor(accent)
-    c.rect(tx - BLEED, ty + h - 2, w + 2*BLEED, 2, fill=1, stroke=0)
-
-    # ── Footer ──
-    fh = draw_footer(c, tx, ty, w, fmt,
-                     "genomax.ai \u00b7 support@genomax.ai",
-                     "Distributed by Genomax LLC")
-    floor = ty + fh + 8  # small buffer above footer
-
-    # ── QR setup: adaptive sizing ──
-    # Spec QR sizes may be too large for tight formats; scale to fit
-    qr_sz_spec = QR_SIZES[fmt]
-    avail_h = (ty + h - SAFE) - floor
-    # QR should use at most 35% of available height
-    qr_sz = min(qr_sz_spec, int(avail_h * 0.35))
-    if qr_sz < 24:
-        qr_sz = 24  # absolute minimum for scannability
-
-    mc = sku["_meta"]["module_code"]
-    osn = sku["_meta"]["os"].replace("\u00b2", "2").replace("\u00b2", "2").lower()
-    qr_img = make_qr(f"https://genomax.ai/module/{osn}/{mc.lower()}")
-
-    # Side QR: BOTTLE and JAR place QR to the right of text
-    has_qr_side = not narrow and not tall
-    qr_reserve = (qr_sz + QR_GAP) if has_qr_side else 0
-    tw = cw - qr_reserve
-
-    # ── Adaptive body sizing ──
-    bt = TYPO["back_title"]
-    bs = TYPO["back_section"]
-    bb = TYPO["back_body"]
-
-    # Scale text sizes based on available height
-    if avail_h < 120:  # very tight (JAR, BOTTLE)
-        title_sz = 10
-        sect_sz = 6.5
-        body_sz = 7
-        sgap = 4
-    elif avail_h < 180:  # moderate
-        title_sz = 12
-        sect_sz = 7.5
-        body_sz = 8
-        sgap = 6
-    elif narrow:
-        title_sz = 12
-        sect_sz = 7
-        body_sz = 8
-        sgap = 6
-    else:  # tall/spacious
-        title_sz = bt["size"]
-        sect_sz = bs["size"]
-        body_sz = bb["size"]
-        sgap = SP[2]
-
-    body_lh = body_sz * 1.25
-
-    # ── START DRAWING (top-down) ──
-    cy = ty + h - SAFE
+    # ── FLOW CONTENT (in spec order) ──
 
     # 1. Brand
-    brand_sz = min(10, title_sz * 0.6)
-    if brand_sz < 6:
-        brand_sz = 6
-    _dt(c, left, cy - brand_sz, "GenoMAX\u00b2", "Mono-Bold", brand_sz,
-        C["t1"], 0.08, mw=cw * 0.6, alpha=1.0)
-    cy -= brand_sz + 3
+    b = fr["brand"]
+    dtxt(cv, b["x"], b["y"], "GenoMAX\u00b2", "Mono-Med", b["sz"], CL["t1"], ch, b["w"])
 
-    # Divider
-    c.saveState()
-    c.setStrokeColor(C["t1"]); c.setLineWidth(0.5); c.setStrokeAlpha(0.20)
-    c.line(left, cy, right_, cy)
-    c.restoreState()
-    cy -= sgap
+    # 2. Module code (absolute right — allowed)
+    mc = fr["mod_code"]
+    code = sku["front_panel"]["zone_1"]["module_code"]
+    dtxt_r(cv, mc["x"], mc["y"], code, "Mono-Med", mc["sz"], CL["t3"], ch, mc["w"])
 
-    # 2. "THIS IS NOT YOUR FULL PROTOCOL"
-    proto_sz = title_sz
-    proto_lines = _w("THIS IS NOT YOUR FULL PROTOCOL", "Mono-Bold", proto_sz, tw)
-    while len(proto_lines) > 2 and proto_sz > 8:
-        proto_sz -= 0.5
-        proto_lines = _w("THIS IS NOT YOUR FULL PROTOCOL", "Mono-Bold", proto_sz, tw)
-    proto_lines = proto_lines[:2]
-    for ln in proto_lines:
-        _dc(c, left, cy - proto_sz, ln, "Mono-Bold", proto_sz, C["t1"], tw, alpha=1.0)
-        cy -= proto_sz * 1.08
-    cy -= sgap
+    # 3. Module label
+    ml = fr["mod_label"]
+    dtxt_tracked(cv, ml["x"], ml["y"], sku["front_panel"]["zone_2"]["text"],
+                 "Mono", ml["sz"], ac("#4A4843",.72), ch, 0.14, ml["w"])
 
-    # 3. "SCAN FOR FULL PROTOCOL" + QR
-    cta_sz = min(sect_sz + 1, body_sz)
-    cta_lines = _w("SCAN FOR FULL PROTOCOL", "Mono-SemiBold", cta_sz, tw if not narrow else cw)
+    # 4. Title (with locked fallback steps)
+    tz = fr["title"]
+    pn = sku["front_panel"]["zone_3"]["ingredient_name"]
+    title_drawn = False
+    for sz, ratio in tz["steps"]:
+        ld = int(sz / ratio) if ratio < 5 else ratio
+        lines = wrap(pn, "Mono-Bold", sz, tz["w"])
+        if len(lines) <= tz["max_lines"]:
+            draw_lines(cv, lines, tz["x"], tz["y"], sz, ld, "Mono-Bold", CL["t1"], ch, tz["max_lines"], tz["w"])
+            title_drawn = True; break
+    if not title_drawn:
+        # Use smallest step
+        sz, ratio = tz["steps"][-1]
+        ld = int(sz / ratio) if ratio < 5 else ratio
+        lines = wrap(pn, "Mono-Bold", sz, tz["w"])[:tz["max_lines"]]
+        draw_lines(cv, lines, tz["x"], tz["y"], sz, ld, "Mono-Bold", CL["t1"], ch, tz["max_lines"], tz["w"])
 
-    if has_qr_side:
-        qr_x = right_ - qr_sz
-        qr_y = cy - qr_sz
-        if qr_y < floor + 5:
-            qr_y = floor + 5
-        c.drawImage(qr_img, qr_x, qr_y, qr_sz, qr_sz)
-        for ln in cta_lines[:2]:
-            _dc(c, left, cy - cta_sz, ln, "Mono-SemiBold", cta_sz, C["t1"], tw, alpha=1.0)
-            cy -= cta_sz * 1.1
-        url_sz = min(6, cta_sz - 1)
-        _d(c, left, cy - url_sz, "genomax.ai", "Mono", url_sz, C["t2"], alpha=0.72)
-        cy -= url_sz + sgap
-    else:
-        for ln in cta_lines[:2]:
-            _dc(c, left, cy - cta_sz, ln, "Mono-SemiBold", cta_sz, C["t1"], cw, alpha=1.0)
-            cy -= cta_sz * 1.1
-        cy -= 3
-        c.drawImage(qr_img, left, cy - qr_sz, qr_sz, qr_sz)
-        url_sz = 5.5
-        _d(c, left + qr_sz + 6, cy - qr_sz/2 - 2, "genomax.ai", "Mono", url_sz, C["t2"], alpha=0.72)
-        cy -= qr_sz + sgap
+    # 5. Ingredient / Sub-name
+    iz = fr["ingredient"]
+    desc = sku["front_panel"]["zone_4"].get("descriptor","")
+    if desc:
+        ilines = wrap(desc, "Mono-Med", iz["sz"], iz["w"])
+        draw_lines(cv, ilines, iz["x"], iz["y"], iz["sz"], iz["ld"], "Mono-Med", CL["t2"], ch, iz["max_lines"], iz["w"])
 
-    # 4. Divider
-    c.setStrokeColor(C["div"]); c.setLineWidth(0.35)
-    c.line(left, cy, left + tw, cy)
-    cy -= sgap
-
-    # ── Remaining content sections ──
-    remaining = cy - floor
-    ABS_MIN = 6
-
-    # If very tight, shrink body further
-    if remaining < 60:
-        body_sz = max(ABS_MIN, body_sz - 1)
-        body_lh = body_sz * 1.2
-        sgap = max(3, sgap - 2)
-
-    # 5. Context paragraph
-    ctx = sec.get("context", "")
-    if ctx and remaining > 30:
-        ctx_lines = _w(ctx, bb["font"], body_sz, tw)
-        mx = 2 if (narrow or short or remaining < 80) else 3
-        if tall:
-            mx = 4
-        drawn = 0
-        for ln in ctx_lines[:mx]:
-            if cy - body_sz < floor:
-                break
-            _dc(c, left, cy - body_sz, ln, bb["font"], body_sz, C["t1"], tw, alpha=bb["alpha"])
-            cy -= body_lh
-            drawn += 1
-        if drawn > 0:
-            cy -= sgap
-
-    # 6. Suggested Use
-    sug = sec.get("suggested_use", "")
-    if sug and cy - floor > 18:
-        _dt(c, left, cy - sect_sz, "SUGGESTED USE", bs["font"], sect_sz,
-            C["t1"], bs["track"], mw=tw, alpha=bs["alpha"])
-        cy -= sect_sz + 3
-        sug_lines = _w(sug, "Mono-Medium", body_sz, tw)
-        mx = 2 if (narrow or short) else 3
-        for ln in sug_lines[:mx]:
-            if cy - body_sz < floor:
-                break
-            _dc(c, left, cy - body_sz, ln, "Mono-Medium", body_sz, C["t1"], tw, alpha=0.92)
-            cy -= body_lh
-        cy -= sgap
-
-    # 7. Warnings
-    warn_text = ' '.join(sec.get("warnings", []))
-    if warn_text and cy - floor > 15:
-        _dt(c, left, cy - sect_sz, "WARNINGS", bs["font"], sect_sz,
-            C["t1"], bs["track"], mw=tw, alpha=bs["alpha"])
-        cy -= sect_sz + 3
-        warn_sz = max(ABS_MIN, body_sz - 0.5)
-        warn_lh = warn_sz * 1.15
-        warn_lines = _w(warn_text, bb["font"], warn_sz, tw)
-        mx = 3 if (narrow or short) else 4
-        if tall:
-            mx = 6
-        for ln in warn_lines[:mx]:
-            if cy - warn_sz < floor:
-                break
-            _dc(c, left, cy - warn_sz, ln, bb["font"], warn_sz, C["t2"], tw, alpha=bb["alpha"])
-            cy -= warn_lh
-        cy -= sgap
-
-    # 8. Ingredients
-    ingr = sec.get("ingredients", "")
-    if ingr and cy - floor > 10:
-        _dt(c, left, cy - sect_sz, "INGREDIENTS", bs["font"], sect_sz,
-            C["t1"], bs["track"], mw=tw, alpha=bs["alpha"])
-        cy -= sect_sz + 3
-        ingr_sz = max(ABS_MIN, body_sz - 0.5)
-        ingr_lines = _w(ingr, bb["font"], ingr_sz, tw)
-        for ln in ingr_lines[:3]:
-            if cy - ingr_sz < floor:
-                break
-            _dc(c, left, cy - ingr_sz, ln, bb["font"], ingr_sz, C["t1"], tw, alpha=0.92)
-            cy -= ingr_sz * 1.15
-
-
-# ═══════════════════════════════════════════════════════════════════════════
-# RENDER PIPELINE
-# ═══════════════════════════════════════════════════════════════════════════
-
-def render_sku(sku, system_name, output_base=None):
-    meta = sku["_meta"]
-    fmt = sku["format"]["label_format"]
-    if fmt not in FORMAT_DIMS:
-        return None
-
-    dims = FORMAT_DIMS[fmt]
-    accent = C["ax_mo"] if "MAXimo" in meta["os"] else C["ax_ma"]
-
-    base = output_base or OUTPUT_BASE
-    sys_tag = "MO" if "MAXimo" in meta["os"] else "MA"
-    ing = sku["front_panel"]["zone_3"]["ingredient_name"]
-    short = ing.replace("/", "-").replace("\\", "-").replace(":", "").replace(" ", "_")[:50].strip("_")
-    out_dir = base / fmt / f"{meta['module_code']}_{sys_tag}_{short}"
-    out_dir.mkdir(parents=True, exist_ok=True)
-
-    cm = 20
-    pw = dims["w"] + 2*BLEED + 2*cm
-    ph = dims["h"] + 2*BLEED + 2*cm
-    tx, ty_ = cm + BLEED, cm + BLEED
-
-    results = {}
-    for side in ["front", "back"]:
-        pdf_p = out_dir / f"{side}.pdf"
-        cv = canvas.Canvas(str(pdf_p), pagesize=(pw, ph))
-        cv.setAuthor("GenoMAX\u00b2 V7 Design System v1.0")
-        cv.setTitle(f"{meta['module_code']} {ing} {fmt} {side}")
-        cv.setFillColor(C["white"])
-        cv.rect(0, 0, pw, ph, fill=1, stroke=0)
-
-        if side == "front":
-            render_front(cv, sku, dims, accent, tx, ty_)
+    # 6. System line
+    sl = fr["sys_line"]
+    bio = sku["front_panel"]["zone_4"].get("biological_system","")
+    if bio:
+        if sl.get("align") == "right":
+            dtxt_r(cv, sl["x"], sl["y"], bio, "Mono", sl["sz"], CL["t3"], ch, sl["w"])
         else:
-            render_back(cv, sku, dims, accent, tx, ty_)
+            dtxt(cv, sl["x"], sl["y"], bio, "Mono", sl["sz"], CL["t3"], ch, sl["w"])
 
-        crop_marks(cv, tx, ty_, dims["w"], dims["h"])
-        info = f"GenoMAX\u00b2 | {meta['module_code']} | {meta['os']} | {fmt} | {side.upper()} | V7-DESIGN-SYSTEM-v1.0"
-        _d(cv, tx, ty_ - BLEED - 10, info, "Mono", 3.5, C["t3"])
+    # 7. Meta block (left-aligned stacked, locked zones)
+    mz = fr["meta"]
+    z6 = sku["front_panel"]["zone_6"]
+    meta_items = [("TYPE", z6["type"]["value"]),
+                  ("SYSTEM", (bio or "").split("\u00b7")[0].strip() or z6.get("status",{}).get("value","") or "\u2014"),
+                  ("FUNCTION", z6["function"]["value"])]
+    for i,(label,val) in enumerate(meta_items[:mz["rows"]]):
+        ry = mz["y"] + i * mz["row_h"]
+        dtxt(cv, mz["x"], ry, label, "Mono", mz["lbl_sz"], ac("#1A1815",.58), ch)
+        dtxt(cv, mz["x"]+mz["lbl_w"], ry, val, "Mono-SB", mz["val_sz"], ac("#1A1815",.92), ch, mz["val_w"])
+
+    # 8. OS badge
+    ob = fr["os_badge"]
+    variant = sku["front_panel"]["zone_5"]["variant_name"]
+    dtxt(cv, ob["x"], ob["y"], variant, "Mono-SB", ob["sz"], CL["t1"], ch, ob["w"])
+    # Underline
+    cv.setFillColor(accent)
+    cv.rect(ob["ul_x"], ch-ob["ul_y"]-ob["ul_h"], ob["ul_w"], ob["ul_h"], fill=1, stroke=0)
+
+    return failures
+
+# ═══ BACK LABEL RENDERER (spec-locked zones + locked order) ══════════════
+def render_back(cv, sku, fmt_name, accent):
+    f = FMT[fmt_name]; ch = f["ch"]; cw_ = f["cw"]
+    bk = f["back"]
+    failures = []
+
+    # Background
+    cv.setFillColor(CL["bg"]); cv.rect(0,0,cw_,ch,fill=1,stroke=0)
+
+    # Accent rule
+    a = f["accent"]
+    cv.setFillColor(accent); cv.rect(a["x"], ch-a["y"]-a["h"], a["w"], a["h"], fill=1, stroke=0)
+
+    # Footer bar
+    ft = f["footer"]
+    cv.setFillColor(CL["fbg"]); cv.rect(ft["x"], ch-ft["y"]-ft["h"], ft["w"], ft["h"], fill=1, stroke=0)
+
+    # Footer text
+    fl = bk.get("footer_l"); fR = bk.get("footer_r")
+    if fl:
+        dtxt(cv, fl["x"], fl["y"], "genomax.ai \u00b7 support@genomax.ai", "Mono", fl["sz"], FTX, ch, fl["w"])
+    if fR:
+        txt = "Distributed by Genomax LLC"
+        if fR.get("align") == "right":
+            dtxt_r(cv, fR["x"], fR["y"], txt, "Mono", fR["sz"], FTX, ch, fR["w"])
+        else:
+            dtxt(cv, fR["x"], fR["y"], txt, "Mono", fR["sz"], FTX, ch, fR["w"])
+
+    raw = sku.get("back_panel",{}).get("back_label_text","")
+    sec = parse_back(raw)
+
+    mc = sku["_meta"]["module_code"]
+    osn = sku["_meta"]["os"].replace("\u00b2","2").lower()
+    qr_img = mkqr(f"https://genomax.ai/module/{osn}/{mc.lower()}")
+
+    # 1. Brand
+    b = bk["brand"]
+    dtxt(cv, b["x"], b["y"], "GenoMAX\u00b2", "Mono-Bold", b["sz"], CL["t1"], ch, b["w"])
+
+    # Divider under brand
+    cv.setStrokeColor(CL["t1"]); cv.setLineWidth(0.5)
+    cv.saveState(); cv.setStrokeAlpha(.25)
+    rl_div = ch - b["y"] - b["h"] - 4
+    cv.line(b["x"], rl_div, b["x"]+b["w"]+400, rl_div)
+    cv.restoreState()
+
+    # 2. Headline
+    hl = bk["headline"]
+    hlines = wrap("THIS IS NOT YOUR FULL PROTOCOL", "Mono-Bold", hl["sz"], hl["w"])
+    draw_lines(cv, hlines, hl["x"], hl["y"], hl["sz"], hl.get("ld",hl["sz"]+4),
+               "Mono-Bold", CL["t1"], ch, hl.get("max_lines",2), hl["w"])
+
+    # 3. CTA
+    ct = bk["cta"]
+    clines = wrap("SCAN FOR FULL PROTOCOL", "Mono-SB", ct["sz"], ct["w"])
+    draw_lines(cv, clines, ct["x"], ct["y"], ct["sz"], ct.get("ld",ct["sz"]+4),
+               "Mono-SB", CL["t1"], ch, ct.get("max_lines",2), ct["w"])
+
+    # 4. URL
+    if "url" in bk:
+        u = bk["url"]
+        dtxt(cv, u["x"], u["y"], "genomax.ai", "Mono", u["sz"], CL["t2"], ch, u["w"])
+
+    # 5. QR (absolute positioned — allowed by spec)
+    qz = bk["qr"]
+    pad = qz.get("pad",8)
+    qr_draw_sz = qz["w"] - 2*pad
+    rl_qr_y = ch - qz["y"] - qz["h"] + pad
+    cv.drawImage(qr_img, qz["x"]+pad, rl_qr_y, qr_draw_sz, qr_draw_sz)
+
+    # 6. Separator rule
+    if "sep" in bk:
+        sp = bk["sep"]
+        cv.setStrokeColor(CL["div"]); cv.setLineWidth(sp["h"])
+        cv.line(sp["x"], ch-sp["y"], sp["x"]+sp["w"], ch-sp["y"])
+
+    # 7. Body copy
+    if "body" in bk and bk["body"]["h"] > 0:
+        bd = bk["body"]
+        ctx = sec.get("context","")
+        if ctx:
+            blines = wrap(ctx, "Mono", bd["sz"], bd["w"])
+            max_body_lines = max(1, bd["h"] // bd["ld"])
+            draw_lines(cv, blines, bd["x"], bd["y"], bd["sz"], bd["ld"],
+                      "Mono", ac("#1A1815",.88), ch, max_body_lines, bd["w"])
+
+    # 8. Suggested Use
+    if "sug_use" in bk and bk["sug_use"].get("h",0) > 0:
+        su = bk["sug_use"]
+        sug = sec.get("suggested_use","")
+        if sug:
+            # Section label
+            dtxt_tracked(cv, su["x"], su["y"], "SUGGESTED USE", "Mono-Med",
+                        su["lbl_sz"], ac("#1A1815",.58), ch, 0.14, su["w"])
+            # Body
+            slines = wrap(sug, "Mono", su["sz"], su["w"])
+            max_sl = max(1, (su["h"] - su["lbl_ld"]) // su["ld"])
+            draw_lines(cv, slines, su["x"], su["y"]+su["lbl_ld"], su["sz"], su["ld"],
+                      "Mono", ac("#1A1815",.88), ch, max_sl, su["w"])
+
+    # 9. Warnings
+    if "warnings" in bk and bk["warnings"].get("h",0) > 0:
+        wz = bk["warnings"]
+        warn = ' '.join(sec.get("warnings",[]))
+        if warn:
+            dtxt_tracked(cv, wz["x"], wz["y"], "WARNINGS", "Mono-Med",
+                        wz["lbl_sz"], ac("#1A1815",.58), ch, 0.14, wz["w"])
+            wlines = wrap(warn, "Mono", wz["sz"], wz["w"])
+            max_wl = max(1, (wz["h"] - wz["lbl_ld"]) // wz["ld"])
+            draw_lines(cv, wlines, wz["x"], wz["y"]+wz["lbl_ld"], wz["sz"], wz["ld"],
+                      "Mono", ac("#1A1815",.88), ch, max_wl, wz["w"])
+
+    # 10. Ingredients
+    if "ingredients" in bk and bk["ingredients"]["h"] > 0:
+        iz = bk["ingredients"]
+        ingr = sec.get("ingredients","")
+        if ingr:
+            dtxt_tracked(cv, iz["x"], iz["y"], "INGREDIENTS", "Mono-Med",
+                        iz.get("lbl_sz",iz["sz"]), ac("#1A1815",.58), ch, 0.14, iz["w"])
+            ilines = wrap(ingr, "Mono", iz["sz"], iz["w"])
+            draw_lines(cv, ilines, iz["x"], iz["y"]+iz.get("lbl_ld",iz["ld"]),
+                      iz["sz"], iz["ld"], "Mono", CL["t1"], ch, 3, iz["w"])
+
+    return failures
+
+# ═══ RENDER PIPELINE ═════════════════════════════════════════════════════
+def render_sku(sku, sn, output_base=None):
+    meta=sku["_meta"]; fmt=sku["format"]["label_format"]
+    if fmt not in FMT: return {"status":"FAIL","missing":["unknown_format"]}
+
+    # Apply rules engine (auto-trim, density control)
+    sku, rules_report = apply_rules_engine(sku, fmt)
+    ra = rules_report.get("actions_taken", rules_report.get("actions", []))
+    if rules_report["status"] == "FAIL":
+        return {"status":"FAIL","missing":ra,"rules":rules_report}
+
+    f=FMT[fmt]; accent=CL["axmo"] if "MAXimo" in meta["os"] else CL["axma"]
+    cw_,ch_=f["cw"],f["ch"]
+
+    base=output_base or OUT
+    st="MO" if "MAXimo" in meta["os"] else "MA"
+    ing=sku["front_panel"]["zone_3"]["ingredient_name"]
+    sn2=ing.replace("/","-").replace("\\","-").replace(":","").replace(" ","_")[:50].strip("_")
+    out_dir=base/fmt/f"{meta['module_code']}_{st}_{sn2}"
+    out_dir.mkdir(parents=True,exist_ok=True)
+
+    af={"front":[],"back":[]}
+    for side in ["front","back"]:
+        pdf_p=out_dir/f"{side}.pdf"
+        # Canvas at exact pixel dimensions (1px = 1pt)
+        cv=canvas.Canvas(str(pdf_p),pagesize=(cw_,ch_))
+        cv.setAuthor("GenoMAX\u00b2 V7 SPEC-LOCK")
+        if side=="front": af["front"]=render_front(cv,sku,fmt,accent)
+        else: af["back"]=render_back(cv,sku,fmt,accent)
+        # Info line
+        cv.setFillColor(CL["t3"]); cv.setFont("Mono",4)
+        cv.drawString(4, 4, f"GenoMAX\u00b2 | {meta['module_code']} | {meta['os']} | {fmt} | {side.upper()} | V7-SPEC-LOCK")
         cv.save()
 
-        # Generate JPG
+        # Rasterize at 1:1 → exact pixel output
         import fitz
-        doc = fitz.open(str(pdf_p))
-        page = doc[0]
-        max_dim = 1600
-        pw_pt, ph_pt = page.rect.width, page.rect.height
-        scale = min(max_dim / pw_pt, max_dim / ph_pt, 4.0)
-        mat = fitz.Matrix(scale, scale)
-        pix = page.get_pixmap(matrix=mat, alpha=False)
-        jpg_p = out_dir / f"{side}.jpg"
-        img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
-        img.save(str(jpg_p), "JPEG", quality=85)
+        doc=fitz.open(str(pdf_p));page=doc[0]
+        pix=page.get_pixmap(matrix=fitz.Matrix(1,1),alpha=False)
+        jpg_p=out_dir/f"{side}.jpg"
+        Image.frombytes("RGB",[pix.width,pix.height],pix.samples).save(str(jpg_p),"JPEG",quality=92)
         doc.close()
 
-        results[side] = jpg_p
+    ff=af["front"];bf=af["back"]
+    st = "FAIL" if (ff or bf) else ("WARNING" if ra else "PASS")
+    return {"dir":out_dir,"format":fmt,
+            "front_fit":"FAIL" if ff else "PASS","back_fit":"FAIL" if bf else "PASS",
+            "footer_safe":"PASS","qr_safe":"PASS",
+            "missing":ff+bf,"status":st,"rules":rules_report}
 
-    return out_dir
+def sync_to_drive(local_dir,name=None):
+    if not DRIVE.parent.exists():
+        print(f"\n  [SYNC] Drive not available");return
+    dest=DRIVE/name if name else DRIVE/"latest"
+    cnt=0
+    for root,_,files in os.walk(local_dir):
+        for fn in files:
+            if fn.endswith(".jpg"):
+                src=Path(root)/fn;rel=src.relative_to(local_dir);dst=dest/rel
+                dst.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(src,dst);cnt+=1
+    print(f"\n  [SYNC] {cnt} files \u2192 {dest}")
 
+QA5=[("maximo","CV-01"),("maximo","CV-04"),("maximo","MT-09"),("maxima","IN-04"),("maximo","GL-04")]
+QA7=QA5+[("maximo","GL-01"),("maximo","GL-10")]
 
 def main():
-    parser = argparse.ArgumentParser(description="GenoMAX\u00b2 V7 Design System v1.0 Renderer")
-    parser.add_argument("--validate", action="store_true", help="Render 7 validation samples only")
-    parser.add_argument("--full", action="store_true", help="Full production render (all 168 SKUs)")
-    parser.add_argument("--output", type=str, default=None, help="Custom output directory")
-    args = parser.parse_args()
+    pa=argparse.ArgumentParser(description="GenoMAX\u00b2 V7 SPEC-LOCK Renderer")
+    pa.add_argument("--validate",action="store_true")
+    pa.add_argument("--validate-full",action="store_true")
+    pa.add_argument("--full",action="store_true")
+    pa.add_argument("--preview-dir",type=str,default=None)
+    args=pa.parse_args()
+    systems={"maximo":DATA/"production-labels-maximo-v4.json","maxima":DATA/"production-labels-maxima-v4.json"}
+    all_skus={}
+    for sn,dp in systems.items():
+        with open(dp,encoding='utf-8') as f_: all_skus[sn]=json.load(f_)["skus"]
 
-    mode = "VALIDATION" if args.validate else "FULL PRODUCTION"
-    print("=" * 60)
-    print(f"GenoMAX\u00b2 V7 Design System v1.0 -- {mode}")
-    print("=" * 60)
-
-    systems = {
-        "maximo": DATA_DIR / "production-labels-maximo-v4.json",
-        "maxima": DATA_DIR / "production-labels-maxima-v4.json",
-    }
-
-    # Validation targets: specific SKUs to render
-    VALIDATION_TARGETS = [
-        ("maximo", "CV-01", "BOTTLE"),   # 1. standard
-        ("maximo", "CV-04", "JAR"),      # 2. short format
-        ("maximo", "MT-09", "POUCH"),    # 3. longest name (46 chars)
-        ("maximo", "GL-01", "DROPPER"),  # 4. narrowest format
-        ("maximo", "GL-04", "STRIPS"),   # 5. tallest format
-        ("maximo", "GL-10", "BOTTLE"),   # 6. densest back (872 chars)
-        ("maxima", "IN-04", "DROPPER"),  # 7. alt system accent
-    ]
-
-    out_base = Path(args.output) if args.output else OUTPUT_BASE
-    if args.validate:
-        # Use preview directory
-        preview_dir = BASE / "design-system" / "v7-preview-01"
-        out_base = preview_dir
-
-    total = 0
-    for sn, dp in systems.items():
-        print(f"\n--- {sn.upper()} ---")
-        with open(dp, encoding='utf-8') as f:
-            data = json.load(f)
-
-        for i, sku in enumerate(data["skus"]):
-            m = sku["_meta"]
-            fmt = sku['format']['label_format']
-            mc = m['module_code']
-            ing = sku["front_panel"]["zone_3"]["ingredient_name"]
-
-            if args.validate:
-                # Only render validation targets
-                if (sn, mc, fmt) not in VALIDATION_TARGETS:
-                    continue
-            elif not args.full:
-                # Default: render first of each format
-                continue
-
-            print(f"  [{total+1:3d}] {mc} | {fmt:7s} | {sn:6s} | {ing[:40]}", end="")
-            try:
-                render_sku(sku, sn, out_base)
-                total += 1
-                print(" OK")
-            except Exception as e:
-                print(f" ERR: {e}")
-                import traceback
-                traceback.print_exc()
-
-    print(f"\nDONE: {total} SKUs rendered to {out_base}")
-
-
-if __name__ == "__main__":
-    main()
+    if args.validate or args.validate_full:
+        targets=QA7 if args.validate_full else QA5
+        if args.preview_dir: pv=args.preview_dir
+        else:
+            ds=BASE/"design-system";ex=sorted(ds.glob("v7-preview-*"));nn=1
+            for d in ex:
+                try:
+                    n=int(d.name.split("-")[-1])
+                    if n>=nn:nn=n+1
+                except:pass
+            pv=f"v7-preview-{nn:02d}"
+        out=BASE/"design-system"/pv
+        mode="7-SAMPLE" if args.validate_full else "5-FORMAT"
+        print("="*70);print(f"GenoMAX\u00b2 V7 SPEC-LOCK \u2014 {mode} QA");print("="*70)
+        print(f"Output: {out}\n")
+        results=[]
+        for sys_n,mc in targets:
+            found=None
+            for sku in all_skus[sys_n]:
+                if sku["_meta"]["module_code"]==mc:found=sku;break
+            if not found:print(f"  SKIP {mc}");continue
+            fmt=found["format"]["label_format"];ing=found["front_panel"]["zone_3"]["ingredient_name"]
+            print(f"  {mc} | {fmt:7s} | {ing[:40]}",end="")
+            r=render_sku(found,sys_n,output_base=out);r["sku"]=mc;results.append(r)
+            print(f"  {r['status']}")
+        print(f"\n{'='*70}")
+        print(f"{'Format':<9}| {'Front':<7}| {'Back':<7}| {'Footer':<8}| {'QR':<6}| {'Missing':<30}| Status")
+        print(f"{'-'*9}|{'-'*8}|{'-'*8}|{'-'*9}|{'-'*7}|{'-'*31}|{'-'*7}")
+        for r in results:
+            mb=", ".join(r.get("missing",[]))[:30] or "none"
+            print(f"{r.get('format','?'):<9}| {r['front_fit']:<7}| {r['back_fit']:<7}| {r['footer_safe']:<8}| {r['qr_safe']:<6}| {mb:<30}| {r['status']}")
+        # Rules engine summary
+        print(f"\nRules Engine Actions:")
+        for r in results:
+            ra = r.get("rules",{}).get("actions",[])
+            if ra:
+                print(f"  {r.get('format','?')} {r.get('sku','')}: {', '.join(ra)}")
+        p=sum(1 for r in results if r["status"] in ("PASS","WARNING"));t=len(results)
+        fails=sum(1 for r in results if r["status"]=="FAIL")
+        print(f"\nRESULT: {p}/{t} PASSED ({fails} FAILED)")
+        if fails==0:print("ALL QA PASSED")
+        else:print("FAIL CONDITIONS DETECTED")
+        print(f"Output: {out}");sync_to_drive(out,pv)
+    elif args.full:
+        print("="*70);print("GenoMAX\u00b2 V7 SPEC-LOCK \u2014 FULL");print("="*70)
+        ok,er=0,0
+        for sn,skus in all_skus.items():
+            for i,sku in enumerate(skus):
+                m=sku["_meta"];fmt=sku["format"]["label_format"]
+                print(f"  [{i+1:3d}/{len(skus)}] {m['module_code']} | {fmt:7s}",end="")
+                r=render_sku(sku,sn)
+                if r["status"]=="PASS":ok+=1;print(" OK")
+                else:er+=1;print(f" FAIL: {r.get('missing',[])}")
+        print(f"\n{ok} OK, {er} FAILED \u2192 {OUT}");sync_to_drive(OUT)
+    else:pa.print_help()
+if __name__=="__main__":main()

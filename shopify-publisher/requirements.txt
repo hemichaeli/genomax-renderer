@@ -1,0 +1,3 @@
+# GenoMAX² Shopify Publisher - Dependencies
+# No external packages required - uses stdlib only
+# (urllib for HTTP, csv for data, json for payloads)

@@ -1,0 +1,6 @@
+sku,store,status,error_message,product_id,handle,timestamp
+CV-01_MO_OMEGA-3,maximo,PUBLISHED_DRAFT,,gid://shopify/Product/001,omega-3-epa-dha-lipid-metabolism-maximo,2026-04-14T17:00:00Z
+CV-04_MO_COLON,maximo,PUBLISHED_DRAFT,,gid://shopify/Product/002,colon-gentle-cleanse-gut-motility-maximo,2026-04-14T17:00:01Z
+GL-01_MO_BERBERINE,maximo,PUBLISHED_DRAFT,,gid://shopify/Product/003,berberine-glucose-regulation-maximo,2026-04-14T17:00:02Z
+GL-04_MO_IRON,maximo,BLOCKED,missing front image: assets/GL-04_MO_IRON/front.jpg,,iron-strips-iron-status-maximo,2026-04-14T17:00:03Z
+GL-10_MO_DENTAL,maximo,PUBLISHED_DRAFT,,gid://shopify/Product/004,dental-oral-health-chewables-maximo,2026-04-14T17:00:04Z
